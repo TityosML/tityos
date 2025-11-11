@@ -1,5 +1,5 @@
 #include <cstdlib>
-#include <Dtype.hpp>
+#include "tityos/ty/tensor/Dtype.h"
 
 class ByteArray {
     private:

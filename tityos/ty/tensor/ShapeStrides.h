@@ -2,32 +2,39 @@
 #include <array>
 #include <cstddef>
 
-constexpr size_t MAX_DIMS = 64;
+namespace ty {
+    namespace internal {
+        constexpr size_t MAX_DIMS = 64;
 
-class ShapeStrides {
-    private:
-        std::array<size_t, MAX_DIMS> shape;
-        std::array<size_t, MAX_DIMS> strides;
-        size_t offset;
-        size_t ndim;
+        class ShapeStrides {
+          private:
+            std::array<size_t, MAX_DIMS> shape_;
+            std::array<size_t, MAX_DIMS> strides_;
+            size_t offset_;
+            size_t ndim_;
 
-    public:
-        ShapeStrides(
-            const std::array<size_t, MAX_DIMS>& shape_,
-            const std::array<size_t, MAX_DIMS>& strides_,
-            size_t offset_,
-            size_t ndim_
-        ) : shape(shape_), strides(strides_), offset(offset_), ndim(ndim_) {}
+          public:
+            ShapeStrides(const std::array<size_t, MAX_DIMS> &shape,
+                         const std::array<size_t, MAX_DIMS> &strides, size_t offset, size_t ndim)
+                : shape_(shape), strides_(strides), offset_(offset), ndim_(ndim) {}
 
-        size_t computeByteIndex(const std::array<size_t, MAX_DIMS>& index) const {
-            size_t byteIndex = offset;
-            for (size_t i = 0; i < ndim; ++i) {
-                byteIndex += index[i] * strides[i];
+            size_t computeByteIndex(const std::array<size_t, MAX_DIMS> &index) const {
+                size_t byteIndex = offset_;
+                for (size_t i = 0; i < ndim_; ++i) {
+                    byteIndex += index[i] * strides_[i];
+                }
+                return byteIndex;
             }
-            return byteIndex;
-        }
 
-        size_t getNDim() const { return ndim; }
-        const std::array<size_t, MAX_DIMS>& getShape() const { return shape; }
-        const std::array<size_t, MAX_DIMS>& getStrides() const { return strides; }
-};
+            size_t getNDim() const {
+                return ndim_;
+            }
+            const std::array<size_t, MAX_DIMS> &getShape() const {
+                return shape_;
+            }
+            const std::array<size_t, MAX_DIMS> &getStrides() const {
+                return strides_;
+            }
+        };
+    } // namespace internal
+} // namespace ty

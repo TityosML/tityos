@@ -1,25 +1,33 @@
-#include <cstdlib>
 #include "tityos/ty/tensor/Dtype.h"
+#include <cstdlib>
 
-class ByteArray {
-    private:
-        void* startPointer;
-        size_t size;
+namespace ty {
+    namespace internal {
+        class ByteArray {
+          private:
+            void *startPointer_;
+            size_t size_;
 
-    public:
-        ByteArray(size_t numBytes) : size(numBytes) {
-            startPointer = std::malloc(numBytes);
-        }
+          public:
+            ByteArray(size_t numBytes) : size_(numBytes) {
+                startPointer_ = std::malloc(numBytes);
 
-        ~ByteArray() {
-            std::free(startPointer);
-        }
+                if (startPointer_ == nullptr) {
+                    // TODO: Logging
+                }
+            }
 
-        void* at(size_t index) {
-            return static_cast<char*>(startPointer) + index;
-        }
+            ~ByteArray() {
+                std::free(startPointer_);
+            }
 
-        size_t getSize() const {
-            return size;
-        }
-};
+            void *at(size_t index) {
+                return static_cast<char *>(startPointer_) + index;
+            }
+
+            size_t getSize() const {
+                return size_;
+            }
+        };
+    } // namespace internal
+} // namespace ty

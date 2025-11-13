@@ -1,11 +1,15 @@
 #pragma once
 
+#include "tityos/ty/tensor/Dtype.h"
 #include "tityos/ty/tensor/ShapeStrides.h"
 #include "tityos/ty/tensor/StridedDataAccessor.h"
-#include "tityos/ty/tensor/Dtype.h"
 
-class BaseTensor {
-    private:
-        DType dtype;
-        StridedDataAccessor dataAccessor;
-};
+namespace ty {
+    namespace internal {
+        class BaseTensor {
+          private:
+            DType dtype_;
+            StridedDataAccessor dataAccessor_;
+        };
+    } // namespace internal
+} // namespace ty

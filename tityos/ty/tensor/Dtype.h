@@ -5,7 +5,7 @@
 namespace ty {
     enum class DType { Int8, UInt8, Int16, UInt16, Int32, UInt32, Int64, UInt64, Float32, Float64 };
 
-    inline size_t dtypeSize(DType dtype) {
+    size_t dtypeSize(DType dtype) {
         switch (dtype) {
         case DType::Int8:
         case DType::UInt8:
@@ -22,5 +22,7 @@ namespace ty {
         case DType::Float64:
             return 8;
         }
+
+        return 0;
     }
 } // namespace ty

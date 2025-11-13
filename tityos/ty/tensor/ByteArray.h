@@ -1,5 +1,9 @@
-#include "tityos/ty/tensor/Dtype.h"
+#pragma once
+
 #include <cstdlib>
+
+#include "tityos/ty/tensor/Device.h"
+#include "tityos/ty/tensor/Dtype.h"
 
 namespace ty {
     namespace internal {
@@ -7,18 +11,16 @@ namespace ty {
           private:
             void *startPointer_;
             size_t size_;
+            Device device_;
 
           public:
-            ByteArray(size_t numBytes) : size_(numBytes) {
-                startPointer_ = std::malloc(numBytes);
-
-                if (startPointer_ == nullptr) {
-                    // TODO: Logging
-                }
+            ByteArray(size_t numBytes, Device device = {DeviceType::CPU, 0})
+                : size_(numBytes), device_(device) {
+                allocate();
             }
 
             ~ByteArray() {
-                std::free(startPointer_);
+                deallocate();
             }
 
             void *at(size_t index) {
@@ -28,6 +30,10 @@ namespace ty {
             size_t getSize() const {
                 return size_;
             }
+
+          private:
+            void allocate();
+            void deallocate();
         };
     } // namespace internal
 } // namespace ty

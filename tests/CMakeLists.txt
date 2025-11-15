@@ -1,5 +1,3 @@
-find_package(Catch2 3 REQUIRED)
-
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "*.cpp")
 
 add_executable(tityos_tests ${TEST_SOURCES})

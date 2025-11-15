@@ -1,4 +1,8 @@
-file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "*.cpp")
+file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/unit/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/integration/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/performance/*.cpp"
+)
 
 add_executable(tityos_tests ${TEST_SOURCES})
 

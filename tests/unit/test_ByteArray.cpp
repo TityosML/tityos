@@ -1,6 +1,6 @@
 #include <catch2/catch_all.hpp>
 
-#include "tityos/ty/tensor/ByteArray.cpp"
+#include "tityos/ty/tensor/ByteArray.h"
 
 TEST_CASE("ByteArrays can be allocated", "[ByteArray]") {
     REQUIRE_NOTHROW([&]() { ty::internal::ByteArray exampleArr(4 * sizeof(int)); });

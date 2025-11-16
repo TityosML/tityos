@@ -49,8 +49,6 @@ option(TITYOS_BUILD_TESTS "Build tests" OFF)
 #  Shared or Static library
 # ================================================================
 
-include(GenerateExportHeader)
-
 if(TITYOS_BUILD_SHARED)
     add_library(tityos SHARED)
 else()
@@ -83,15 +81,11 @@ elseif(TITYOS_SANITIZE_MEMORY)
     target_link_options(tityos PRIVATE -fsanitize=memory)
 endif()
 
-set_target_properties(
-    tityos 
-    PROPERTIES 
+if(NOT WIN32)
+    set_target_properties(tityos PROPERTIES
         CXX_VISIBILITY_PRESET "hidden"
         VISIBILITY_INLINES_HIDDEN TRUE
-)
-
-if(TITYOS_BUILD_SHARED)
-    target_compile_definitions(tityos PRIVATE TITYOS_SHARED)
+    )
 endif()
 
 # ================================================================

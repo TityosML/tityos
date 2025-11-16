@@ -61,7 +61,6 @@ target_include_directories(
     tityos
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 include(${TY_ROOT_DIR}/ty/CMakeLists.txt)
@@ -91,7 +90,7 @@ set_target_properties(
         VISIBILITY_INLINES_HIDDEN TRUE
 )
 
-if(BUILD_SHARED_LIBS)
+if(TITYOS_BUILD_SHARED)
     target_compile_definitions(tityos PRIVATE TITYOS_SHARED)
 endif()
 

@@ -21,7 +21,7 @@ namespace ty {
 
             size_t computeByteIndex(const std::array<size_t, MAX_DIMS> &index) const {
                 size_t byteIndex = offset_;
-                for (size_t i = 0; i < ndim_; ++i) {
+                for (size_t i = 0; i < ndim_; i++) {
                     byteIndex += index[i] * strides_[i];
                 }
                 return byteIndex;

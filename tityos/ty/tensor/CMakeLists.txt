@@ -4,5 +4,4 @@ target_sources(
     tityos
     PRIVATE
      ${CMAKE_CURRENT_LIST_DIR}/ByteArray.cpp
-     ${CMAKE_CURRENT_LIST_DIR}/StridedDataAccessor.cpp
 )

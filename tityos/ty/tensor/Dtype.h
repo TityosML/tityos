@@ -2,10 +2,12 @@
 
 #include <cstddef>
 
-namespace ty {
-    enum class DType { Int8, UInt8, Int16, UInt16, Int32, UInt32, Int64, UInt64, Float32, Float64 };
+#include "tityos/ty/export.h"
 
-    size_t dtypeSize(DType dtype) {
+namespace ty {
+    TITYOS_EXPORT enum class DType { Int8, UInt8, Int16, UInt16, Int32, UInt32, Int64, UInt64, Float32, Float64 };
+
+    inline size_t dtypeSize(DType dtype) {
         switch (dtype) {
         case DType::Int8:
         case DType::UInt8:

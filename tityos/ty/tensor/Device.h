@@ -1,9 +1,11 @@
 #pragma once
 
-namespace ty {
-    enum class DeviceType { CPU, CUDA };
+#include "tityos/ty/export.h"
 
-    class Device {
+namespace ty {
+    TITYOS_EXPORT enum class DeviceType { CPU, CUDA };
+
+    TITYOS_EXPORT class Device {
       private:
         DeviceType type_;
         int index_;

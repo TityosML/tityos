@@ -2,6 +2,8 @@
 
 #include <cstdlib>
 
+#include "tityos/ty/cuda/cuda_import.h"
+#include "tityos/ty/cuda/cuda_utils.h"
 #include "tityos/ty/tensor/Device.h"
 #include "tityos/ty/tensor/Dtype.h"
 

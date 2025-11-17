@@ -45,6 +45,9 @@ option(TITYOS_BUILD_WARNINGS "Enable compiler warnings" OFF)
 # Testing options
 option(TITYOS_BUILD_TESTS "Build tests" OFF)
 
+# CUDA options
+option(TITYOS_USE_CUDA "Build to allow cuda" OFF)
+
 # ================================================================
 #  Shared or Static library
 # ================================================================
@@ -62,6 +65,20 @@ target_include_directories(
 )
 
 include(${TY_ROOT_DIR}/ty/CMakeLists.txt)
+
+# CUDA
+if (TITYOS_USE_CUDA)
+    find_package(CUDAToolkit)
+    if (NOT CUDAToolkit_FOUND)
+        enable_language(CUDA)
+        message("Cuda not found - Compiling using CPU")
+        set(TITYOS_USE_CUDA OFF)
+    endif()
+endif()
+
+if (TITYOS_USE_CUDA)
+    target_link_libraries(tityos PRIVATE CUDA::cudart)
+endif()
 
 # Warnings
 if(TITYOS_BUILD_WARNINGS)
@@ -81,6 +98,7 @@ elseif(TITYOS_SANITIZE_MEMORY)
     target_link_options(tityos PRIVATE -fsanitize=memory)
 endif()
 
+# Hiding for non Win32
 if(NOT WIN32)
     set_target_properties(tityos PROPERTIES
         CXX_VISIBILITY_PRESET "hidden"

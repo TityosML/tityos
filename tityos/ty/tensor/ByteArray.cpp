@@ -12,7 +12,17 @@ namespace ty {
             }
 
             if (device_.isCuda()) {
-                // TODO: CUDA allocation
+                if (cuda::isCudaAvailable()) {
+                    #ifdef TITYOS_USE_CUDA
+                        // TODO: CUDA allocation
+                    #endif
+                } else {
+                    #ifdef TITYOS_USE_CUDA
+                        // TODO: Error, CUDA device not found
+                    #else
+                        // TODO: Error, not built with CUDA
+                    #endif
+                }
                 return;
             }
 
@@ -27,7 +37,9 @@ namespace ty {
             }
 
             if (device_.isCuda()) {
-                // TODO: CUDA deallocation
+                #ifdef TITYOS_USE_CUDA
+                    // TODO: CUDA deallocation
+                #endif
                 return;
             }
 

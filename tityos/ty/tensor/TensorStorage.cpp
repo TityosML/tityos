@@ -18,9 +18,9 @@ namespace ty {
                     #endif
                 } else {
                     #ifdef TITYOS_USE_CUDA
-                        // TODO: Error, CUDA device not found
+                        throw std::runtime_error("Cannot allocate Tensor Data to CUDA. CUDA is not available");
                     #else
-                        // TODO: Error, not built with CUDA
+                        throw std::runtime_error("Cannot allocate Tensor Data to CUDA. Tityos not built with CUDA");
                     #endif
                 }
                 return;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdlib>
+#include <stdexcept>
 
 #include "tityos/ty/cuda/cuda_import.h"
 #include "tityos/ty/cuda/cuda_utils.h"

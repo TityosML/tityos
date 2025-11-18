@@ -70,8 +70,6 @@ target_include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-include(${TY_ROOT_DIR}/ty/CMakeLists.txt)
-
 # CUDA
 if (TITYOS_USE_CUDA)
     find_package(CUDAToolkit)
@@ -136,6 +134,8 @@ if(NOT WIN32)
         VISIBILITY_INLINES_HIDDEN TRUE
     )
 endif()
+
+include(${TY_ROOT_DIR}/ty/CMakeLists.txt)
 
 # ================================================================
 #  Tests

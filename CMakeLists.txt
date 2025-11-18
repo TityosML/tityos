@@ -79,6 +79,7 @@ if (TITYOS_USE_CUDA)
     else()
         enable_language(CUDA)
         message(STATUS "Compiling using CUDA")
+        target_compile_definitions(tityos PRIVATE TITYOS_USE_CUDA)
     endif()
 endif()
 

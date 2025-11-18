@@ -9,19 +9,19 @@
 
 namespace ty {
     namespace internal {
-        class ByteArray {
+        class TensorStorage {
           private:
             void *startPointer_;
             size_t size_;
             Device device_;
 
           public:
-            ByteArray(size_t numBytes, Device device = {DeviceType::CPU, 0})
+            TensorStorage(size_t numBytes, Device device = {DeviceType::CPU, 0})
                 : size_(numBytes), device_(device) {
                 allocate();
             }
 
-            ~ByteArray() {
+            ~TensorStorage() {
                 deallocate();
             }
 

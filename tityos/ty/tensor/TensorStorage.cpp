@@ -1,8 +1,8 @@
-#include "tityos/ty/tensor/ByteArray.h"
+#include "tityos/ty/tensor/TensorStorage.h"
 
 namespace ty {
     namespace internal {
-        void ByteArray::allocate() {
+        void TensorStorage::allocate() {
             if (device_.isCpu()) {
                 startPointer_ = std::malloc(size_);
                 if (!startPointer_) {
@@ -29,7 +29,7 @@ namespace ty {
             // TODO: Unsupported device type
         }
 
-        void ByteArray::deallocate() {
+        void TensorStorage::deallocate() {
             if (device_.isCpu()) {
                 std::free(startPointer_);
                 startPointer_ = nullptr;

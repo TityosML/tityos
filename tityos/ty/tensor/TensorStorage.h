@@ -27,7 +27,7 @@ namespace ty {
             }
 
             void *at(size_t index) {
-                return static_cast<char *>(startPointer_) + index;
+                return reinterpret_cast<char *>(startPointer_) + index;
             }
 
             size_t getSize() const {

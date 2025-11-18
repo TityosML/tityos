@@ -48,9 +48,15 @@ option(TITYOS_BUILD_TESTS "Build tests" OFF)
 # CUDA options
 option(TITYOS_USE_CUDA "Build to allow cuda" OFF)
 
+# CPU SIMD options
+option(TITYOS_USE_AVX "Build to allow AVX" OFF)
+option(TITYOS_USE_AVX2 "Build to allow AVX2" OFF)
+
 # ================================================================
 #  Shared or Static library
 # ================================================================
+
+include(CheckCXXCompilerFlag)
 
 if(TITYOS_BUILD_SHARED)
     add_library(tityos SHARED)
@@ -71,13 +77,38 @@ if (TITYOS_USE_CUDA)
     find_package(CUDAToolkit)
     if (NOT CUDAToolkit_FOUND)
         enable_language(CUDA)
-        message("Cuda not found - Compiling using CPU")
+        message(WARNING "Cuda not found - Compiling using CPU")
         set(TITYOS_USE_CUDA OFF)
+    else()
+        message(STATUS "Compiling using CUDA")
     endif()
 endif()
 
 if (TITYOS_USE_CUDA)
     target_link_libraries(tityos PRIVATE CUDA::cudart)
+endif()
+
+# CPU SIMD
+if (TITYOS_USE_AVX2)
+    message(STATUS "Checking for AVX2 support")
+    if(MSVC)
+        check_cxx_compiler_flag("-mavx2" COMPILER_ALLOWS_AVX2)
+        if (COMPILER_ALLOWS_AVX2)
+            target_compile_options(tityos PRIVATE /arch:AVX2)
+        endif()
+    else()
+        check_cxx_compiler_flag("-mavx2" COMPILER_ALLOWS_AVX2)
+        if (COMPILER_ALLOWS_AVX2)
+            target_compile_options(tityos PRIVATE -mavx2)
+        endif()
+    endif()
+
+    if(NOT COMPILER_ALLOWS_AVX2)
+        message(WARNING "Checking for AVX2 support - Failed")
+        message(WARNING "AVX2 not supported - continuing without AVX2")
+    else()
+        message(STATUS "Checking for AVX2 support - Success")
+    endif()
 endif()
 
 # Warnings

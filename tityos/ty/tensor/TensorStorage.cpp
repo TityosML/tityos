@@ -14,7 +14,7 @@ namespace ty {
             if (device_.isCuda()) {
                 if (cuda::isCudaAvailable()) {
                     #ifdef TITYOS_USE_CUDA
-                        // TODO: CUDA allocation
+                        cudaMalloc(&startPointer_, size_);
                     #endif
                 } else {
                     #ifdef TITYOS_USE_CUDA
@@ -38,7 +38,8 @@ namespace ty {
 
             if (device_.isCuda()) {
                 #ifdef TITYOS_USE_CUDA
-                    // TODO: CUDA deallocation
+                    cudaFree(startPointer_);
+                    startPointer_ = nullptr;
                 #endif
                 return;
             }

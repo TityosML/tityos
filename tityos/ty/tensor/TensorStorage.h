@@ -34,6 +34,14 @@ namespace ty {
                 return size_;
             }
 
+            void *begin() {
+                return startPointer_;
+            }
+
+            void *end() {
+                return reinterpret_cast<char *>(startPointer_) + size_;
+            }
+
           private:
             void allocate();
             void deallocate();

@@ -3,6 +3,8 @@
 #include <array>
 #include <cstddef>
 
+#include "tityos/ty/tensor/Dtype.h"
+
 namespace ty {
     namespace internal {
         constexpr size_t MAX_DIMS = 64;
@@ -18,6 +20,11 @@ namespace ty {
             ShapeStrides(const std::array<size_t, MAX_DIMS> &shape,
                          const std::array<size_t, MAX_DIMS> &strides, size_t offset, size_t ndim)
                 : shape_(shape), strides_(strides), offset_(offset), ndim_(ndim) {}
+
+            ShapeStrides(const std::array<size_t, MAX_DIMS> &shape, DType dtype, size_t ndim)
+                : shape_(shape), offset_(0), ndim_(ndim) {
+                    initialStrides(dtype);
+                }
 
             size_t computeByteIndex(const std::array<size_t, MAX_DIMS> &index) const {
                 size_t byteIndex = offset_;
@@ -36,6 +43,9 @@ namespace ty {
             const std::array<size_t, MAX_DIMS> &getStrides() const {
                 return strides_;
             }
+
+          private:
+            void initialStrides(DType dtype);
         };
     } // namespace internal
 } // namespace ty

@@ -2,9 +2,17 @@
 
 #include "tityos/ty/tensor/Tensor.h"
 
-TEST_CASE("Tensor creation using vector", "[Tensor]") {
+TEST_CASE("Tensor creation", "[Tensor]") {
     REQUIRE_NOTHROW(
         ty::Tensor(std::vector<float>({1.0, 2.0, 3.0, 4.0}), {2, 2})
+    );
+
+    REQUIRE_NOTHROW(
+        ty::Tensor(std::vector<float>({1.0, 2.0, 3.0, 4.0}), std::vector<size_t>({2, 2}))
+    );
+
+    REQUIRE_NOTHROW(
+        ty::Tensor(std::vector<float>({1.0, 2.0, 3.0, 4.0}), std::array<size_t, 2>({2, 2}))
     );
 }
 

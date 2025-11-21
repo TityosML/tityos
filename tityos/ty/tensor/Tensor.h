@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ranges>
+#include <span>
 #include <string>
 
 #include "tityos/ty/export.h"
@@ -13,13 +14,14 @@ namespace ty {
 
       public:
         template <std::ranges::contiguous_range R>
-        Tensor(const R &data, const std::initializer_list<size_t> &shape,
-               Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32) {
+        Tensor(const R &data, std::span<const size_t> shape, Device device = {DeviceType::CPU, 0},
+               DType dtype = DType::Float32) {
             using T = std::ranges::range_value_t<R>;
 
             size_t numElements = std::ranges::size(data);
             size_t numBytes = sizeof(T) * numElements;
-            std::shared_ptr<internal::TensorStorage> dataStorage = std::make_shared<internal::TensorStorage>(numBytes, device);
+            std::shared_ptr<internal::TensorStorage> dataStorage =
+                std::make_shared<internal::TensorStorage>(numBytes, device);
             std::memcpy(dataStorage->begin(), std::ranges::data(data), numBytes);
 
             std::array<size_t, internal::MAX_DIMS> storageShape{};
@@ -32,6 +34,21 @@ namespace ty {
 
             baseTensor_ = std::make_shared<internal::BaseTensor>(dataStorage, layout);
         }
+
+        template <std::ranges::contiguous_range R>
+        Tensor(const R &data, const std::initializer_list<size_t> &shape,
+               Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32)
+            : Tensor(data, std::span<const size_t>(shape.begin(), shape.size()), device, dtype) {}
+
+        template <std::ranges::contiguous_range R>
+        Tensor(const R &data, const std::vector<size_t> &shape,
+               Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32)
+            : Tensor(data, std::span<const size_t>(shape.data(), shape.size()), device, dtype) {}
+
+        template <std::ranges::contiguous_range R, size_t N>
+        Tensor(const R &data, const std::array<size_t, N> &shape,
+               Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32)
+            : Tensor(data, std::span<const size_t>(shape.data(), shape.size()), device, dtype) {}
 
         void *at(const std::array<size_t, internal::MAX_DIMS> &index) const {
             // TODO: Not efficient to create new array everytime

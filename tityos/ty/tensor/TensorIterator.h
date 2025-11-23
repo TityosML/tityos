@@ -6,24 +6,22 @@
 
 namespace ty {
     namespace internal {
+        template <typename T>
         class TensorIterator { 
           private:
             std::shared_ptr<BaseTensor> baseTensor_;
             std::array<size_t, MAX_DIMS> index_; 
 
-            void* m_ptr;
-            ShapeStrides layout_;
-            size_t ndim_;
-            std::array<size_t, MAX_DIMS> shape_;
-
+            pointer m_ptr;
             void incrementIndex() {
-                for (size_t i = ndim_ - 1; i >= 0; i--)
+                for (size_t i = layout.getNDim(); i > 0; i--)
                 {
-                    index_[i] += 1;
-                    if (index_[i] < shape_[i]) {
+                    size_t idx = i - 1
+                    index_[idx] += 1;
+                    if (index_[idx] < layout.getShape()[idx]) {
                         break;
                     } else {
-                        index_[i] = 0;
+                        index_[idx] = 0;
                     }
                 }
 
@@ -32,30 +30,34 @@ namespace ty {
             
           public:
             TensorIterator(std::shared_ptr<BaseTensor> baseTensor, std::array<size_t, MAX_DIMS> startIndex) 
-            : baseTensor_(baseTensor), index_(startIndex), layout_(baseTensor.getLayout()), m_ptr(baseTensor_->at(index_)), ndim_(layout.getNDim()), shape_(layout.getShape()) {}
+            : baseTensor_(baseTensor), index_(startIndex), m_ptr(baseTensor_->at(index_)) {}
 
-            // TODO: use a template to add iterator tags
+            // TODO: replace float with a generic type
+            using iterator_category = std::forward_iterator_tag;
+            using value_type        = T
+            using pointer           = T*;  
+            using reference         = T&;  
 
             reference operator*() const { return *m_ptr; }
             pointer operator->() { return m_ptr; }
-
             // Prefix increment
-            Iterator& operator++() {
+            TensorIterator& operator++() {
                 incrementIndex();
                 return *this; 
             }
 
             // Postfix increment
-            Iterator operator++(int) { 
+            TensorIterator operator++(int) { 
                 TensorIterator tmp = *this;
                 ++(*this);
                 return tmp;
             } 
 
-            friend bool operator== (const Iterator& a, const Iterator& b) { return a.m_ptr == b.m_ptr; };
-            friend bool operator!= (const Iterator& a, const Iterator& b) { return a.m_ptr != b.m_ptr; };   
+            bool operator== (const TensorIterator& a, const TensorIterator& b) { return a.m_ptr == b.m_ptr; };
+            bool operator!= (const TensorIterator& a, const TensorIterator& b) { return a.m_ptr != b.m_ptr; };   
 
             // TODO: move into BaseTensor as a struct if that is better for design
+
     };
   } // namespace internal
 } // namespace ty

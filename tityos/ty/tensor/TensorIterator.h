@@ -16,12 +16,11 @@ namespace ty {
             void incrementIndex() {
                 for (size_t i = layout.getNDim(); i > 0; i--)
                 {
-                    size_t idx = i - 1;
-                    index_[idx] += 1;
-                    if (index_[idx] < layout.getShape()[idx]) {
+                    index_[i-1] += 1;
+                    if (index_[i-1] < layout.getShape()[i-1]) {
                         break;
                     } else {
-                        index_[idx] = 0;
+                        index_[i-1] = 0;
                     }
                 }
 

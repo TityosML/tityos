@@ -16,7 +16,7 @@ namespace ty {
             void incrementIndex() {
                 for (size_t i = layout.getNDim(); i > 0; i--)
                 {
-                    size_t idx = i - 1
+                    size_t idx = i - 1;
                     index_[idx] += 1;
                     if (index_[idx] < layout.getShape()[idx]) {
                         break;
@@ -34,7 +34,7 @@ namespace ty {
 
             // TODO: replace float with a generic type
             using iterator_category = std::forward_iterator_tag;
-            using value_type        = T
+            using value_type        = T;
             using pointer           = T*;  
             using reference         = T&;  
 

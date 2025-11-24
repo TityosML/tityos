@@ -14,6 +14,17 @@ namespace ty {
 
             std::shared_ptr<TensorStorage> tensorStorage_;
             ShapeStrides layout_;
+
+            
+            std::array<size_t, MAX_DIMS> endIndex() const {
+                // Inclusive end index
+                std::array<size_t, MAX_DIMS> endIdx = {};
+                for (size_t i = 0; i < layout_.getNDim(); i++){
+                    endIdx[i] = layout_.getShape()[i]-1;
+                }
+                return endIdx;
+            }
+
           
           public:
             BaseTensor(std::shared_ptr<TensorStorage> data, const ShapeStrides &layout)
@@ -32,10 +43,11 @@ namespace ty {
             }
 
             struct Iterator {
-                Iterator(const BaseTensor &baseTensor, const std::array<size_t, MAX_DIMS>& startIndex) 
-                : baseTensor_(baseTensor), index_(startIndex), ptr_((&baseTensor)->at(startIndex.data())) {}
+                Iterator(const BaseTensor &baseTensor, const std::array<size_t, MAX_DIMS> &startIndex) 
+                : baseTensor_(baseTensor), index_(startIndex), ptr_(baseTensor.at(startIndex.data())) {}
                 
                 void* operator->() { return ptr_; }
+                void* operator*() { return ptr_; }
                 // Prefix increment
                 Iterator& operator++() {
                     incrementIndex();
@@ -59,29 +71,24 @@ namespace ty {
                 void* ptr_;
 
                 void incrementIndex() {
-                    for (size_t i = baseTensor_.getLayout().getNDim(); i > 0; i--) {
-                        index_[i-1] += 1;
-                        if (index_[i-1] < baseTensor_.getLayout().getShape()[i-1]) {
+                    for (int i = baseTensor_.getLayout().getNDim() - 1; i >= 0; i--) {
+                        index_[i]++;
+                        if (index_[i] < baseTensor_.getLayout().getShape()[i]) {
                             break;
                         } else {
-                            index_[i-1] = 0;
+                            index_[i] = 0;
                         }
                     }
 
-                    ptr_ = (&baseTensor_)->at(index_.data());
+                    ptr_ = baseTensor_.at(index_.data());
                 }
             }; 
 
             Iterator begin() { return Iterator(*this, std::array<size_t, MAX_DIMS> {});}
-        
-            Iterator end() { 
-                std::array<size_t, MAX_DIMS> endIdx = {};
-                for (size_t i = 0; i < layout_.getNDim(); i++){
-                    endIdx[i] = layout_.getShape()[i]-1;
-                }
-                
-                return Iterator(*this, endIdx)++;
-            }
+            Iterator end() { return Iterator(*this, endIndex())++;}
+
+            Iterator begin() const { return Iterator(*this, std::array<size_t, MAX_DIMS> {});}
+            Iterator end() const { return Iterator(*this, endIndex())++;}
         };
     } // namespace internal
 } // namespace ty

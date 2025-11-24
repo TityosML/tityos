@@ -82,10 +82,22 @@ namespace ty {
             return at(index.begin(), index.size());
         }
         
-        // TODO: Expose Iterator from BaseTensor
+        using Iterator = internal::BaseTensor::Iterator;
+        
+        Iterator begin() { return baseTensor_->begin(); }
+        Iterator end() { return baseTensor_->end(); }
+
+        Iterator begin() const { return baseTensor_->begin(); }
+        Iterator end() const { return baseTensor_->end(); }
 
         std::string toString() const {
-            return "";
+            // TODO: Add [] formatting and deal with datatypes
+            std::string str = "";
+            for (auto it = begin(); it != end(); it++){
+                str += std::to_string(*static_cast<float*>(*it));
+            }
+            str += std::to_string(*static_cast<float*>(*end()));
+            return str;
         }
     };
 } // namespace ty

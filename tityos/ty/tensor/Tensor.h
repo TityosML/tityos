@@ -49,21 +49,23 @@ namespace ty {
         Tensor(const R &data, const std::array<size_t, N> &shape,
                Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32)
             : Tensor(data, std::span<const size_t>(shape.data(), shape.size()), device, dtype) {}
+        
+        inline void *at(const size_t *indexStart, const size_t indexSize) const {
+            // TODO : Check dimension and index
+            return baseTensor_->at(indexStart);
+        }
 
         template <size_t N>
-        void *at(const std::array<size_t, N> &index) const {
-            // TODO : Check dimension and index
-            return baseTensor_->at(index.data());
+        inline void *at(const std::array<size_t, N> &index) const {
+            return at(index.data(), N);
         }
 
-        void *at(const std::vector<size_t> &index) const {
-            // TODO : Check dimension and index
-            return baseTensor_->at(index.data());
+        inline void *at(const std::vector<size_t> &index) const {
+            return at(index.data(), index.size());
         }
 
-        void *at(const std::initializer_list<size_t> &index) const {
-            // TODO : Check dimension and index
-            return baseTensor_->at(index.begin());
+        inline void *at(const std::initializer_list<size_t> &index) const {
+            return at(index.begin(), index.size());
         }
 
         std::string toString() const {

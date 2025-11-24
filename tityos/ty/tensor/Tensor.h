@@ -49,18 +49,37 @@ namespace ty {
         Tensor(const R &data, const std::array<size_t, N> &shape,
                Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32)
             : Tensor(data, std::span<const size_t>(shape.data(), shape.size()), device, dtype) {}
-
-        void *at(const std::array<size_t, internal::MAX_DIMS> &index) const {
-            // TODO: Not efficient to create new array everytime
-            //       Need to add option to subclasses to allow for std::initializer_list and
-            //       std::vector
-
-            std::array<size_t, internal::MAX_DIMS> arrayIndex{};
-            for (int i = 0; i < index.size(); i++) {
-                arrayIndex[i] = index[i];
+        
+        inline void *at(const size_t *indexStart, const size_t indexSize) const {
+            if (indexSize != baseTensor_->getLayout().getNDim()) {
+                throw std::invalid_argument("Index size mismatch: expected "
+                + std::to_string(baseTensor_->getLayout().getNDim())
+                + ", got " + std::to_string(indexSize));
             }
 
-            return baseTensor_->at(arrayIndex);
+            const std::array<size_t, internal::MAX_DIMS>& shape = baseTensor_->getLayout().getShape();
+            for (size_t i = 0; i < indexSize; i++) {
+                if (indexStart[i] >= shape[i]) {
+                    throw std::out_of_range("Index out of bounds at dimension " + std::to_string(i) 
+                    + ": index value " + std::to_string(*(indexStart + i))
+                    + " is >= shape dimension " + std::to_string(baseTensor_->getLayout().getShape()[i]));
+                }
+            }
+
+            return baseTensor_->at(indexStart);
+        }
+
+        template <size_t N>
+        inline void *at(const std::array<size_t, N> &index) const {
+            return at(index.data(), N);
+        }
+
+        inline void *at(const std::vector<size_t> &index) const {
+            return at(index.data(), index.size());
+        }
+
+        inline void *at(const std::initializer_list<size_t> &index) const {
+            return at(index.begin(), index.size());
         }
         
         // TODO: Expose Iterator from BaseTensor

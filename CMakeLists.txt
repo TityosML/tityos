@@ -73,17 +73,15 @@ target_include_directories(
 
 # CUDA
 if (TITYOS_USE_CUDA)
-    find_package(CUDAToolkit)
-    if (CUDAToolkit_FOUND)
-        enable_language(CUDA)
-        message(STATUS "Compiling using CUDA")
-        target_compile_definitions(tityos PUBLIC TITYOS_USE_CUDA)
-        target_link_libraries(tityos PRIVATE CUDA::cudart)
-    else()
-        message(WARNING "Cuda not found - Compiling using CPU")
-        set(TITYOS_USE_CUDA OFF)
-    endif()
+    find_package(CUDAToolkit REQUIRED)
+    enable_language(CUDA)
+    message(STATUS "Compiling using CUDA")
+    target_compile_definitions(tityos PUBLIC TITYOS_USE_CUDA)
+
+    target_link_libraries(tityos PUBLIC CUDA::cudart)
+    target_include_directories(tityos PUBLIC ${CUDAToolkit_INCLUDE_DIRS})
 endif()
+
 
 # CPU SIMD
 if (TITYOS_USE_AVX2)

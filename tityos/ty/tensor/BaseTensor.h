@@ -27,7 +27,7 @@ namespace ty {
             const ShapeStrides &getLayout() const {
                 return layout_;
             }
-            const std::shared_ptr<TensorStorage> &getByteArray() const {
+            const std::shared_ptr<TensorStorage> &getTensorStorage() const {
                 return tensorStorage_;
             }
 
@@ -48,7 +48,7 @@ namespace ty {
                         }
                     }
 
-                    ptr_ = (&baseTensor_)->at(index_.data());
+                    ptr_ = baseTensor_.at(index_.data());
                 }
                 
               public:
@@ -56,6 +56,7 @@ namespace ty {
                 : baseTensor_(baseTensor), index_(startIndex), ptr_(baseTensor.at(startIndex.data())) {}
                 
                 void* operator->() { return ptr_; }
+
                 // Prefix increment
                 Iterator& operator++() {
                     incrementIndex();

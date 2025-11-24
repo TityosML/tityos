@@ -38,16 +38,39 @@ namespace ty {
             const ShapeStrides &getLayout() const {
                 return layout_;
             }
-            const std::shared_ptr<TensorStorage> &getByteArray() const {
+            const std::shared_ptr<TensorStorage> &getTensorStorage() const {
                 return tensorStorage_;
             }
 
             struct Iterator {
-                Iterator(const BaseTensor &baseTensor, const std::array<size_t, MAX_DIMS> &startIndex) 
+              private:
+                const BaseTensor &baseTensor_;
+                std::array<size_t, MAX_DIMS> index_; 
+
+                void* ptr_;
+
+                void incrementIndex() {
+                    const std::array<size_t, internal::MAX_DIMS>& shape = baseTensor_.getLayout().getShape();
+                    const std::array<size_t, internal::MAX_DIMS>& strides = baseTensor_.getLayout().getStrides();
+                    for (int i = baseTensor_.getLayout().getNDim() - 1; i >= 0; i--) {
+                        index_[i]++;
+                        if (index_[i] < shape[i]) {
+                            ptr_ = reinterpret_cast<char*>(ptr_) + strides[i];
+                            break;
+                        } else {
+                            index_[i] = 0;
+                            ptr_ = reinterpret_cast<char*>(ptr_) - (shape[i] - 1) * strides[i];
+                        }
+                    }
+                }
+                
+              public:
+                Iterator(const BaseTensor &baseTensor, const std::array<size_t, MAX_DIMS> startIndex) 
                 : baseTensor_(baseTensor), index_(startIndex), ptr_(baseTensor.at(startIndex.data())) {}
                 
                 void* operator->() { return ptr_; }
                 void* operator*() { return ptr_; }
+
                 // Prefix increment
                 Iterator& operator++() {
                     incrementIndex();
@@ -64,24 +87,6 @@ namespace ty {
                 friend bool operator== (const Iterator& a, const Iterator& b) { return a.ptr_ == b.ptr_; };
                 friend bool operator!= (const Iterator& a, const Iterator& b) { return a.ptr_ != b.ptr_; };   
 
-              private:
-                const BaseTensor &baseTensor_;
-                std::array<size_t, MAX_DIMS> index_; 
-
-                void* ptr_;
-
-                void incrementIndex() {
-                    for (int i = baseTensor_.getLayout().getNDim() - 1; i >= 0; i--) {
-                        index_[i]++;
-                        if (index_[i] < baseTensor_.getLayout().getShape()[i]) {
-                            break;
-                        } else {
-                            index_[i] = 0;
-                        }
-                    }
-
-                    ptr_ = baseTensor_.at(index_.data());
-                }
             }; 
 
             Iterator begin() { return Iterator(*this, std::array<size_t, MAX_DIMS> {});}

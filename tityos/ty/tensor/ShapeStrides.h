@@ -26,7 +26,7 @@ namespace ty {
                     initialStrides(dtype);
                 }
 
-            size_t computeByteIndex(const size_t *indexStart, const size_t indexSize) const {
+            size_t computeByteIndex(const size_t *indexStart) const {
                 size_t byteIndex = offset_;
                 for (size_t i = 0; i < ndim_; i++) {
                     byteIndex += *indexStart * strides_[i];

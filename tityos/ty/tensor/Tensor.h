@@ -52,15 +52,18 @@ namespace ty {
 
         template <size_t N>
         void *at(const std::array<size_t, N> &index) const {
-            return baseTensor_->at(index.data(), N);
+            // TODO : Check dimension and index
+            return baseTensor_->at(index.data());
         }
 
         void *at(const std::vector<size_t> &index) const {
-            return baseTensor_->at(index.data(), index.size());
+            // TODO : Check dimension and index
+            return baseTensor_->at(index.data());
         }
 
         void *at(const std::initializer_list<size_t> &index) const {
-            return baseTensor_->at(index.begin(), index.size());
+            // TODO : Check dimension and index
+            return baseTensor_->at(index.begin());
         }
 
         std::string toString() const {

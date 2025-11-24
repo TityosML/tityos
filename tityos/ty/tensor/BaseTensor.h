@@ -71,6 +71,17 @@ namespace ty {
                     ptr_ = (&baseTensor_)->at(index_.data());
                 }
             }; 
+
+            Iterator begin() { return Iterator(*this, std::array<size_t, MAX_DIMS> {});}
+        
+            Iterator end() { 
+                std::array<size_t, MAX_DIMS> endIdx = {};
+                for (size_t i = 0; i < layout_.getNDim(); i++){
+                    endIdx[i] = layout_.getShape()[i]-1;
+                }
+                
+                return Iterator(*this, endIdx)++;
+            }
         };
     } // namespace internal
 } // namespace ty

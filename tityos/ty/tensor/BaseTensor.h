@@ -32,8 +32,8 @@ namespace ty {
             }
 
             struct Iterator {
-                Iterator(BaseTensor &baseTensor, std::array<size_t, MAX_DIMS> startIndex) 
-                : baseTensor_(baseTensor), index_(startIndex), ptr_((&baseTensor)->at(startIndex)) {}
+                Iterator(const BaseTensor &baseTensor, const std::array<size_t, MAX_DIMS>& startIndex) 
+                : baseTensor_(baseTensor), index_(startIndex), ptr_((&baseTensor)->at(startIndex.data())) {}
                 
                 void* operator->() { return ptr_; }
                 // Prefix increment
@@ -53,7 +53,7 @@ namespace ty {
                 friend bool operator!= (const Iterator& a, const Iterator& b) { return a.ptr_ != b.ptr_; };   
 
               private:
-                BaseTensor &baseTensor_;
+                const BaseTensor &baseTensor_;
                 std::array<size_t, MAX_DIMS> index_; 
 
                 void* ptr_;
@@ -68,7 +68,7 @@ namespace ty {
                         }
                     }
 
-                    ptr_ = (&baseTensor_)->at(index_);
+                    ptr_ = (&baseTensor_)->at(index_.data());
                 }
             }; 
         };

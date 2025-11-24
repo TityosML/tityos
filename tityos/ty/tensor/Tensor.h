@@ -62,6 +62,8 @@ namespace ty {
 
             return baseTensor_->at(arrayIndex);
         }
+        
+        // TODO: Expose Iterator from BaseTensor
 
         std::string toString() const {
             return "";

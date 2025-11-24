@@ -30,6 +30,47 @@ namespace ty {
             const std::shared_ptr<TensorStorage> &getByteArray() const {
                 return tensorStorage_;
             }
+
+            struct Iterator {
+                Iterator(BaseTensor &baseTensor, std::array<size_t, MAX_DIMS> startIndex) 
+                : baseTensor_(baseTensor), index_(startIndex), ptr_((&baseTensor)->at(startIndex)) {}
+                
+                void* operator->() { return ptr_; }
+                // Prefix increment
+                Iterator& operator++() {
+                    incrementIndex();
+                    return *this; 
+                }
+
+                // Postfix increment
+                Iterator operator++(int) { 
+                    Iterator tmp = *this;
+                    ++(*this);
+                    return tmp;
+                } 
+
+                friend bool operator== (const Iterator& a, const Iterator& b) { return a.ptr_ == b.ptr_; };
+                friend bool operator!= (const Iterator& a, const Iterator& b) { return a.ptr_ != b.ptr_; };   
+
+              private:
+                BaseTensor &baseTensor_;
+                std::array<size_t, MAX_DIMS> index_; 
+
+                void* ptr_;
+
+                void incrementIndex() {
+                    for (size_t i = baseTensor_.getLayout().getNDim(); i > 0; i--) {
+                        index_[i-1] += 1;
+                        if (index_[i-1] < baseTensor_.getLayout().getShape()[i-1]) {
+                            break;
+                        } else {
+                            index_[i-1] = 0;
+                        }
+                    }
+
+                    ptr_ = (&baseTensor_)->at(index_);
+                }
+            }; 
         };
     } // namespace internal
 } // namespace ty

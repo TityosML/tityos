@@ -39,16 +39,18 @@ namespace ty {
                 void* ptr_;
 
                 void incrementIndex() {
-                    for (size_t i = baseTensor_.getLayout().getNDim(); i > 0; i--) {
-                        index_[i-1] += 1;
-                        if (index_[i-1] < baseTensor_.getLayout().getShape()[i-1]) {
+                    const std::array<size_t, internal::MAX_DIMS>& shape = baseTensor_.getLayout().getShape();
+                    const std::array<size_t, internal::MAX_DIMS>& strides = baseTensor_.getLayout().getStrides();
+                    for (int i = baseTensor_.getLayout().getNDim() - 1; i >= 0; i--) {
+                        index_[i]++;
+                        if (index_[i] < shape[i]) {
+                            ptr_ = reinterpret_cast<char*>(ptr_) + strides[i];
                             break;
                         } else {
-                            index_[i-1] = 0;
+                            index_[i] = 0;
+                            ptr_ = reinterpret_cast<char*>(ptr_) - (shape[i] - 1) * strides[i];
                         }
                     }
-
-                    ptr_ = baseTensor_.at(index_.data());
                 }
                 
               public:

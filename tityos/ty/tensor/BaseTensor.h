@@ -19,8 +19,8 @@ namespace ty {
             BaseTensor(std::shared_ptr<TensorStorage> data, const ShapeStrides &layout)
                 : tensorStorage_(std::move(data)), layout_(layout) {}
 
-            void *at(const std::array<size_t, MAX_DIMS> &index) const {
-                size_t byteOffset = layout_.computeByteIndex(index);
+            void *at(const size_t *indexStart, const size_t indexSize) const {
+                size_t byteOffset = layout_.computeByteIndex(indexStart, indexSize);
                 return tensorStorage_->at(byteOffset);
             }
 

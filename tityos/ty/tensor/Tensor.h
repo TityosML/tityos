@@ -50,17 +50,17 @@ namespace ty {
                Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32)
             : Tensor(data, std::span<const size_t>(shape.data(), shape.size()), device, dtype) {}
 
-        void *at(const std::array<size_t, internal::MAX_DIMS> &index) const {
-            // TODO: Not efficient to create new array everytime
-            //       Need to add option to subclasses to allow for std::initializer_list and
-            //       std::vector
+        template <size_t N>
+        void *at(const std::array<size_t, N> &index) const {
+            return baseTensor_->at(index.data(), N);
+        }
 
-            std::array<size_t, internal::MAX_DIMS> arrayIndex{};
-            for (int i = 0; i < index.size(); i++) {
-                arrayIndex[i] = index[i];
-            }
+        void *at(const std::vector<size_t> &index) const {
+            return baseTensor_->at(index.data(), index.size());
+        }
 
-            return baseTensor_->at(arrayIndex);
+        void *at(const std::initializer_list<size_t> &index) const {
+            return baseTensor_->at(index.begin(), index.size());
         }
 
         std::string toString() const {

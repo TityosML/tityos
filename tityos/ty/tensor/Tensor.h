@@ -62,7 +62,7 @@ namespace ty {
                 if (indexStart[i] >= shape[i]) {
                     throw std::out_of_range("Index out of bounds at dimension " + std::to_string(i) 
                     + ": index value " + std::to_string(*(indexStart + i))
-                    + " is >= shape dimension " + std::to_string(baseTensor_->getLayout().getShape()[i]));
+                    + " is >= shape dimension " + std::to_string(shape[i]));
                 }
             }
 

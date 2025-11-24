@@ -23,4 +23,7 @@ TEST_CASE("Accessing Tensor", "[Tensor]") {
     CHECK(*(float*)example.at(std::vector<size_t>({0, 1})) == 2.0);
     CHECK(*(float*)example.at(std::array<size_t, 2>({1, 0})) == 3.0);
     CHECK(*(float*)example.at({1, 1}) == 4.0);
+
+    REQUIRE_THROWS(example.at({2, 0}));
+    REQUIRE_THROWS(example.at({0, 0, 0}));
 }

@@ -51,7 +51,21 @@ namespace ty {
             : Tensor(data, std::span<const size_t>(shape.data(), shape.size()), device, dtype) {}
         
         inline void *at(const size_t *indexStart, const size_t indexSize) const {
-            // TODO : Check dimension and index
+            if (indexSize != baseTensor_->getLayout().getNDim()) {
+                throw std::invalid_argument("Index size mismatch: expected "
+                + std::to_string(baseTensor_->getLayout().getNDim())
+                + ", got " + std::to_string(indexSize));
+            }
+
+            const std::array<size_t, internal::MAX_DIMS>& shape = baseTensor_->getLayout().getShape();
+            for (size_t i = 0; i < indexSize; i++) {
+                if (indexStart[i] >= shape[i]) {
+                    throw std::out_of_range("Index out of bounds at dimension " + std::to_string(i) 
+                    + ": index value " + std::to_string(*(indexStart + i))
+                    + " is >= shape dimension " + std::to_string(baseTensor_->getLayout().getShape()[i]));
+                }
+            }
+
             return baseTensor_->at(indexStart);
         }
 

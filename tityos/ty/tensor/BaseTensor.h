@@ -76,6 +76,17 @@ namespace ty {
                 friend bool operator!= (const Iterator& a, const Iterator& b) { return a.ptr_ != b.ptr_; };   
 
             }; 
+
+            Iterator begin() { return Iterator(*this, std::array<size_t, MAX_DIMS> {});}
+        
+            Iterator end() { 
+                std::array<size_t, MAX_DIMS> endIdx = {};
+                for (size_t i = 0; i < layout_.getNDim(); i++){
+                    endIdx[i] = layout_.getShape()[i]-1;
+                }
+                
+                return Iterator(*this, endIdx)++;
+            }
         };
     } // namespace internal
 } // namespace ty

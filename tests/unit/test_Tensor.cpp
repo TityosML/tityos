@@ -33,6 +33,5 @@ TEST_CASE("Displaying Tensor", "[Tensor]") {
     ty::Tensor example(std::vector<float>({1.0, 2.0, 3.0, 4.0}), {2, 2});
 
     CHECK(example.toString() == "1.0000002.0000003.0000004.000000");
-    // REQUIRE_NOTHROW(example.testFun());
 
 }

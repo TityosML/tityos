@@ -96,7 +96,6 @@ namespace ty {
             for (auto it = begin(); it != end(); it++){
                 str += std::to_string(*static_cast<float*>(*it));
             }
-            str += std::to_string(*static_cast<float*>(*end()));
             return str;
         }
     };

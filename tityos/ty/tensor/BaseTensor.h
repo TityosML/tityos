@@ -16,12 +16,18 @@ namespace ty {
             ShapeStrides layout_;
 
             
-            std::array<size_t, MAX_DIMS> endIndex() const {
-                // Inclusive end index
-                std::array<size_t, MAX_DIMS> endIdx = {};
-                for (size_t i = 0; i < layout_.getNDim(); i++){
-                    endIdx[i] = layout_.getShape()[i]-1;
+            const std::array<size_t, MAX_DIMS> endIndex() const {
+                // Exclusive end index
+                // TODO: move into utils class to avoid duplicated code
+                const size_t nDim = layout_.getNDim();
+                const std::array<size_t, MAX_DIMS> shape = layout_.getShape();
+                std::array<size_t, MAX_DIMS> endIdx {};
+
+                for (size_t i = 0; i < nDim - 1; i++){
+                    endIdx[i] = shape[i] - 1;
                 }
+
+                endIdx[nDim - 1] = shape[nDim - 1];
                 return endIdx;
             }
 
@@ -48,20 +54,42 @@ namespace ty {
                 std::array<size_t, MAX_DIMS> index_; 
 
                 void* ptr_;
+                
+                const std::array<size_t, MAX_DIMS> endIndex() const {
+                    // Exclusive end index
+                    // TODO: move into utils class to avoid duplicated code
+                    const size_t nDim = baseTensor_.getLayout().getNDim();
+                    const std::array<size_t, MAX_DIMS> shape = baseTensor_.getLayout().getShape();
+                    std::array<size_t, MAX_DIMS> endIdx {};
+
+                    for (size_t i = 0; i < nDim - 1; i++){
+                        endIdx[i] = shape[i] - 1;
+                    }
+
+                    endIdx[nDim - 1] = shape[nDim - 1];
+                    return endIdx;
+                }
 
                 void incrementIndex() {
                     const std::array<size_t, internal::MAX_DIMS>& shape = baseTensor_.getLayout().getShape();
                     const std::array<size_t, internal::MAX_DIMS>& strides = baseTensor_.getLayout().getStrides();
-                    for (int i = baseTensor_.getLayout().getNDim() - 1; i >= 0; i--) {
+                    const size_t nDim = baseTensor_.getLayout().getNDim();
+                    for (int i = nDim - 1; i >= 0; i--) {
                         index_[i]++;
                         if (index_[i] < shape[i]) {
                             ptr_ = reinterpret_cast<char*>(ptr_) + strides[i];
-                            break;
+                            return;
                         } else {
                             index_[i] = 0;
                             ptr_ = reinterpret_cast<char*>(ptr_) - (shape[i] - 1) * strides[i];
                         }
                     }
+                    // Handle overflow as 1 more in last dimension
+                    index_ = endIndex();
+                    for (int i = nDim - 1; i >= 0; i--){
+                        ptr_ = reinterpret_cast<char*>(ptr_) + strides[i] * (shape[i] - 1);
+                    } 
+                    ptr_ = reinterpret_cast<char*>(ptr_) + strides[nDim - 1];
                 }
                 
               public:
@@ -90,10 +118,10 @@ namespace ty {
             }; 
 
             Iterator begin() { return Iterator(*this, std::array<size_t, MAX_DIMS> {});}
-            Iterator end() { return Iterator(*this, endIndex())++;}
+            Iterator end() { return Iterator(*this, endIndex());}
 
             Iterator begin() const { return Iterator(*this, std::array<size_t, MAX_DIMS> {});}
-            Iterator end() const { return Iterator(*this, endIndex())++;}
+            Iterator end() const { return Iterator(*this, endIndex());}
         };
     } // namespace internal
 } // namespace ty

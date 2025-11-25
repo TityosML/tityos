@@ -3,7 +3,7 @@
 #include <ranges>
 #include <span>
 #include <string>
-
+#include <cstring>
 #include "tityos/ty/export.h"
 #include "tityos/ty/tensor/BaseTensor.h"
 
@@ -94,7 +94,7 @@ namespace ty {
             // TODO: Add [] formatting and deal with datatypes
             std::string str = "";
             for (auto it = begin(); it != end(); it++){
-                str += std::to_string(*static_cast<float*>(*it));
+                str += std::to_string(*static_cast<float*>(*it)) + " ";
             }
             return str;
         }

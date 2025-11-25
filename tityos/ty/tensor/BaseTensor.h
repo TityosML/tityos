@@ -1,6 +1,8 @@
 #pragma once
 
 #include <memory>
+#include <vector>
+#include <array>
 
 #include "tityos/ty/tensor/Dtype.h"
 #include "tityos/ty/tensor/ShapeStrides.h"

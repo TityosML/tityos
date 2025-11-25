@@ -2,6 +2,9 @@
 
 #include "tityos/ty/tensor/Tensor.h"
 
+#include <numeric>
+#include <vector>
+
 TEST_CASE("Tensor creation", "[Tensor]") {
     REQUIRE_NOTHROW(
         ty::Tensor(std::vector<float>({1.0, 2.0, 3.0, 4.0}), {2, 2})
@@ -30,8 +33,13 @@ TEST_CASE("Accessing Tensor", "[Tensor]") {
 
 TEST_CASE("Displaying Tensor", "[Tensor]") {
     // TODO: update with correct toString functionality
-    ty::Tensor example(std::vector<float>({1.0, 2.0, 3.0, 4.0}), {2, 2});
+    ty::Tensor example1(std::vector<float>({1.0, 2.0, 3.0, 4.0}), {2, 2});
+   
+    std::vector<float> v(4*3*2*1);
+    std::iota(std::begin(v), std::end(v), 0);
 
-    CHECK(example.toString() == "1.0000002.0000003.0000004.000000");
+    ty::Tensor example2(v, {4,3,2,1});
+
+    CHECK(example1.toString() == "[[ 1.000000 2.000000 ]\n[ 3.000000 4.000000 ]]");
 
 }

@@ -91,11 +91,36 @@ namespace ty {
         Iterator end() const { return baseTensor_->end(); }
 
         std::string toString() const {
-            // TODO: Add [] formatting and deal with datatypes
+            const std::array<size_t, internal::MAX_DIMS>& shape = baseTensor_->getLayout().getShape();
+            const size_t ndim = baseTensor_->getLayout().getNDim();
+            std::array<size_t, internal::MAX_DIMS> shapeProduct;
+            size_t product = 1;
+            for(int i = ndim - 1; i >= 0; i--) {
+                product *= shape[i];
+                shapeProduct[i] = product;
+            }
+
+            // TODO : Add padding
             std::string str = "";
-            for (auto it = begin(); it != end(); it++){
+            int idx = 0;
+            for (auto it = begin(); it != end(); it++, idx++){
+                for(int i = 0; i < ndim; i++) {
+                    if (idx % shapeProduct[i] == 0) {
+                        if(idx != 0) {
+                            str += std::string(ndim - i, ']');
+                            str += ndim - i > 1 ? "\n\n" : "\n";
+                        }
+                        str += std::string(ndim - i, '[') + " ";
+                        break;
+                    }
+                }
+                
+                // TODO : Deal with different datatypes
                 str += std::to_string(*static_cast<float*>(*it)) + " ";
             }
+
+            str += std::string(ndim, ']');
+
             return str;
         }
     };

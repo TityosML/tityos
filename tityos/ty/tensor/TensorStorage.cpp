@@ -12,17 +12,15 @@ namespace ty {
             }
 
             if (device_.isCuda()) {
-                if (cuda::isCudaAvailable()) {
-                    #ifdef TITYOS_USE_CUDA
+                #ifdef TITYOS_USE_CUDA
+                    if (cuda::isCudaAvailable()) {
                         cudaMalloc(&startPointer_, size_);
-                    #endif
-                } else {
-                    #ifdef TITYOS_USE_CUDA
+                    } else {
                         throw std::runtime_error("Cannot allocate Tensor Data to CUDA. CUDA is not available");
-                    #else
-                        throw std::runtime_error("Cannot allocate Tensor Data to CUDA. Tityos not built with CUDA");
-                    #endif
-                }
+                    }
+                #else
+                    throw std::runtime_error("Cannot allocate Tensor Data to CUDA. Tityos not built with CUDA");
+                #endif
                 return;
             }
 

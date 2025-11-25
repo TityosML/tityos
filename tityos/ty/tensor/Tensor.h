@@ -50,7 +50,7 @@ namespace ty {
         Tensor(std::initializer_list<T> data, std::initializer_list<size_t> shape)
             : Tensor(std::vector<T>(data), std::vector<size_t>(shape)) {}
 
-        inline void *at(const size_t *indexStart, const size_t indexSize) const {
+        void *at(const size_t *indexStart, const size_t indexSize) const {
             if (indexSize != baseTensor_->getLayout().getNDim()) {
                 throw std::invalid_argument("Index size mismatch: expected " +
                                             std::to_string(baseTensor_->getLayout().getNDim()) +
@@ -71,15 +71,15 @@ namespace ty {
             return baseTensor_->at(indexStart);
         }
 
-        template <size_t N> inline void *at(const std::array<size_t, N> &index) const {
+        template <size_t N> void *at(const std::array<size_t, N> &index) const {
             return at(index.data(), N);
         }
 
-        inline void *at(const std::vector<size_t> &index) const {
+        void *at(const std::vector<size_t> &index) const {
             return at(index.data(), index.size());
         }
 
-        inline void *at(const std::initializer_list<size_t> &index) const {
+        void *at(const std::initializer_list<size_t> &index) const {
             return at(index.begin(), index.size());
         }
 

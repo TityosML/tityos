@@ -21,6 +21,10 @@ namespace ty {
                Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32) {
             using T = typename DataContainer::value_type;
 
+            if (std::size(shape) > MAX_DIMS) {
+                throw std::runtime_error("Tensor shape has too many dimensions.");
+            }
+
             size_t numElements = std::size(data);
             size_t numBytes = sizeof(T) * numElements;
             std::shared_ptr<internal::TensorStorage> dataStorage =
@@ -36,7 +40,7 @@ namespace ty {
             internal::ShapeStrides layout(storageShape, dtype, std::size(shape));
 
             baseTensor_ = std::make_shared<internal::BaseTensor>(dataStorage, layout);
-        }
+        }}
 
         template <typename T, class ShapeContainer>
         Tensor(std::initializer_list<T> data, const ShapeContainer &shape)

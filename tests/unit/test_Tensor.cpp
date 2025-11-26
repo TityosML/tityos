@@ -25,10 +25,10 @@ TEST_CASE("Tensor creation", "[Tensor]") {
 TEST_CASE("Accessing Tensor", "[Tensor]") {
     ty::Tensor example(std::vector<float>({1.0, 2.0, 3.0, 4.0}), std::vector<size_t>({2, 2}));
 
-    CHECK(*(float *)example.at({0, 0}) == 1.0);
-    CHECK(*(float *)example.at(std::vector<size_t>({0, 1})) == 2.0);
-    CHECK(*(float *)example.at(std::array<size_t, 2>({1, 0})) == 3.0);
-    CHECK(*(float *)example.at({1, 1}) == 4.0);
+    CHECK(*static_cast<float *>(example.at({0, 0})) == 1.0f);
+    CHECK(*static_cast<float *>(example.at(std::vector<size_t>{0, 1})) == 2.0f);
+    CHECK(*static_cast<float *>(example.at(std::array<size_t, 2>{1, 0})) == 3.0f);
+    CHECK(*static_cast<float *>(example.at({1, 1})) == 4.0f);
 
     REQUIRE_THROWS(example.at({2, 0}));
     REQUIRE_THROWS(example.at({0, 0, 0}));
@@ -52,27 +52,27 @@ TEST_CASE("Tensor copy and move operators", "[Tensor]") {
     SECTION("Copy constructor") {
         auto example2 = example1;
 
-        CHECK(*(float *)example2.at({0, 0}) == 1.0);
-        CHECK(*(float *)example2.at({0, 1}) == 2.0);
-        CHECK(*(float *)example2.at({1, 0}) == 3.0);
-        CHECK(*(float *)example2.at({1, 1}) == 4.0);
+        CHECK(*static_cast<float *>(example2.at({0, 0})) == 1.0);
+        CHECK(*static_cast<float *>(example2.at({0, 1})) == 2.0);
+        CHECK(*static_cast<float *>(example2.at({1, 0})) == 3.0);
+        CHECK(*static_cast<float *>(example2.at({1, 1})) == 4.0);
 
-        *(float *)example2.at({0, 0}) = 5.0f;
+        *static_cast<float *>(example2.at({0, 0})) = 5.0f;
 
-        CHECK(*(float *)example1.at({0, 0}) == 5.0);
-        CHECK(*(float *)example2.at({0, 0}) == 5.0);
+        CHECK(*static_cast<float *>(example1.at({0, 0})) == 5.0);
+        CHECK(*static_cast<float *>(example2.at({0, 0})) == 5.0);
     }
 
     SECTION("Move constructor") {
         auto example2 = std::move(example1);
 
-        CHECK(*(float *)example2.at({0, 0}) == 1.0);
-        CHECK(*(float *)example2.at({0, 1}) == 2.0);
-        CHECK(*(float *)example2.at({1, 0}) == 3.0);
-        CHECK(*(float *)example2.at({1, 1}) == 4.0);
+        CHECK(*static_cast<float *>(example2.at({0, 0})) == 1.0);
+        CHECK(*static_cast<float *>(example2.at({0, 1})) == 2.0);
+        CHECK(*static_cast<float *>(example2.at({1, 0})) == 3.0);
+        CHECK(*static_cast<float *>(example2.at({1, 1})) == 4.0);
 
-        *(float *)example2.at({0, 0}) = 5.0f;
+        *static_cast<float *>(example2.at({0, 0})) = 5.0f;
 
-        CHECK(*(float *)example2.at({0, 0}) == 5.0);
+        CHECK(*static_cast<float *>(example2.at({0, 0})) == 5.0);
     }
 }

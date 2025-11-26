@@ -21,7 +21,7 @@ namespace ty {
                Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32) {
             using T = typename DataContainer::value_type;
 
-            if (std::size(shape) > MAX_DIMS) {
+            if (std::size(shape) > internal::MAX_DIMS) {
                 throw std::runtime_error("Tensor shape has too many dimensions.");
             }
 
@@ -40,7 +40,7 @@ namespace ty {
             internal::ShapeStrides layout(storageShape, dtype, std::size(shape));
 
             baseTensor_ = std::make_shared<internal::BaseTensor>(dataStorage, layout);
-        }}
+        }
 
         template <typename T, class ShapeContainer>
         Tensor(std::initializer_list<T> data, const ShapeContainer &shape)
@@ -53,6 +53,24 @@ namespace ty {
         template <typename T>
         Tensor(std::initializer_list<T> data, std::initializer_list<size_t> shape)
             : Tensor(std::vector<T>(data), std::vector<size_t>(shape)) {}
+
+        Tensor(const Tensor &other) : baseTensor_(other.baseTensor_) {}
+
+        Tensor(Tensor &&other) noexcept : baseTensor_(std::move(other.baseTensor_)) {}
+
+        Tensor &operator=(const Tensor &other) {
+            if (this != &other) {
+                baseTensor_ = other.baseTensor_;
+            }
+            return *this;
+        }
+
+        Tensor &operator=(Tensor &&other) noexcept {
+            if (this != &other) {
+                baseTensor_ = std::move(other.baseTensor_);
+            }
+            return *this;
+        }
 
         void *at(const size_t *indexStart, const size_t indexSize) const {
             if (indexSize != baseTensor_->getLayout().getNDim()) {
@@ -99,6 +117,7 @@ namespace ty {
         Iterator begin() const {
             return baseTensor_->begin();
         }
+
         Iterator end() const {
             return baseTensor_->end();
         }

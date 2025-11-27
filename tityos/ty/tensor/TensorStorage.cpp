@@ -19,6 +19,10 @@ size_t TensorStorage::getSize() const {
     return size_;
 }
 
+Device TensorStorage::getDevice() const {
+    return device_;
+}
+
 void* TensorStorage::begin() {
     return startPointer_;
 }

@@ -18,15 +18,16 @@ const std::array<size_t, MAX_DIMS> BaseTensor::endIndex() const {
 }
 
 BaseTensor::BaseTensor(std::shared_ptr<TensorStorage> data,
-                       const ShapeStrides& layout)
-    : tensorStorage_(std::move(data)), layout_(layout) {}
+                       const ShapeStrides& layout, const DType dtype)
+    : tensorStorage_(std::move(data)), layout_(layout), dtype_(dtype) {}
 
 BaseTensor::BaseTensor(const BaseTensor& other)
-    : tensorStorage_(other.tensorStorage_), layout_(other.layout_) {}
+    : tensorStorage_(other.tensorStorage_), layout_(other.layout_),
+      dtype_(other.dtype_) {}
 
 BaseTensor::BaseTensor(BaseTensor&& other) noexcept
     : tensorStorage_(std::move(other.tensorStorage_)),
-      layout_(std::move(other.layout_)) {}
+      layout_(std::move(other.layout_)), dtype_(std::move(other.dtype_)) {}
 
 BaseTensor& BaseTensor::operator=(const BaseTensor& other) {
     if (this != &other) {
@@ -55,6 +56,10 @@ const ShapeStrides& BaseTensor::getLayout() const {
 
 const std::shared_ptr<TensorStorage>& BaseTensor::getTensorStorage() const {
     return tensorStorage_;
+}
+
+const DType BaseTensor::getDType() const {
+    return dtype_;
 }
 
 const std::array<size_t, MAX_DIMS> BaseTensor::Iterator::endIndex() const {

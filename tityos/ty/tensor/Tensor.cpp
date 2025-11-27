@@ -1,5 +1,7 @@
 #include "tityos/ty/tensor/Tensor.h"
 
+#include <cmath>
+
 namespace ty {
 Tensor::Tensor(const Tensor& other) : baseTensor_(other.baseTensor_) {}
 
@@ -67,7 +69,35 @@ Iterator Tensor::end() const {
     return baseTensor_->end();
 }
 
+std::string Tensor::itemToStringCPU(const void* item, const DType dtype) const {
+    switch (dtype) {
+    case DType::Int8:
+        return std::to_string(*reinterpret_cast<const int8_t*>(item));
+    case DType::UInt8:
+        return std::to_string(*reinterpret_cast<const uint8_t*>(item));
+    case DType::Int16:
+        return std::to_string(*reinterpret_cast<const int16_t*>(item));
+    case DType::UInt16:
+        return std::to_string(*reinterpret_cast<const uint16_t*>(item));
+    case DType::Int32:
+        return std::to_string(*reinterpret_cast<const int32_t*>(item));
+    case DType::UInt32:
+        return std::to_string(*reinterpret_cast<const uint32_t*>(item));
+    case DType::Int64:
+        return std::to_string(*reinterpret_cast<const int64_t*>(item));
+    case DType::UInt64:
+        return std::to_string(*reinterpret_cast<const uint64_t*>(item));
+    case DType::Float32:
+        return std::to_string(*reinterpret_cast<const float*>(item));
+    case DType::Float64:
+        return std::to_string(*reinterpret_cast<const double*>(item));
+    }
+    return "";
+}
+
 std::string Tensor::toString() const {
+    // TODO : get a copy of this tensor on the cpu if not already there
+
     const std::array<size_t, internal::MAX_DIMS>& shape =
         baseTensor_->getLayout().getShape();
     const size_t ndim = baseTensor_->getLayout().getNDim();
@@ -78,23 +108,56 @@ std::string Tensor::toString() const {
         shapeProduct[i] = product;
     }
 
-    // TODO : Add padding
+    const DType dtype = baseTensor_->getDType();
+    int maxItemLength = 1;
+    bool allItemsIntegral = true;
+    double itDouble;
+    float itFloat;
+    std::string itString;
+    for (auto it = begin(); it != end(); it++) {
+        itString = itemToStringCPU(*it, dtype);
+        itDouble = *reinterpret_cast<const double*>(*it);
+        itFloat = *reinterpret_cast<const float*>(*it);
+
+        maxItemLength =
+            (itString.size() > maxItemLength) ? itString.size() : maxItemLength;
+
+        if (!(std::trunc(itDouble) == itDouble ||
+              std::trunc(itFloat) == std::trunc(itFloat))) {
+            allItemsIntegral = false;
+        }
+    }
+
     std::string str = "";
     int idx = 0;
+    int numBrackets;
     for (auto it = begin(); it != end(); it++, idx++) {
+        itString = itemToStringCPU(*it, dtype);
+        if (!isIntegralType(dtype) && allItemsIntegral) {
+            size_t decimal_pos = itString.find('.');
+            if (decimal_pos != std::string::npos) {
+                itString.resize(decimal_pos + 1);
+            } else {
+                itString += ".";
+            }
+        }
+
+        itString = std::string(maxItemLength - itString.size(), ' ') + itString;
+
         for (size_t i = 0; i < ndim; i++) {
+            numBrackets = ndim - i;
             if (idx % shapeProduct[i] == 0) {
                 if (idx != 0) {
-                    str += std::string(ndim - i, ']');
-                    str += ndim - i > 1 ? "\n\n" : "\n";
+                    str += std::string(numBrackets, ']');
+                    str += numBrackets > 1 ? "\n\n" : "\n";
                 }
-                str += std::string(ndim - i, '[') + " ";
+                str +=
+                    std::string(i, ' ') + std::string(numBrackets, '[') + " ";
                 break;
             }
         }
 
-        // TODO : Deal with different datatypes
-        str += std::to_string(*static_cast<float*>(*it)) + " ";
+        str += itString + " ";
     }
 
     str += std::string(ndim, ']');

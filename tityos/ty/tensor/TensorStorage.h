@@ -25,6 +25,8 @@ class TensorStorage {
 
     size_t getSize() const;
 
+    Device getDevice() const;
+
     void* begin();
 
     void* end();

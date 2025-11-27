@@ -20,7 +20,8 @@ class BaseTensor {
     const std::array<size_t, MAX_DIMS> endIndex() const;
 
   public:
-    BaseTensor(std::shared_ptr<TensorStorage> data, const ShapeStrides& layout);
+    BaseTensor(std::shared_ptr<TensorStorage> data, const ShapeStrides& layout,
+               const DType dtype = DType::Float32);
     BaseTensor(const BaseTensor& other);
     BaseTensor(BaseTensor&& other) noexcept;
 
@@ -32,6 +33,8 @@ class BaseTensor {
     const ShapeStrides& getLayout() const;
 
     const std::shared_ptr<TensorStorage>& getTensorStorage() const;
+
+    const DType getDType() const;
 
     struct Iterator {
       private:

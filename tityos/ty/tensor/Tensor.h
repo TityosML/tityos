@@ -12,6 +12,8 @@ TITYOS_EXPORT class Tensor {
   private:
     std::shared_ptr<internal::BaseTensor> baseTensor_;
 
+    std::string itemToStringCPU(const void* item, const DType dtype) const;
+
   public:
     template <class DataContainer, class ShapeContainer,
               std::enable_if_t<

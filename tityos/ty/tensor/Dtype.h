@@ -1,7 +1,9 @@
 #pragma once
 
 #include "tityos/ty/export.h"
+#include "tityos/ty/tensor/Device.h"
 
+#include <any>
 #include <cstddef>
 
 namespace ty {
@@ -37,5 +39,24 @@ inline size_t dtypeSize(DType dtype) {
     }
 
     return 0;
+}
+
+inline bool isIntegralType(DType dtype) {
+    switch (dtype) {
+    case DType::Int8:
+    case DType::UInt8:
+    case DType::Int16:
+    case DType::UInt16:
+    case DType::Int32:
+    case DType::UInt32:
+    case DType::Int64:
+    case DType::UInt64:
+        return true;
+    case DType::Float32:
+    case DType::Float64:
+        return false;
+    }
+
+    return false;
 }
 } // namespace ty

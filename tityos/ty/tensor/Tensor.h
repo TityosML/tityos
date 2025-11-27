@@ -44,20 +44,24 @@ TITYOS_EXPORT class Tensor {
         internal::ShapeStrides layout(storageShape, dtype, std::size(shape));
 
         baseTensor_ =
-            std::make_shared<internal::BaseTensor>(dataStorage, layout);
+            std::make_shared<internal::BaseTensor>(dataStorage, layout, dtype);
     }
 
     template <typename T, class ShapeContainer>
-    Tensor(std::initializer_list<T> data, const ShapeContainer& shape)
-        : Tensor(std::vector<T>(data), shape) {}
+    Tensor(std::initializer_list<T> data, const ShapeContainer& shape,
+           Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32)
+        : Tensor(std::vector<T>(data), shape, device, dtype) {}
 
     template <class DataContainer>
-    Tensor(const DataContainer& data, std::initializer_list<size_t> shape)
-        : Tensor(data, std::vector<size_t>(shape)) {}
+    Tensor(const DataContainer& data, std::initializer_list<size_t> shape,
+           Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32)
+        : Tensor(data, std::vector<size_t>(shape), device, dtype) {}
 
     template <typename T>
-    Tensor(std::initializer_list<T> data, std::initializer_list<size_t> shape)
-        : Tensor(std::vector<T>(data), std::vector<size_t>(shape)) {}
+    Tensor(std::initializer_list<T> data, std::initializer_list<size_t> shape,
+           Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32)
+        : Tensor(std::vector<T>(data), std::vector<size_t>(shape), device,
+                 dtype) {}
 
     Tensor(const Tensor& other);
 

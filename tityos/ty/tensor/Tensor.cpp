@@ -128,6 +128,10 @@ std::string Tensor::toString() const {
         }
     }
 
+    if (!isIntegralType(dtype) && allItemsIntegral) {
+        maxItemLength -= 6; // remove digits right of the decimal point
+    }
+
     std::string str = "";
     int idx = 0;
     int numBrackets;

@@ -46,7 +46,7 @@ TEST_CASE("Displaying Tensor", "[Tensor]") {
 
     // Incorrect test
     // CHECK(example.toString() ==
-    //      "[[ 1.000000 2.000000 ]\n[ 3.000000 4.000000 ]]");
+    //       "[[ 1.000000 2.000000 ]\n[ 3.000000 4.000000 ]]");
 }
 
 TEST_CASE("Tensor copy and move operators", "[Tensor]") {

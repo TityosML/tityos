@@ -4,4 +4,5 @@ target_sources(
      ${CMAKE_CURRENT_LIST_DIR}/TensorStorage.cpp
      ${CMAKE_CURRENT_LIST_DIR}/ShapeStrides.cpp
      ${CMAKE_CURRENT_LIST_DIR}/Tensor.cpp
+     ${CMAKE_CURRENT_LIST_DIR}/BaseTensor.cpp
 )

@@ -1,50 +1,37 @@
 #pragma once
 
-#include <cstdlib>
-#include <stdexcept>
-
 #include "tityos/ty/cuda/cuda_import.h"
 #include "tityos/ty/cuda/cuda_utils.h"
 #include "tityos/ty/tensor/Device.h"
 #include "tityos/ty/tensor/Dtype.h"
 
+#include <cstdlib>
+#include <stdexcept>
+
 namespace ty {
-    namespace internal {
-        class TensorStorage {
-          private:
-            void *startPointer_;
-            size_t size_;
-            Device device_;
+namespace internal {
+class TensorStorage {
+  private:
+    void* startPointer_;
+    size_t size_;
+    Device device_;
 
-          public:
-            TensorStorage(size_t numBytes, Device device = {DeviceType::CPU, 0})
-                : size_(numBytes), device_(device) {
-                allocate();
-            }
+  public:
+    TensorStorage(size_t numBytes, Device device = {DeviceType::CPU, 0});
 
-            ~TensorStorage() {
-                deallocate();
-            }
+    ~TensorStorage();
 
-            void *at(size_t index) {
-                return reinterpret_cast<char *>(startPointer_) + index;
-            }
+    void* at(size_t index);
 
-            size_t getSize() const {
-                return size_;
-            }
+    size_t getSize() const;
 
-            void *begin() {
-                return startPointer_;
-            }
+    void* begin();
 
-            void *end() {
-                return reinterpret_cast<char *>(startPointer_) + size_;
-            }
+    void* end();
 
-          private:
-            void allocate();
-            void deallocate();
-        };
-    } // namespace internal
+  private:
+    void allocate();
+    void deallocate();
+};
+} // namespace internal
 } // namespace ty

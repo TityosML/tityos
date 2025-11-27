@@ -1,52 +1,38 @@
 #pragma once
 
+#include "tityos/ty/tensor/Dtype.h"
+
 #include <array>
 #include <cstddef>
 
-#include "tityos/ty/tensor/Dtype.h"
-
 namespace ty {
-    namespace internal {
-        constexpr size_t MAX_DIMS = 64;
+namespace internal {
+constexpr size_t MAX_DIMS = 64;
 
-        class ShapeStrides {
-          private:
-            std::array<size_t, MAX_DIMS> shape_;
-            std::array<size_t, MAX_DIMS> strides_;
-            size_t offset_;
-            size_t ndim_;
+class ShapeStrides {
+  private:
+    std::array<size_t, MAX_DIMS> shape_;
+    std::array<size_t, MAX_DIMS> strides_;
 
-          public:
-            ShapeStrides(const std::array<size_t, MAX_DIMS> &shape,
-                         const std::array<size_t, MAX_DIMS> &strides, size_t offset, size_t ndim)
-                : shape_(shape), strides_(strides), offset_(offset), ndim_(ndim) {}
+    size_t offset_;
+    size_t ndim_;
 
-            ShapeStrides(const std::array<size_t, MAX_DIMS> &shape, DType dtype, size_t ndim)
-                : shape_(shape), offset_(0), ndim_(ndim) {
-                    initialStrides(dtype);
-                }
+  public:
+    ShapeStrides(const std::array<size_t, MAX_DIMS>& shape,
+                 const std::array<size_t, MAX_DIMS>& strides, size_t offset,
+                 size_t ndim);
 
-            size_t computeByteIndex(const size_t *indexStart) const {
-                size_t byteIndex = offset_;
-                for (size_t i = 0; i < ndim_; i++) {
-                    byteIndex += *indexStart * strides_[i];
-                    indexStart++;
-                }
-                return byteIndex;
-            }
+    ShapeStrides(const std::array<size_t, MAX_DIMS>& shape, DType dtype,
+                 size_t ndim);
 
-            size_t getNDim() const {
-                return ndim_;
-            }
-            const std::array<size_t, MAX_DIMS> &getShape() const {
-                return shape_;
-            }
-            const std::array<size_t, MAX_DIMS> &getStrides() const {
-                return strides_;
-            }
+    size_t computeByteIndex(const size_t* indexStart) const;
 
-          private:
-            void initialStrides(DType dtype);
-        };
-    } // namespace internal
+    size_t getNDim() const;
+    const std::array<size_t, MAX_DIMS>& getShape() const;
+    const std::array<size_t, MAX_DIMS>& getStrides() const;
+
+  private:
+    void initialStrides(DType dtype);
+};
+} // namespace internal
 } // namespace ty

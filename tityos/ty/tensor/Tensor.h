@@ -2,107 +2,89 @@
 
 #include "tityos/ty/export.h"
 #include "tityos/ty/tensor/BaseTensor.h"
+
 #include <cstring>
 #include <iterator>
 #include <string>
 
 namespace ty {
-    TITYOS_EXPORT class Tensor {
-      private:
-        std::shared_ptr<internal::BaseTensor> baseTensor_;
+TITYOS_EXPORT class Tensor {
+  private:
+    std::shared_ptr<internal::BaseTensor> baseTensor_;
 
-      public:
-        template <
-            class DataContainer, class ShapeContainer,
-            std::enable_if_t<std::is_same_v<typename ShapeContainer::value_type, size_t> &&
-                                 std::is_trivially_copyable_v<typename DataContainer::value_type>,
-                             int> = 0>
-        Tensor(const DataContainer &data, const ShapeContainer &shape,
-               Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32) {
-            using T = typename DataContainer::value_type;
+  public:
+    template <class DataContainer, class ShapeContainer,
+              std::enable_if_t<
+                  std::is_same_v<typename ShapeContainer::value_type, size_t> &&
+                      std::is_trivially_copyable_v<
+                          typename DataContainer::value_type>,
+                  int> = 0>
+    Tensor(const DataContainer& data, const ShapeContainer& shape,
+           Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32) {
+        using T = typename DataContainer::value_type;
 
-            if (std::size(shape) > internal::MAX_DIMS) {
-                throw std::runtime_error("Tensor shape has too many dimensions.");
-            }
-
-            size_t numElements = std::size(data);
-            size_t numBytes = sizeof(T) * numElements;
-            std::shared_ptr<internal::TensorStorage> dataStorage =
-                std::make_shared<internal::TensorStorage>(numBytes, device);
-            std::memcpy(dataStorage->begin(), std::data(data), numBytes);
-
-            std::array<size_t, internal::MAX_DIMS> storageShape{};
-            int i = 0;
-            for (size_t s : shape) {
-                storageShape[i++] = s;
-            }
-
-            internal::ShapeStrides layout(storageShape, dtype, std::size(shape));
-
-            baseTensor_ = std::make_shared<internal::BaseTensor>(dataStorage, layout);
+        if (std::size(shape) > internal::MAX_DIMS) {
+            throw std::runtime_error("Tensor shape has too many dimensions.");
         }
 
-        template <typename T, class ShapeContainer>
-        Tensor(std::initializer_list<T> data, const ShapeContainer &shape)
-            : Tensor(std::vector<T>(data), shape) {}
+        size_t numElements = std::size(data);
+        size_t numBytes = sizeof(T) * numElements;
+        std::shared_ptr<internal::TensorStorage> dataStorage =
+            std::make_shared<internal::TensorStorage>(numBytes, device);
+        std::memcpy(dataStorage->begin(), std::data(data), numBytes);
 
-        template <class DataContainer>
-        Tensor(const DataContainer &data, std::initializer_list<size_t> shape)
-            : Tensor(data, std::vector<size_t>(shape)) {}
-
-        template <typename T>
-        Tensor(std::initializer_list<T> data, std::initializer_list<size_t> shape)
-            : Tensor(std::vector<T>(data), std::vector<size_t>(shape)) {}
-
-        Tensor(const Tensor &other) : baseTensor_(other.baseTensor_) {}
-
-        Tensor(Tensor &&other) noexcept : baseTensor_(std::move(other.baseTensor_)) {}
-
-        Tensor &operator=(const Tensor &other) {
-            if (this != &other) {
-                baseTensor_ = other.baseTensor_;
-            }
-            return *this;
+        std::array<size_t, internal::MAX_DIMS> storageShape{};
+        int i = 0;
+        for (size_t s : shape) {
+            storageShape[i++] = s;
         }
 
-        Tensor &operator=(Tensor &&other) noexcept {
-            if (this != &other) {
-                baseTensor_ = std::move(other.baseTensor_);
-            }
-            return *this;
-        }
+        internal::ShapeStrides layout(storageShape, dtype, std::size(shape));
 
-        void *at(const size_t *indexStart, const size_t indexSize) const;
+        baseTensor_ =
+            std::make_shared<internal::BaseTensor>(dataStorage, layout);
+    }
 
-        template <size_t N> void *at(const std::array<size_t, N> &index) const {
-            return at(index.data(), N);
-        }
+    template <typename T, class ShapeContainer>
+    Tensor(std::initializer_list<T> data, const ShapeContainer& shape)
+        : Tensor(std::vector<T>(data), shape) {}
 
-        void *at(const std::vector<size_t> &index) const {
-            return at(index.data(), index.size());
-        }
+    template <class DataContainer>
+    Tensor(const DataContainer& data, std::initializer_list<size_t> shape)
+        : Tensor(data, std::vector<size_t>(shape)) {}
 
-        void *at(const std::initializer_list<size_t> &index) const {
-            return at(index.begin(), index.size());
-        }
+    template <typename T>
+    Tensor(std::initializer_list<T> data, std::initializer_list<size_t> shape)
+        : Tensor(std::vector<T>(data), std::vector<size_t>(shape)) {}
 
-        using Iterator = internal::BaseTensor::Iterator;
+    Tensor(const Tensor& other);
 
-        Iterator begin() {
-            return baseTensor_->begin();
-        }
-        Iterator end() {
-            return baseTensor_->end();
-        }
+    Tensor(Tensor&& other) noexcept;
 
-        Iterator begin() const {
-            return baseTensor_->begin();
-        }
+    Tensor& operator=(const Tensor& other);
 
-        Iterator end() const {
-            return baseTensor_->end();
-        }
+    Tensor& operator=(Tensor&& other) noexcept;
 
-        std::string toString() const;
-    };
+    void* at(const size_t* indexStart, const size_t indexSize) const;
+
+    template <size_t N> void* at(const std::array<size_t, N>& index) const {
+        return at(index.data(), N);
+    }
+
+    void* at(const std::vector<size_t>& index) const;
+
+    void* at(const std::initializer_list<size_t>& index) const;
+
+    using Iterator = internal::BaseTensor::Iterator;
+
+    Iterator begin();
+
+    Iterator end();
+
+    Iterator begin() const;
+
+    Iterator end() const;
+
+    std::string toString() const;
+};
 } // namespace ty

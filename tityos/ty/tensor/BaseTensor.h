@@ -12,10 +12,11 @@ namespace ty {
 namespace internal {
     class BaseTensor {
       private:
-        DType dtype_;
-
         std::shared_ptr<TensorStorage> tensorStorage_;
+
         ShapeStrides layout_;
+
+        DType dtype_;
 
         const std::array<size_t, MAX_DIMS> endIndex() const;
 
@@ -35,7 +36,7 @@ namespace internal {
 
         const std::shared_ptr<TensorStorage>& getTensorStorage() const;
 
-        const DType getDType() const;
+        DType getDType() const;
 
         struct Iterator {
           private:

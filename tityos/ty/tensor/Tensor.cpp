@@ -109,7 +109,7 @@ std::string Tensor::toString() const {
     }
 
     const DType dtype = baseTensor_->getDType();
-    int maxItemLength = 1;
+    size_t maxItemLength = 1;
     bool allItemsIntegral = true;
     double itDouble;
     float itFloat;

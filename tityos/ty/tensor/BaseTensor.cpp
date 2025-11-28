@@ -58,7 +58,7 @@ namespace internal {
         return tensorStorage_;
     }
 
-    const DType BaseTensor::getDType() const {
+    DType BaseTensor::getDType() const {
         return dtype_;
     }
 

@@ -10,30 +10,30 @@
 
 namespace ty {
 namespace internal {
-class TensorStorage {
-  private:
-    void* startPointer_;
-    size_t size_;
-    Device device_;
+    class TensorStorage {
+      private:
+        void* startPointer_;
+        size_t size_;
+        Device device_;
 
-  public:
-    TensorStorage(size_t numBytes, Device device = {DeviceType::CPU, 0});
+      public:
+        TensorStorage(size_t numBytes, Device device = {DeviceType::CPU, 0});
 
-    ~TensorStorage();
+        ~TensorStorage();
 
-    void* at(size_t index);
+        void* at(size_t index);
 
-    size_t getSize() const;
+        size_t getSize() const;
 
-    Device getDevice() const;
+        Device getDevice() const;
 
-    void* begin();
+        void* begin();
 
-    void* end();
+        void* end();
 
-  private:
-    void allocate();
-    void deallocate();
-};
+      private:
+        void allocate();
+        void deallocate();
+    };
 } // namespace internal
 } // namespace ty

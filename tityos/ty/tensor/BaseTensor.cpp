@@ -79,11 +79,11 @@ namespace internal {
     }
 
     void BaseTensor::Iterator::incrementIndex() {
-        const std::array<size_t, internal::MAX_DIMS>& shape =
-            baseTensor_.getLayout().getShape();
+        const ShapeStrides& layout = baseTensor_.getLayout();
+        const std::array<size_t, internal::MAX_DIMS>& shape = layout.getShape();
         const std::array<size_t, internal::MAX_DIMS>& strides =
-            baseTensor_.getLayout().getStrides();
-        const size_t nDim = baseTensor_.getLayout().getNDim();
+            layout.getStrides();
+        const size_t nDim = layout.getNDim();
         for (int i = nDim - 1; i >= 0; i--) {
             index_[i]++;
             if (index_[i] < shape[i]) {
@@ -128,6 +128,16 @@ namespace internal {
         Iterator tmp = *this;
         ++(*this);
         return tmp;
+    }
+
+    const std::array<size_t, MAX_DIMS> BaseTensor::Iterator::getIndex() const {
+        return index_;
+    }
+
+    void BaseTensor::Iterator::jumpToIndex(
+        const std::array<size_t, MAX_DIMS> index) {
+        index_ = index;
+        ptr_ = baseTensor_.at(index_.begin());
     }
 
     bool operator==(const BaseTensor::Iterator& a,

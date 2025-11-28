@@ -54,6 +54,10 @@ namespace internal {
             Iterator(const BaseTensor& baseTensor,
                      const std::array<size_t, MAX_DIMS> startIndex);
 
+            const std::array<size_t, MAX_DIMS> getIndex() const;
+
+            void jumpToIndex(const std::array<size_t, MAX_DIMS> index);
+
             void* operator->();
             void* operator*();
 

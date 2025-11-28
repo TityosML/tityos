@@ -40,13 +40,37 @@ TEST_CASE("Accessing Tensor", "[Tensor]") {
 }
 
 TEST_CASE("Displaying Tensor", "[Tensor]") {
-    // TODO: update with correct toString functionality
-    ty::Tensor example(std::vector<float>({1.0, 2.0, 3.0, 4.0}),
-                       std::vector<size_t>({2, 2}));
+    ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}),
+                        std::vector<size_t>({2, 2}));
 
-    // Incorrect test
-    // CHECK(example.toString() ==
-    //       "[[ 1.000000 2.000000 ]\n[ 3.000000 4.000000 ]]");
+    CHECK(example1.toString() == "[[ 1. 2. ]\n [ 3. 4. ]]");
+
+    ty::Tensor example2(
+        std::vector<float>({1.2345678f, 9.8765432f, 10.0f, 1.2f}),
+        std::vector<size_t>({2, 2}));
+
+    const std::string expected2 =
+        "[[  1.234568  9.876543 ]\n [ 10.000000  1.200000 ]]";
+    CHECK(example2.toString() == expected2);
+
+    ty::Tensor example3(std::vector<float>({1.0f, 100.0f, 10.0f, 9999.0f}),
+                        std::vector<size_t>({4}));
+
+    const std::string expected3 = "[    1.  100.   10. 9999. ]";
+    CHECK(example3.toString() == expected3);
+
+    ty::Tensor example4(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}),
+                        std::vector<size_t>({2, 1, 2}));
+
+    const std::string expected4 = "[[[ 1. 2. ]]\n\n [[ 3. 4. ]]]";
+    CHECK(example4.toString() == expected4);
+
+    ty::Tensor example5(std::vector<int32_t>({1, 2, 3, 4}),
+                        std::vector<size_t>({2, 2, 1}),
+                        {ty::DeviceType::CPU, 0}, ty::DType::Int32);
+
+    const std::string expected5 = "[[[ 1 ]\n  [ 2 ]]\n\n [[ 3 ]\n  [ 4 ]]]";
+    CHECK(example5.toString() == expected5);
 }
 
 TEST_CASE("Tensor copy and move operators", "[Tensor]") {

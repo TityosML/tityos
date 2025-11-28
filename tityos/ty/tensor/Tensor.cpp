@@ -1,5 +1,7 @@
 #include "tityos/ty/tensor/Tensor.h"
 
+#include "tityos/ty/tensor/ShapeStrides.h"
+
 #include <cmath>
 
 namespace ty {
@@ -98,9 +100,12 @@ std::string Tensor::itemToStringCPU(const void* item, const DType dtype) const {
 std::string Tensor::toString() const {
     // TODO : get a copy of this tensor on the cpu if not already there
 
-    const std::array<size_t, internal::MAX_DIMS>& shape =
-        baseTensor_->getLayout().getShape();
-    const size_t ndim = baseTensor_->getLayout().getNDim();
+    // TODO : handle adding ... for long tensors
+
+    const ty::internal::ShapeStrides& layout = baseTensor_->getLayout();
+    const std::array<size_t, internal::MAX_DIMS>& shape = layout.getShape();
+    const size_t ndim = layout.getNDim();
+
     std::array<size_t, internal::MAX_DIMS> shapeProduct;
     size_t product = 1;
     for (int i = ndim - 1; i >= 0; i--) {
@@ -109,34 +114,41 @@ std::string Tensor::toString() const {
     }
 
     const DType dtype = baseTensor_->getDType();
+
     size_t maxItemLength = 1;
     bool allItemsIntegral = true;
-    double itDouble;
-    float itFloat;
-    std::string itString;
     for (auto it = begin(); it != end(); it++) {
-        itString = itemToStringCPU(*it, dtype);
-        itDouble = *reinterpret_cast<const double*>(*it);
-        itFloat = *reinterpret_cast<const float*>(*it);
+        std::string itString = itemToStringCPU(*it, dtype);
 
         maxItemLength =
             (itString.size() > maxItemLength) ? itString.size() : maxItemLength;
 
-        if (!(std::trunc(itDouble) == itDouble ||
-              std::trunc(itFloat) == std::trunc(itFloat))) {
-            allItemsIntegral = false;
+        switch (dtype) {
+        // TODO : Handle Float16 case
+        case DType::Float32: {
+            const float itFloat = *reinterpret_cast<const float*>(*it);
+            allItemsIntegral &= std::trunc(itFloat) == itFloat;
+
+        } break;
+        case DType::Float64: {
+            const double itDouble = *reinterpret_cast<const double*>(*it);
+            allItemsIntegral &= std::trunc(itDouble) == itDouble;
+        } break;
+        default:
+            break;
         }
     }
 
     if (!isIntegralType(dtype) && allItemsIntegral) {
-        maxItemLength -= 6; // remove digits right of the decimal point
+        // Remove trailing zeros if all elements are whole numbers
+        maxItemLength = (maxItemLength > 6) ? (maxItemLength - 6) : 1;
     }
 
-    std::string str = "";
-    int idx = 0;
-    int numBrackets;
-    for (auto it = begin(); it != end(); it++, idx++) {
-        itString = itemToStringCPU(*it, dtype);
+    std::string resultStr = "";
+    int index = 0;
+    for (auto it = begin(); it != end(); it++, index++) {
+        std::string itString = itemToStringCPU(*it, dtype);
+
         if (!isIntegralType(dtype) && allItemsIntegral) {
             size_t decimal_pos = itString.find('.');
             if (decimal_pos != std::string::npos) {
@@ -149,23 +161,23 @@ std::string Tensor::toString() const {
         itString = std::string(maxItemLength - itString.size(), ' ') + itString;
 
         for (size_t i = 0; i < ndim; i++) {
-            numBrackets = ndim - i;
-            if (idx % shapeProduct[i] == 0) {
-                if (idx != 0) {
-                    str += std::string(numBrackets, ']');
-                    str += numBrackets > 1 ? "\n\n" : "\n";
+            const int numBrackets = ndim - i;
+            if (index % shapeProduct[i] == 0) {
+                if (index != 0) {
+                    resultStr += std::string(numBrackets, ']');
+                    resultStr += numBrackets > 1 ? "\n\n" : "\n";
                 }
-                str +=
+                resultStr +=
                     std::string(i, ' ') + std::string(numBrackets, '[') + " ";
                 break;
             }
         }
 
-        str += itString + " ";
+        resultStr += itString + " ";
     }
 
-    str += std::string(ndim, ']');
+    resultStr += std::string(ndim, ']');
 
-    return str;
+    return resultStr;
 }
 } // namespace ty

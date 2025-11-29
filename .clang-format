@@ -1,0 +1,11 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+ColumnLimit: 80
+UseTab: Never
+BreakBeforeBraces: Attach
+AllowShortFunctionsOnASingleLine: Inline
+PointerAlignment: Left
+SortIncludes: true
+IncludeBlocks: Regroup
+NamespaceIndentation: Inner
+IndentPPDirectives: BeforeHash

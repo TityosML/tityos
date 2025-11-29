@@ -1,7 +1,6 @@
 .vscode
 build
 Testing
-.clang-format
 
 # Prerequisites
 *.d

@@ -12,8 +12,6 @@ TITYOS_EXPORT class Tensor {
   private:
     std::shared_ptr<internal::BaseTensor> baseTensor_;
 
-    std::string itemToStringCPU(const void* item, const DType dtype) const;
-
   public:
     template <class DataContainer, class ShapeContainer,
               std::enable_if_t<
@@ -92,5 +90,8 @@ TITYOS_EXPORT class Tensor {
     Iterator end() const;
 
     std::string toString() const;
+
+  private:
+    std::string itemToStringCpu(const void* item, const DType dtype) const;
 };
 } // namespace ty

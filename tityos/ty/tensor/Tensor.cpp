@@ -71,7 +71,7 @@ Iterator Tensor::end() const {
     return baseTensor_->end();
 }
 
-std::string Tensor::itemToStringCPU(const void* item, const DType dtype) const {
+std::string Tensor::itemToStringCpu(const void* item, const DType dtype) const {
     switch (dtype) {
     case DType::Int8:
         return std::to_string(*reinterpret_cast<const int8_t*>(item));
@@ -118,7 +118,7 @@ std::string Tensor::toString() const {
     size_t maxItemLength = 1;
     bool allItemsIntegral = true;
     for (auto it = begin(); it != end(); it++) {
-        std::string itString = itemToStringCPU(*it, dtype);
+        std::string itString = itemToStringCpu(*it, dtype);
 
         maxItemLength =
             (itString.size() > maxItemLength) ? itString.size() : maxItemLength;
@@ -147,7 +147,7 @@ std::string Tensor::toString() const {
     std::string resultStr = "";
     int index = 0;
     for (auto it = begin(); it != end(); it++, index++) {
-        std::string itString = itemToStringCPU(*it, dtype);
+        std::string itString = itemToStringCpu(*it, dtype);
 
         if (!isIntegralType(dtype) && allItemsIntegral) {
             size_t decimal_pos = itString.find('.');

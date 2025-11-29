@@ -17,7 +17,7 @@ namespace internal {
         }
 #ifdef TITYOS_USE_CUDA
         if (device_.isCuda()) {
-            cudaMemcpy(startPointer_, dataStartPointer, bytes,
+            cudaMemcpy(startPointer_, dataStartPointer, numBytes,
                        cudaMemcpyHostToDevice);
         }
 #endif

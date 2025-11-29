@@ -21,6 +21,8 @@ TEST_CASE("Tensor creation", "[Tensor]") {
     REQUIRE_NOTHROW(ty::Tensor(std::vector<float>({1.0, 2.0, 3.0, 4.0}),
                                std::array<size_t, 2>({2, 2})));
 
+    REQUIRE_NOTHROW(ty::Tensor({1.0, 2.0, 3.0, 4.0}, {2, 2}, { ty::DeviceType::CPU, 0 }, ty::DType::Float64));
+
     REQUIRE_THROWS(ty::Tensor(std::vector<float>({1.0, 2.0, 3.0, 4.0}),
                               std::array<size_t, 65>({2, 2})));
 }

@@ -6,6 +6,7 @@
 #include "tityos/ty/tensor/Dtype.h"
 
 #include <cstdlib>
+#include <cstring>
 #include <stdexcept>
 
 namespace ty {
@@ -20,6 +21,8 @@ namespace internal {
         TensorStorage(size_t numBytes, Device device = {DeviceType::CPU, 0});
 
         ~TensorStorage();
+
+        void copyDataFromCpu(const void* dataStartPointer, size_t numBytes);
 
         void* at(size_t index);
 

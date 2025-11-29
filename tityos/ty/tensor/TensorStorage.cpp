@@ -11,6 +11,18 @@ namespace internal {
         deallocate();
     }
 
+    void TensorStorage::copyDataFromCpu(const void* dataStartPointer, size_t numBytes) {
+        if (device_.isCpu()) {
+            std::memcpy(startPointer_, dataStartPointer, numBytes);
+        }
+#ifdef TITYOS_USE_CUDA
+        if (device_.isCuda()) {
+            cudaMemcpy(startPointer_, dataStartPointer, bytes,
+                       cudaMemcpyHostToDevice);
+        }
+#endif
+    }
+
     void* TensorStorage::at(size_t index) {
         return reinterpret_cast<char*>(startPointer_) + index;
     }

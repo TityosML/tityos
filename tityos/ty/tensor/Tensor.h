@@ -33,7 +33,7 @@ TITYOS_EXPORT class Tensor {
         size_t numBytes = sizeof(T) * numElements;
         std::shared_ptr<internal::TensorStorage> dataStorage =
             std::make_shared<internal::TensorStorage>(numBytes, device);
-        std::memcpy(dataStorage->begin(), std::data(data), numBytes);
+        dataStorage->copyDataFromCpu(std::data(data), numBytes);
 
         std::array<size_t, internal::MAX_DIMS> storageShape{};
         int i = 0;

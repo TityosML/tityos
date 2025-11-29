@@ -6,6 +6,7 @@
 #include <cstring>
 #include <iterator>
 #include <string>
+#include <sstream>
 
 namespace ty {
 TITYOS_EXPORT class Tensor {

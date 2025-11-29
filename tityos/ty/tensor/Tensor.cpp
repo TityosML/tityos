@@ -105,6 +105,7 @@ std::string Tensor::toString() const {
     const ty::internal::ShapeStrides& layout = baseTensor_->getLayout();
     const std::array<size_t, internal::MAX_DIMS>& shape = layout.getShape();
     const size_t ndim = layout.getNDim();
+    std::ostringstream resultStream;
 
     std::array<size_t, internal::MAX_DIMS> shapeProduct;
     size_t product = 1;
@@ -144,7 +145,6 @@ std::string Tensor::toString() const {
         maxItemLength = (maxItemLength > 6) ? (maxItemLength - 6) : 1;
     }
 
-    std::string resultStr = "";
     int index = 0;
     for (auto it = begin(); it != end(); it++, index++) {
         std::string itString = itemToStringCpu(*it, dtype);
@@ -154,7 +154,7 @@ std::string Tensor::toString() const {
             if (decimal_pos != std::string::npos) {
                 itString.resize(decimal_pos + 1);
             } else {
-                itString += ".";
+                resultStream << ".";
             }
         }
 
@@ -164,20 +164,22 @@ std::string Tensor::toString() const {
             const int numBrackets = ndim - i;
             if (index % shapeProduct[i] == 0) {
                 if (index != 0) {
-                    resultStr += std::string(numBrackets, ']');
-                    resultStr += numBrackets > 1 ? "\n\n" : "\n";
+                    resultStream << std::string(numBrackets, ']')
+                                 << (numBrackets > 1
+                        ? "\n\n"
+                        : "\n");
                 }
-                resultStr +=
-                    std::string(i, ' ') + std::string(numBrackets, '[') + " ";
+                resultStream << std::string(i, ' ') <<
+                                    std::string(numBrackets, '[') << " ";
                 break;
             }
         }
 
-        resultStr += itString + " ";
+        resultStream << itString << " ";
     }
 
-    resultStr += std::string(ndim, ']');
+    resultStream << std::string(ndim, ']');
 
-    return resultStr;
+    return resultStream.str();
 }
 } // namespace ty

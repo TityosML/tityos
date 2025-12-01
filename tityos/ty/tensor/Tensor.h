@@ -70,6 +70,8 @@ TITYOS_EXPORT class Tensor {
 
     Tensor& operator=(Tensor&& other) noexcept;
 
+    Device getDevice() const { return baseTensor_->getTensorStorage()->getDevice(); }
+
     void* at(const size_t* indexStart, const size_t indexSize) const;
 
     template <size_t N> void* at(const std::array<size_t, N>& index) const {

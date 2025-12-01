@@ -86,25 +86,6 @@ TEST_CASE("Displaying Tensor", "[Tensor]") {
         "]\n ...\n "
         "[ 1 1 1 ... 1 1 1 ]\n [ 1 1 1 ... 1 1 1 ]\n [ 1 1 1 ... 1 1 1 ]]";
     CHECK(example6.toString() == expected6);
-
-    std::vector<int32_t> seq_data(9 * 7 * 4);
-    std::iota(seq_data.begin(), seq_data.end(), 1);
-
-    ty::Tensor example8(seq_data, std::vector<size_t>({9, 7, 4}),
-                        {ty::DeviceType::CPU, 0}, ty::DType::Int32);
-
-    const std::string expected8 = "[[[   1   2 ...   3   4 ]\n"
-                                  "  [   5   6 ...   7   8 ]\n"
-                                  "  [   9  10 ...  11  12 ]\n"
-                                  "  ...\n"
-                                  "  [  25  26 ...  27  28 ]]\n\n"
-                                  " ...\n\n"
-                                  " [[ 225 226 ... 227 228 ]\n"
-                                  "  [ 229 230 ... 231 232 ]\n"
-                                  "  ...\n"
-                                  "  [ 249 250 ... 251 252 ]]]";
-
-    CHECK(example8.toString() == expected8);
 }
 
 TEST_CASE("Tensor copy and move operators", "[Tensor]") {

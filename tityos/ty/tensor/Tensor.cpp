@@ -3,6 +3,7 @@
 #include "tityos/ty/tensor/ShapeStrides.h"
 
 #include <cmath>
+#include <tuple>
 
 namespace ty {
 Tensor::Tensor(const Tensor& other) : baseTensor_(other.baseTensor_) {}
@@ -98,84 +99,139 @@ std::string Tensor::itemToStringCpu(const void* item, const DType dtype) const {
 }
 
 std::string Tensor::toString() const {
-    // TODO : get a copy of this tensor on the cpu if not already there
+    const int elideAfter = 0; // currently 0 for testing, should be 1000
+    const int elidedElementsPrinted = 3;
+    const int decimalsDisplayed = 6;
 
-    // TODO : handle adding ... for long tensors
+    // TODO : get a copy of this tensor on the cpu if not already there
 
     const ty::internal::ShapeStrides& layout = baseTensor_->getLayout();
     const std::array<size_t, internal::MAX_DIMS>& shape = layout.getShape();
+    const DType dtype = baseTensor_->getDType();
     const size_t ndim = layout.getNDim();
+
     std::ostringstream resultStream;
 
-    std::array<size_t, internal::MAX_DIMS> shapeProduct;
-    size_t product = 1;
-    for (int i = ndim - 1; i >= 0; i--) {
-        product *= shape[i];
-        shapeProduct[i] = product;
+    size_t tensorSize = 1;
+    for (size_t i = 0; i < ndim; i++) {
+        tensorSize *= shape[i];
     }
 
-    const DType dtype = baseTensor_->getDType();
+    // returns (finished iterating, num brackets to place, has elided)
+    auto nextVisibleIndex = [=](std::array<size_t, internal::MAX_DIMS>& idx)
+        -> std::tuple<bool, size_t, bool> {
+        for (int i = ndim - 1; i >= 0; i--) {
+            idx[i]++;
+
+            size_t dimSize = shape[i];
+            bool isElided =
+                tensorSize > elideAfter && dimSize > 2 * elidedElementsPrinted;
+
+            if (isElided && idx[i] == elidedElementsPrinted) {
+                idx[i] = dimSize - elidedElementsPrinted;
+                return {true, ndim - i - 1, true};
+            }
+            if (idx[i] < dimSize) {
+                return {true, ndim - i - 1, false};
+            }
+
+            idx[i] = 0;
+        }
+        return {false, ndim, false};
+    };
 
     size_t maxItemLength = 1;
-    bool allItemsIntegral = true;
-    for (auto it = begin(); it != end(); it++) {
-        std::string itString = itemToStringCpu(*it, dtype);
+    bool allVisibleIntegral = true;
 
-        maxItemLength =
-            (itString.size() > maxItemLength) ? itString.size() : maxItemLength;
+    {
+        bool active = true;
+        auto it = begin();
+        auto idx = it.getIndex();
 
-        switch (dtype) {
-        // TODO : Handle Float16 case
-        case DType::Float32: {
-            const float itFloat = *reinterpret_cast<const float*>(*it);
-            allItemsIntegral &= std::trunc(itFloat) == itFloat;
+        while (active) {
+            it.jumpToIndex(idx);
 
-        } break;
-        case DType::Float64: {
-            const double itDouble = *reinterpret_cast<const double*>(*it);
-            allItemsIntegral &= std::trunc(itDouble) == itDouble;
-        } break;
-        default:
-            break;
-        }
-    }
+            std::string itString = itemToStringCpu(*it, dtype);
 
-    if (!isIntegralType(dtype) && allItemsIntegral) {
-        // Remove trailing zeros if all elements are whole numbers
-        maxItemLength = (maxItemLength > 6) ? (maxItemLength - 6) : 1;
-    }
+            maxItemLength = (itString.size() > maxItemLength) ? itString.size()
+                                                              : maxItemLength;
 
-    int index = 0;
-    for (auto it = begin(); it != end(); it++, index++) {
-        std::string itString = itemToStringCpu(*it, dtype);
+            switch (dtype) {
+            // TODO : Handle Float16 case
+            case DType::Float32: {
+                const float itFloat = *reinterpret_cast<const float*>(*it);
+                allVisibleIntegral &= std::trunc(itFloat) == itFloat;
 
-        if (!isIntegralType(dtype) && allItemsIntegral) {
-            size_t decimal_pos = itString.find('.');
-            if (decimal_pos != std::string::npos) {
-                itString.resize(decimal_pos + 1);
-            } else {
-                resultStream << ".";
-            }
-        }
-
-        itString = std::string(maxItemLength - itString.size(), ' ') + itString;
-
-        for (size_t i = 0; i < ndim; i++) {
-            const int numBrackets = ndim - i;
-            if (index % shapeProduct[i] == 0) {
-                if (index != 0) {
-                    resultStream << std::string(numBrackets, ']')
-                                 << (numBrackets > 1
-                        ? "\n\n"
-                        : "\n");
-                }
-                resultStream << std::string(i, ' ') <<
-                                    std::string(numBrackets, '[') << " ";
+            } break;
+            case DType::Float64: {
+                const double itDouble = *reinterpret_cast<const double*>(*it);
+                allVisibleIntegral &= std::trunc(itDouble) == itDouble;
+            } break;
+            default:
                 break;
             }
-        }
 
-        resultStream << itString << " ";
+            active = std::get<0>(nextVisibleIndex(idx));
+        }
+    }
+
+    if (!isIntegralType(dtype) && allVisibleIntegral) {
+        // Remove trailing zeros if all elements are whole numbers
+        maxItemLength = (maxItemLength > decimalsDisplayed)
+                            ? (maxItemLength - decimalsDisplayed)
+                            : 1;
+    }
+
+    {
+        auto it = begin();
+        auto index = it.getIndex();
+
+        bool active = true;
+        size_t numBrackets = 0;
+        bool hasElided = false;
+
+        resultStream << std::string(ndim, '[') << " ";
+
+        while (active) {
+            it.jumpToIndex(index);
+
+            if (numBrackets > 0) {
+                resultStream << std::string(numBrackets, ']') << "\n";
+
+                if (hasElided) {
+                    if (numBrackets > 1) {
+                        resultStream << "\n"
+                                     << std::string(ndim - numBrackets, ' ')
+                                     << "...\n\n";
+                    } else {
+                        resultStream << std::string(ndim - numBrackets, ' ')
+                                     << "...\n";
+                    }
+                } else if (numBrackets > 1) {
+                    resultStream << "\n";
+                }
+
+                resultStream << std::string(ndim - numBrackets, ' ')
+                             << std::string(numBrackets, '[') << " ";
+            } else if (hasElided) {
+                resultStream << "... ";
+            }
+
+            std::string itString = itemToStringCpu(*it, dtype);
+
+            if (!isIntegralType(dtype) && allVisibleIntegral) {
+                size_t decimal_pos = itString.find('.');
+                // Assumes that a '.' is always found
+                itString.resize(decimal_pos + 1);
+            }
+
+            itString =
+                std::string(maxItemLength - itString.size(), ' ') + itString;
+
+            resultStream << itString << " ";
+
+            std::tie(active, numBrackets, hasElided) = nextVisibleIndex(index);
+        }
     }
 
     resultStream << std::string(ndim, ']');

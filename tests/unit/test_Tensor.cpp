@@ -21,7 +21,8 @@ TEST_CASE("Tensor creation", "[Tensor]") {
     REQUIRE_NOTHROW(ty::Tensor(std::vector<float>({1.0, 2.0, 3.0, 4.0}),
                                std::array<size_t, 2>({2, 2})));
 
-    REQUIRE_NOTHROW(ty::Tensor({1.0, 2.0, 3.0, 4.0}, {2, 2}, { ty::DeviceType::CPU, 0 }, ty::DType::Float64));
+    REQUIRE_NOTHROW(ty::Tensor({1.0, 2.0, 3.0, 4.0}, {2, 2},
+                               {ty::DeviceType::CPU, 0}, ty::DType::Float64));
 
     REQUIRE_THROWS(ty::Tensor(std::vector<float>({1.0, 2.0, 3.0, 4.0}),
                               std::array<size_t, 65>({2, 2})));
@@ -73,6 +74,37 @@ TEST_CASE("Displaying Tensor", "[Tensor]") {
 
     const std::string expected5 = "[[[ 1 ]\n  [ 2 ]]\n\n [[ 3 ]\n  [ 4 ]]]";
     CHECK(example5.toString() == expected5);
+
+    ty::Tensor example6(
+        std::vector<int8_t>({1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}),
+        std::vector<size_t>({7, 7}), {ty::DeviceType::CPU, 0}, ty::DType::Int8);
+
+    const std::string expected6 =
+        "[[ 1 1 1 ... 1 1 1 ]\n [ 1 1 1 ... 1 1 1 ]\n [ 1 1 1 ... 1 1 1 "
+        "]\n ...\n "
+        "[ 1 1 1 ... 1 1 1 ]\n [ 1 1 1 ... 1 1 1 ]\n [ 1 1 1 ... 1 1 1 ]]";
+    CHECK(example6.toString() == expected6);
+
+    std::vector<int32_t> seq_data(9 * 7 * 4);
+    std::iota(seq_data.begin(), seq_data.end(), 1);
+
+    ty::Tensor example8(seq_data, std::vector<size_t>({9, 7, 4}),
+                        {ty::DeviceType::CPU, 0}, ty::DType::Int32);
+
+    const std::string expected8 = "[[[   1   2 ...   3   4 ]\n"
+                                  "  [   5   6 ...   7   8 ]\n"
+                                  "  [   9  10 ...  11  12 ]\n"
+                                  "  ...\n"
+                                  "  [  25  26 ...  27  28 ]]\n\n"
+                                  " ...\n\n"
+                                  " [[ 225 226 ... 227 228 ]\n"
+                                  "  [ 229 230 ... 231 232 ]\n"
+                                  "  ...\n"
+                                  "  [ 249 250 ... 251 252 ]]]";
+
+    CHECK(example8.toString() == expected8);
 }
 
 TEST_CASE("Tensor copy and move operators", "[Tensor]") {

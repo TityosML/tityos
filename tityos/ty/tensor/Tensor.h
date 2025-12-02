@@ -5,8 +5,8 @@
 
 #include <cstring>
 #include <iterator>
-#include <string>
 #include <sstream>
+#include <string>
 
 namespace ty {
 TITYOS_EXPORT class Tensor {
@@ -70,7 +70,13 @@ TITYOS_EXPORT class Tensor {
 
     Tensor& operator=(Tensor&& other) noexcept;
 
-    Device getDevice() const { return baseTensor_->getTensorStorage()->getDevice(); }
+    Device getDevice() const;
+
+    DType getDType() const;
+
+    const std::array<size_t, internal::MAX_DIMS> getShape() const;
+
+    size_t getSize() const;
 
     void* at(const size_t* indexStart, const size_t indexSize) const;
 

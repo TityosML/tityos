@@ -25,6 +25,27 @@ Tensor& Tensor::operator=(Tensor&& other) noexcept {
     return *this;
 }
 
+Device Tensor::getDevice() const {
+    return baseTensor_->getTensorStorage()->getDevice();
+}
+
+DType Tensor::getDType() const {
+    return baseTensor_->getDType();
+}
+
+const std::array<size_t, internal::MAX_DIMS> Tensor::getShape() const {
+    return baseTensor_->getLayout().getShape();
+}
+
+size_t Tensor::getSize() const {
+    size_t tensorSize = 1;
+    const std::array<size_t, internal::MAX_DIMS>& shape = getShape();
+    for (size_t i = 0; i < baseTensor_->getLayout().getNDim(); i++) {
+        tensorSize *= shape[i];
+    }
+    return tensorSize;
+}
+
 void* Tensor::at(const size_t* indexStart, const size_t indexSize) const {
     if (indexSize != baseTensor_->getLayout().getNDim()) {
         throw std::invalid_argument(
@@ -107,15 +128,11 @@ std::string Tensor::toString() const {
 
     const ty::internal::ShapeStrides& layout = baseTensor_->getLayout();
     const std::array<size_t, internal::MAX_DIMS>& shape = layout.getShape();
-    const DType dtype = baseTensor_->getDType();
+    const DType dtype = getDType();
     const size_t ndim = layout.getNDim();
+    const size_t tensorSize = getSize();
 
     std::ostringstream resultStream;
-
-    size_t tensorSize = 1;
-    for (size_t i = 0; i < ndim; i++) {
-        tensorSize *= shape[i];
-    }
 
     // returns (finished iterating, num brackets to place, has elided)
     auto nextVisibleIndex = [=](std::array<size_t, internal::MAX_DIMS>& idx)

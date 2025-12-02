@@ -137,7 +137,7 @@ namespace internal {
     void BaseTensor::Iterator::jumpToIndex(
         const std::array<size_t, MAX_DIMS> index) {
         index_ = index;
-        ptr_ = baseTensor_.at(index_.begin());
+        ptr_ = baseTensor_.at(index_.data());
     }
 
     bool operator==(const BaseTensor::Iterator& a,

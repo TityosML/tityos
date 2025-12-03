@@ -2,8 +2,6 @@
 
 #include "tityos/ty/tensor/Tensor.h"
 
-#include <iostream>
-
 namespace ty {
 namespace internal {
     void internalAddCpu(Tensor& result, const Tensor& tensor1, const Tensor& tensor2);

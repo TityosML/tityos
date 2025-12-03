@@ -4,32 +4,48 @@
 
 #define DEFINE_FUNC_DISPATCH(func)                                             \
     template <typename... Args> void func(Device device, Args&&... args) {     \
-        if (device.isCpu()) {                                                  \
-            FUNC_CPU_DISPATCH(func, std::forward<Args>(args)...);              \
+        if (device.isCuda()) {                                                 \
+            if constexpr (func##CudaExists) {                                  \
+                func##Cuda(std::forward<Args>(args)...);                        \
+            } else {                                                           \
+                throw std::runtime_error("Cannot apply function to a cuda "    \
+                                         "tensor CUDA is not available");       \
+            }                                                                  \
             return;                                                            \
-        } else if (device.isCuda()) {                                          \
-            FUNC_CUDA_DISPATCH(func, std::forward<Args>(args)...);             \
+        } else if (device.isCpu()) {                                           \
+            if constexpr (func##Avx2Exists) {                                  \
+                func##Avx2(std::forward<Args>(args)...);                       \
+            } else {                                                           \
+                func##Cpu(std::forward<Args>(args)...);                        \
+            }                                                                  \
             return;                                                            \
         }                                                                      \
                                                                                \
         throw std::runtime_error("Unknown device");                            \
-    }                                                                          
+    }
+
+
+#define DECLARE_NO_CUDA_DISPATCH_FUNCTION(func)                                \
+    constexpr bool func##CudaExists = false;
+#define DECLARE_NO_AVX2_DISPATCH_FUNCTION(func)                                \
+    constexpr bool func##Avx2Exists = false;
 
 #ifdef TITYOS_USE_CUDA
-    #define FUNC_CUDA_DISPATCH(func, ...) func##Cuda(__VA_ARGS__)
+    #define DECLARE_CUDA_DISPATCH_FUNCTION(func)                               \
+        constexpr bool func##CudaExists = true;
 #else
-    #define FUNC_CUDA_DISPATCH(func, ...)                                      \
-        throw std::runtime_error(                                              \
-            "Cannot apply function to a cuda tensor CUDA is not available")
+    #define DECLARE_CUDA_DISPATCH_FUNCTION(func)                               \
+        DECLARE_NO_CUDA_DISPATCH_FUNCTION(func)
 #endif
 
-#define FUNC_CPU_DISPATCH(func, ...) func##Cpu(__VA_ARGS__);
+#ifdef TITYOS_USE_AVX2
+    #define DECLARE_AVX2_DISPATCH_FUNCTION(func)                               \
+        constexpr bool func##Avx2Exists = true;
+#else
+    #define DECLARE_AVX2_DISPATCH_FUNCTION(func)                               \
+        DECLARE_NO_AVX2_DISPATCH_FUNCTION(func)
+#endif
 
-// --- For when we start implementing SIMD ---
-// #ifdef TITYOS_USE_AVX2
-//     #define FUNC_CPU_DISPATCH(func, ...) func##Avx2(__VA_ARGS__)
-// #elif TITYOS_USE_AVX
-//     #define FUNC_CPU_DISPATCH(func, ...) func##Avx2(__VA_ARGS__)
-// #else
-//     #define FUNC_CPU_DISPATCH(func, ...) func##Cpu(__VA_ARGS__);
-// #endif
+#define DECLARE_ALL_DISPATCH_FUNCTION(func)                                    \
+    DECLARE_CUDA_DISPATCH_FUNCTION(func)                                       \
+    DECLARE_AVX2_DISPATCH_FUNCTION(func)

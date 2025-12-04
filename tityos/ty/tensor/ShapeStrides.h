@@ -4,6 +4,7 @@
 
 #include <array>
 #include <cstddef>
+#include <numeric>
 
 namespace ty {
 namespace internal {
@@ -22,17 +23,23 @@ namespace internal {
                      const std::array<size_t, MAX_DIMS>& strides, size_t offset,
                      size_t ndim);
 
-        ShapeStrides(const std::array<size_t, MAX_DIMS>& shape, DType dtype,
-                     size_t ndim);
+        ShapeStrides(const std::array<size_t, MAX_DIMS>& shape, size_t ndim);
 
-        size_t computeByteIndex(const size_t* indexStart) const;
+        size_t computeByteIndex(const size_t* indexStart, DType dtype) const;
+        size_t computeByteIndex(size_t index, DType dtype) const;
+
+        std::array<size_t, MAX_DIMS>
+        linearToTensorIndex(size_t linearIndex) const;
+        size_t tensorToLinearIndex(
+            const std::array<size_t, MAX_DIMS>& linearIndex) const;
 
         size_t getNDim() const;
         const std::array<size_t, MAX_DIMS>& getShape() const;
         const std::array<size_t, MAX_DIMS>& getStrides() const;
+        size_t numElements() const;
 
       private:
-        void initialStrides(DType dtype);
+        void initialStrides();
     };
 } // namespace internal
 } // namespace ty

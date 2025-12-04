@@ -1,20 +1,11 @@
 #include "tityos/ty/tensor/BaseTensor.h"
 
+#include <iostream>
+
 namespace ty {
 namespace internal {
-    const std::array<size_t, MAX_DIMS> BaseTensor::endIndex() const {
-        // Exclusive end index
-        // TODO: move into utils class to avoid duplicated code
-        const size_t nDim = layout_.getNDim();
-        const std::array<size_t, MAX_DIMS> shape = layout_.getShape();
-        std::array<size_t, MAX_DIMS> endIdx{};
-
-        for (size_t i = 0; i < nDim - 1; i++) {
-            endIdx[i] = shape[i] - 1;
-        }
-
-        endIdx[nDim - 1] = shape[nDim - 1];
-        return endIdx;
+    size_t BaseTensor::endIndex() const {
+        return layout_.numElements(); 
     }
 
     BaseTensor::BaseTensor(std::shared_ptr<TensorStorage> data,
@@ -46,7 +37,12 @@ namespace internal {
     }
 
     void* BaseTensor::at(const size_t* indexStart) const {
-        size_t byteOffset = layout_.computeByteIndex(indexStart);
+        size_t byteOffset = layout_.computeByteIndex(indexStart, dtype_);
+        return tensorStorage_->at(byteOffset);
+    }
+
+    void* BaseTensor::at(size_t index) const {
+        size_t byteOffset = layout_.computeByteIndex(index, dtype_);
         return tensorStorage_->at(byteOffset);
     }
 
@@ -62,52 +58,10 @@ namespace internal {
         return dtype_;
     }
 
-    const std::array<size_t, MAX_DIMS> BaseTensor::Iterator::endIndex() const {
-        // Exclusive end index
-        // TODO: move into utils class to avoid duplicated code
-        const size_t nDim = baseTensor_.getLayout().getNDim();
-        const std::array<size_t, MAX_DIMS> shape =
-            baseTensor_.getLayout().getShape();
-        std::array<size_t, MAX_DIMS> endIdx{};
-
-        for (size_t i = 0; i < nDim - 1; i++) {
-            endIdx[i] = shape[i] - 1;
-        }
-
-        endIdx[nDim - 1] = shape[nDim - 1];
-        return endIdx;
-    }
-
-    void BaseTensor::Iterator::incrementIndex() {
-        const ShapeStrides& layout = baseTensor_.getLayout();
-        const std::array<size_t, internal::MAX_DIMS>& shape = layout.getShape();
-        const std::array<size_t, internal::MAX_DIMS>& strides =
-            layout.getStrides();
-        const size_t nDim = layout.getNDim();
-        for (int i = nDim - 1; i >= 0; i--) {
-            index_[i]++;
-            if (index_[i] < shape[i]) {
-                ptr_ = reinterpret_cast<char*>(ptr_) + strides[i];
-                return;
-            } else {
-                index_[i] = 0;
-                ptr_ =
-                    reinterpret_cast<char*>(ptr_) - (shape[i] - 1) * strides[i];
-            }
-        }
-        // Handle overflow as 1 more in last dimension
-        index_ = endIndex();
-        for (int i = nDim - 1; i >= 0; i--) {
-            ptr_ = reinterpret_cast<char*>(ptr_) + strides[i] * (shape[i] - 1);
-        }
-        ptr_ = reinterpret_cast<char*>(ptr_) + strides[nDim - 1];
-    }
-
     BaseTensor::Iterator::Iterator(
-        const BaseTensor& baseTensor,
-        const std::array<size_t, MAX_DIMS> startIndex)
-        : baseTensor_(baseTensor), index_(startIndex),
-          ptr_(baseTensor.at(startIndex.data())) {}
+        const BaseTensor& baseTensor, size_t linearStartIndex)
+        : baseTensor_(baseTensor), linearIndex_(linearStartIndex),
+          ptr_(baseTensor.at(linearStartIndex)) {}
 
     void* BaseTensor::Iterator::operator->() {
         return ptr_;
@@ -119,7 +73,8 @@ namespace internal {
 
     // Prefix increment
     BaseTensor::Iterator& BaseTensor::Iterator::operator++() {
-        incrementIndex();
+        linearIndex_++;
+        ptr_ = baseTensor_.at(linearIndex_);
         return *this;
     }
 
@@ -130,28 +85,28 @@ namespace internal {
         return tmp;
     }
 
-    const std::array<size_t, MAX_DIMS> BaseTensor::Iterator::getIndex() const {
-        return index_;
+    size_t BaseTensor::Iterator::getIndex() const {
+        return linearIndex_;
     }
 
     void BaseTensor::Iterator::jumpToIndex(
-        const std::array<size_t, MAX_DIMS> index) {
-        index_ = index;
-        ptr_ = baseTensor_.at(index_.data());
+        size_t linearIndex) {
+        linearIndex_ = linearIndex;
+        ptr_ = baseTensor_.at(linearIndex_);
     }
 
     bool operator==(const BaseTensor::Iterator& a,
                     const BaseTensor::Iterator& b) {
-        return a.ptr_ == b.ptr_;
+        return (a.ptr_ == b.ptr_) && (a.linearIndex_ == b.linearIndex_);
     }
 
     bool operator!=(const BaseTensor::Iterator& a,
                     const BaseTensor::Iterator& b) {
-        return a.ptr_ != b.ptr_;
+        return (a.ptr_ != b.ptr_) || (a.linearIndex_ != b.linearIndex_);
     }
 
     BaseTensor::Iterator BaseTensor::begin() {
-        return Iterator(*this, std::array<size_t, MAX_DIMS>{});
+        return Iterator(*this, 0);
     }
 
     BaseTensor::Iterator BaseTensor::end() {
@@ -159,7 +114,7 @@ namespace internal {
     }
 
     BaseTensor::Iterator BaseTensor::begin() const {
-        return Iterator(*this, std::array<size_t, MAX_DIMS>{});
+        return Iterator(*this, 0);
     }
 
     BaseTensor::Iterator BaseTensor::end() const {

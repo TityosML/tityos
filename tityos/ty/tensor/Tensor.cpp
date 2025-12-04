@@ -1,10 +1,5 @@
 #include "tityos/ty/tensor/Tensor.h"
 
-#include "tityos/ty/tensor/ShapeStrides.h"
-
-#include <cmath>
-#include <tuple>
-
 namespace ty {
 Tensor::Tensor(const Tensor& other) : baseTensor_(other.baseTensor_) {}
 
@@ -135,25 +130,30 @@ std::string Tensor::toString() const {
     std::ostringstream resultStream;
 
     // returns (finished iterating, num brackets to place, has elided)
-    auto nextVisibleIndex = [=](std::array<size_t, internal::MAX_DIMS>& idx)
+    auto nextVisibleIndex = [=](size_t& linearIndex)
         -> std::tuple<bool, size_t, bool> {
+        auto index = layout.linearToTensorIndex(linearIndex);
+    
         for (int i = ndim - 1; i >= 0; i--) {
-            idx[i]++;
+            index[i]++;
 
             size_t dimSize = shape[i];
             bool isElided =
                 tensorSize > elideAfter && dimSize > 2 * elidedElementsPrinted;
 
-            if (isElided && idx[i] == elidedElementsPrinted) {
-                idx[i] = dimSize - elidedElementsPrinted;
+            if (isElided && index[i] == elidedElementsPrinted) {
+                index[i] = dimSize - elidedElementsPrinted;
+                linearIndex = layout.tensorToLinearIndex(index);
                 return {true, ndim - i - 1, true};
             }
-            if (idx[i] < dimSize) {
+            if (index[i] < dimSize) {
+                linearIndex = layout.tensorToLinearIndex(index);
                 return {true, ndim - i - 1, false};
             }
 
-            idx[i] = 0;
+            index[i] = 0;
         }
+        linearIndex = layout.tensorToLinearIndex(index);
         return {false, ndim, false};
     };
 

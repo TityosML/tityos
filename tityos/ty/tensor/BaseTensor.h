@@ -18,7 +18,7 @@ namespace internal {
 
         DType dtype_;
 
-        const std::array<size_t, MAX_DIMS> endIndex() const;
+        size_t endIndex() const;
 
       public:
         BaseTensor(std::shared_ptr<TensorStorage> data,
@@ -31,6 +31,7 @@ namespace internal {
         BaseTensor& operator=(BaseTensor&& other) noexcept;
 
         void* at(const size_t* indexStart) const;
+        void* at(size_t index) const;
 
         const ShapeStrides& getLayout() const;
 
@@ -42,21 +43,16 @@ namespace internal {
           private:
             const BaseTensor& baseTensor_;
 
-            std::array<size_t, MAX_DIMS> index_;
+            size_t linearIndex_;
 
             void* ptr_;
 
-            const std::array<size_t, MAX_DIMS> endIndex() const;
-
-            void incrementIndex();
-
           public:
-            Iterator(const BaseTensor& baseTensor,
-                     const std::array<size_t, MAX_DIMS> startIndex);
+            Iterator(const BaseTensor& baseTensor, size_t linearStartIndex);
 
-            const std::array<size_t, MAX_DIMS> getIndex() const;
+            size_t getIndex() const;
 
-            void jumpToIndex(const std::array<size_t, MAX_DIMS> index);
+            void jumpToIndex(size_t linearIndex);
 
             void* operator->();
             void* operator*();

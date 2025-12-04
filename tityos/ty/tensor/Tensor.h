@@ -2,11 +2,14 @@
 
 #include "tityos/ty/export.h"
 #include "tityos/ty/tensor/BaseTensor.h"
+#include "tityos/ty/tensor/ShapeStrides.h"
 
+#include <cmath>
 #include <cstring>
 #include <iterator>
 #include <sstream>
 #include <string>
+#include <tuple>
 
 namespace ty {
 TITYOS_EXPORT class Tensor {
@@ -40,7 +43,7 @@ TITYOS_EXPORT class Tensor {
             storageShape[i++] = s;
         }
 
-        internal::ShapeStrides layout(storageShape, dtype, std::size(shape));
+        internal::ShapeStrides layout(storageShape, std::size(shape));
 
         baseTensor_ =
             std::make_shared<internal::BaseTensor>(dataStorage, layout, dtype);

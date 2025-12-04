@@ -3,7 +3,7 @@
 namespace ty {
 namespace internal {
     size_t BaseTensor::endIndex() const {
-        return layout_.numElements(); 
+        return layout_.numElements();
     }
 
     BaseTensor::BaseTensor(std::shared_ptr<TensorStorage> data,
@@ -22,6 +22,7 @@ namespace internal {
         if (this != &other) {
             tensorStorage_ = other.tensorStorage_;
             layout_ = other.layout_;
+            dtype_ = other.dtype_;
         }
         return *this;
     }
@@ -30,6 +31,7 @@ namespace internal {
         if (this != &other) {
             tensorStorage_ = std::move(other.tensorStorage_);
             layout_ = std::move(other.layout_);
+            dtype_ = other.dtype_;
         }
         return *this;
     }
@@ -56,8 +58,8 @@ namespace internal {
         return dtype_;
     }
 
-    BaseTensor::Iterator::Iterator(
-        const BaseTensor& baseTensor, size_t linearStartIndex)
+    BaseTensor::Iterator::Iterator(const BaseTensor& baseTensor,
+                                   size_t linearStartIndex)
         : baseTensor_(baseTensor), linearIndex_(linearStartIndex),
           ptr_(baseTensor.at(linearStartIndex)) {}
 
@@ -87,8 +89,7 @@ namespace internal {
         return linearIndex_;
     }
 
-    void BaseTensor::Iterator::jumpToIndex(
-        size_t linearIndex) {
+    void BaseTensor::Iterator::jumpToIndex(size_t linearIndex) {
         linearIndex_ = linearIndex;
         ptr_ = baseTensor_.at(linearIndex_);
     }

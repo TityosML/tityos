@@ -2,7 +2,6 @@
 #include "tityos/ty/tensor/Dtype.h"
 #include "tityos/ty/tensor/ShapeStrides.h"
 
-#include <iostream>
 #include <catch2/catch_all.hpp>
 
 TEST_CASE("Tensor Addition", "[Operation][Pointwise]") {

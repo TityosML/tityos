@@ -1,7 +1,5 @@
 #include "tityos/ty/tensor/ShapeStrides.h"
 
-#include <iostream>
-
 namespace ty {
 namespace internal {
     ShapeStrides::ShapeStrides(const std::array<size_t, MAX_DIMS>& shape,

@@ -1,7 +1,5 @@
 #include "tityos/ty/ops/cpu/avx2/add.h"
 
-#include <iostream>
-
 namespace ty {
 namespace internal {
     void internalAddAvx2(Tensor& result, const Tensor& tensor1, const Tensor& tensor2) {

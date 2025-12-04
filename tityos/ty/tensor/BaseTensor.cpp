@@ -1,7 +1,5 @@
 #include "tityos/ty/tensor/BaseTensor.h"
 
-#include <iostream>
-
 namespace ty {
 namespace internal {
     size_t BaseTensor::endIndex() const {

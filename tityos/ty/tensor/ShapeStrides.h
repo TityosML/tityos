@@ -38,6 +38,8 @@ namespace internal {
         const std::array<size_t, MAX_DIMS>& getStrides() const;
         size_t numElements() const;
 
+        bool operator==(const ShapeStrides& other) const;
+
       private:
         void initialStrides();
     };

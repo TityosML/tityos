@@ -6,7 +6,6 @@
 TEST_CASE("ShapeStrides creation", "[ShapeStrides]") {
     REQUIRE_NOTHROW(ty::internal::ShapeStrides({2, 2}, {2, 1}, 0, 2));
     REQUIRE_NOTHROW(ty::internal::ShapeStrides({2, 2}, 2));
-    REQUIRE_NOTHROW(ty::internal::ShapeStrides({2, 2}, 2));
     REQUIRE_NOTHROW(ty::internal::ShapeStrides({2, 3, 4}, 3));
 }
 
@@ -34,7 +33,8 @@ TEST_CASE("Accessing ShapeStrides and Computing Byte Index", "[ShapeStrides]") {
     CHECK(unknownExample2.computeByteIndex(index3, ty::DType::Float64) == 184);
 }
 
-TEST_CASE("ShapeStrides Linear and Tensor index conversion idempotence", "[ShapeStrides]") {
+TEST_CASE("ShapeStrides Linear and Tensor index conversion idempotence",
+          "[ShapeStrides]") {
     ty::internal::ShapeStrides example1({2, 3}, 2);
 
     CHECK(example1.tensorToLinearIndex(example1.linearToTensorIndex(1)) == 1);

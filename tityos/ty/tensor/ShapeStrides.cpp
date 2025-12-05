@@ -81,5 +81,10 @@ namespace internal {
             currentStride *= shape_[i];
         }
     }
+
+    bool ShapeStrides::operator==(const ShapeStrides& other) const {
+        return ndim_ == other.ndim_ && shape_ == other.shape_ &&
+               strides_ == other.strides_ && offset_ == other.offset_;
+    }
 } // namespace internal
 } // namespace ty

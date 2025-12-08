@@ -38,11 +38,10 @@ namespace internal {
     ShapeStrides::linearToTensorIndex(size_t linearIndex) const {
         std::array<size_t, MAX_DIMS> index{};
 
-        for (size_t i = ndim_ - 1; i > 0; i--) {
+        for (size_t i = ndim_; i-- > 0;) {
             index[i] = linearIndex % shape_[i];
             linearIndex /= shape_[i];
         }
-        index[0] = linearIndex % shape_[0];
 
         return index;
     }
@@ -50,9 +49,11 @@ namespace internal {
     size_t ShapeStrides::tensorToLinearIndex(
         const std::array<size_t, MAX_DIMS>& index) const {
         size_t linear = 0;
+        size_t dimProduct = 1;
 
-        for (size_t i = 0; i < ndim_; i++) {
-            linear += strides_[i] * index[i];
+        for (size_t i = ndim_; i-- > 0;) {
+            linear += dimProduct * index[i];
+            dimProduct *= shape_[i];
         }
 
         return linear;

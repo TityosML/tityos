@@ -26,7 +26,7 @@ namespace internal {
     size_t ShapeStrides::computeByteIndex(size_t index, DType dtype) const {
         size_t indexByte = 0;
 
-        for (size_t i = 0; i < ndim_; i++) {
+        for (size_t i = ndim_; i-- > 0;) {
             indexByte += (index % shape_[i]) * strides_[i];
             index /= shape_[i];
         }

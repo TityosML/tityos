@@ -115,9 +115,9 @@ std::string Tensor::itemToStringCpu(const void* item, const DType dtype) const {
 }
 
 std::string Tensor::toString() const {
-    const int elideAfter = 0; // currently 0 for testing, should be 1000
-    const int elidedElementsPrinted = 3;
-    const int decimalsDisplayed = 6;
+    const int ElideAfter = 0; // currently 0 for testing, should be 1000
+    const int ElidedElementsPrinted = 3;
+    const int DecimalsDisplayed = 6;
 
     // TODO : get a copy of this tensor on the cpu if not already there
 
@@ -130,19 +130,19 @@ std::string Tensor::toString() const {
     std::ostringstream resultStream;
 
     // returns (finished iterating, num brackets to place, has elided)
-    auto nextVisibleIndex = [=](size_t& linearIndex)
-        -> std::tuple<bool, size_t, bool> {
+    auto nextVisibleIndex =
+        [=](size_t& linearIndex) -> std::tuple<bool, size_t, bool> {
         auto index = layout.linearToTensorIndex(linearIndex);
-    
+
         for (int i = ndim - 1; i >= 0; i--) {
             index[i]++;
 
             size_t dimSize = shape[i];
             bool isElided =
-                tensorSize > elideAfter && dimSize > 2 * elidedElementsPrinted;
+                tensorSize > ElideAfter && dimSize > 2 * ElidedElementsPrinted;
 
-            if (isElided && index[i] == elidedElementsPrinted) {
-                index[i] = dimSize - elidedElementsPrinted;
+            if (isElided && index[i] == ElidedElementsPrinted) {
+                index[i] = dimSize - ElidedElementsPrinted;
                 linearIndex = layout.tensorToLinearIndex(index);
                 return {true, ndim - i - 1, true};
             }
@@ -161,6 +161,7 @@ std::string Tensor::toString() const {
     bool allVisibleIntegral = true;
 
     {
+        // First pass, finds length of items to determine padding
         bool active = true;
         auto it = begin();
         auto idx = it.getIndex();
@@ -194,12 +195,13 @@ std::string Tensor::toString() const {
 
     if (!isIntegralType(dtype) && allVisibleIntegral) {
         // Remove trailing zeros if all elements are whole numbers
-        maxItemLength = (maxItemLength > decimalsDisplayed)
-                            ? (maxItemLength - decimalsDisplayed)
+        maxItemLength = (maxItemLength > DecimalsDisplayed)
+                            ? (maxItemLength - DecimalsDisplayed)
                             : 1;
     }
 
     {
+        // Second pass, constructs the output string
         auto it = begin();
         auto index = it.getIndex();
 

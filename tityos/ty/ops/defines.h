@@ -6,10 +6,10 @@
     template <typename... Args> void func(Device device, Args&&... args) {     \
         if (device.isCuda()) {                                                 \
             if constexpr (func##CudaExists) {                                  \
-                func##Cuda(std::forward<Args>(args)...);                        \
+                func##Cuda(std::forward<Args>(args)...);                       \
             } else {                                                           \
                 throw std::runtime_error("Cannot apply function to a cuda "    \
-                                         "tensor CUDA is not available");       \
+                                         "tensor CUDA is not available");      \
             }                                                                  \
             return;                                                            \
         } else if (device.isCpu()) {                                           \
@@ -23,7 +23,6 @@
                                                                                \
         throw std::runtime_error("Unknown device");                            \
     }
-
 
 #define DECLARE_NO_CUDA_DISPATCH_FUNCTION(func)                                \
     constexpr bool func##CudaExists = false;

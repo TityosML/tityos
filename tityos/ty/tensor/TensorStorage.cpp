@@ -11,7 +11,8 @@ namespace internal {
         deallocate();
     }
 
-    void TensorStorage::copyDataFromCpu(const void* dataStartPointer, size_t numBytes) {
+    void TensorStorage::copyDataFromCpu(const void* dataStartPointer,
+                                        size_t numBytes) {
         if (device_.isCpu()) {
             std::memcpy(startPointer_, dataStartPointer, numBytes);
         }

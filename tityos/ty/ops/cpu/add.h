@@ -4,6 +4,7 @@
 
 namespace ty {
 namespace internal {
-    void internalAddCpu(Tensor& result, const Tensor& tensor1, const Tensor& tensor2);
+    void internalAddCpu(Tensor& result, const Tensor& tensor1,
+                        const Tensor& tensor2);
 }
 } // namespace ty

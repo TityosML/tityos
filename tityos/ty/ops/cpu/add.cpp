@@ -26,8 +26,7 @@ namespace internal {
                         const Tensor& tensor2) {
         if (result.getDType() != tensor1.getDType() ||
             result.getDType() != tensor2.getDType()) {
-            throw std::invalid_argument(
-                "Types must match for addition");
+            throw std::invalid_argument("Types must match for addition");
         }
 
         switch (result.getDType()) {

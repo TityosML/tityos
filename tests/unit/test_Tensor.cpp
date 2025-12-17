@@ -94,27 +94,27 @@ TEST_CASE("Tensor copy and move operators", "[Tensor]") {
     SECTION("Copy constructor") {
         auto example2 = example1;
 
-        CHECK(*static_cast<float*>(example2.at({0, 0})) == 1.0);
-        CHECK(*static_cast<float*>(example2.at({0, 1})) == 2.0);
-        CHECK(*static_cast<float*>(example2.at({1, 0})) == 3.0);
-        CHECK(*static_cast<float*>(example2.at({1, 1})) == 4.0);
+        CHECK(example2.elemAt<float>({0, 0}) == 1.0);
+        CHECK(example2.elemAt<float>({0, 1}) == 2.0);
+        CHECK(example2.elemAt<float>({1, 0}) == 3.0);
+        CHECK(example2.elemAt<float>({1, 1}) == 4.0);
 
-        *static_cast<float*>(example2.at({0, 0})) = 5.0f;
+        example2.elemAt<float>({0, 0}) = 5.0f;
 
-        CHECK(*static_cast<float*>(example1.at({0, 0})) == 5.0);
-        CHECK(*static_cast<float*>(example2.at({0, 0})) == 5.0);
+        CHECK(example1.elemAt<float>({0, 0}) == 5.0);
+        CHECK(example2.elemAt<float>({0, 0}) == 5.0);
     }
 
     SECTION("Move constructor") {
         auto example2 = std::move(example1);
 
-        CHECK(*static_cast<float*>(example2.at({0, 0})) == 1.0);
-        CHECK(*static_cast<float*>(example2.at({0, 1})) == 2.0);
-        CHECK(*static_cast<float*>(example2.at({1, 0})) == 3.0);
-        CHECK(*static_cast<float*>(example2.at({1, 1})) == 4.0);
+        CHECK(example2.elemAt<float>({0, 0}) == 1.0);
+        CHECK(example2.elemAt<float>({0, 1}) == 2.0);
+        CHECK(example2.elemAt<float>({1, 0}) == 3.0);
+        CHECK(example2.elemAt<float>({1, 1}) == 4.0);
 
-        *static_cast<float*>(example2.at({0, 0})) = 5.0f;
+        example2.elemAt<float>({0, 0}) = 5.0f;
 
-        CHECK(*static_cast<float*>(example2.at({0, 0})) == 5.0);
+        CHECK(example2.elemAt<float>({0, 0}) == 5.0);
     }
 }

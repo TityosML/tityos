@@ -14,10 +14,10 @@ TEST_CASE("Tensor Addition", "[Operation][Pointwise]") {
 
     auto result1 = ty::add(example1, example2);
 
-    CHECK(*static_cast<float*>(result1.at({0, 0})) == 6.0f);
-    CHECK(*static_cast<float*>(result1.at({0, 1})) == 8.0f);
-    CHECK(*static_cast<float*>(result1.at({1, 0})) == 10.0f);
-    CHECK(*static_cast<float*>(result1.at({1, 1})) == 12.0f);
+    CHECK(result1.elemAt<float>({0, 0}) == 6.0f);
+    CHECK(result1.elemAt<float>({0, 1}) == 8.0f);
+    CHECK(result1.elemAt<float>({1, 0}) == 10.0f);
+    CHECK(result1.elemAt<float>({1, 1}) == 12.0f);
 
     // Int32
     ty::Tensor example3(std::vector<int>({1, 2, 3, 4}),
@@ -29,8 +29,8 @@ TEST_CASE("Tensor Addition", "[Operation][Pointwise]") {
 
     auto result2 = ty::add(example3, example4);
 
-    CHECK(*static_cast<int*>(result2.at({0, 0})) == 6);
-    CHECK(*static_cast<int*>(result2.at({0, 1})) == 8);
-    CHECK(*static_cast<int*>(result2.at({1, 0})) == 10);
-    CHECK(*static_cast<int*>(result2.at({1, 1})) == 12);
+    CHECK(result2.elemAt<int>({0, 0}) == 6);
+    CHECK(result2.elemAt<int>({0, 1}) == 8);
+    CHECK(result2.elemAt<int>({1, 0}) == 10);
+    CHECK(result2.elemAt<int>({1, 1}) == 12);
 }

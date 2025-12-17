@@ -91,6 +91,25 @@ TITYOS_EXPORT class Tensor {
 
     void* at(const std::initializer_list<size_t>& index) const;
 
+    template <typename T>
+    T& elemAt(const size_t* indexStart, const size_t indexSize) {
+        return *static_cast<T*>(at(indexStart, indexSize));
+    }
+
+    template <typename T, size_t N>
+    T& elemAt(const std::array<size_t, N>& index) {
+        return *static_cast<T*>(at(index));
+    }
+
+    template <typename T> T& elemAt(const std::vector<size_t>& index) {
+        return *static_cast<T*>(at(index));
+    }
+
+    template <typename T>
+    T& elemAt(const std::initializer_list<size_t>& index) {
+        return *static_cast<T*>(at(index));
+    }
+
     using Iterator = internal::BaseTensor::Iterator;
 
     Iterator begin();

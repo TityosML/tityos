@@ -26,6 +26,10 @@ Tensor& Tensor::operator=(Tensor&& other) noexcept {
     return *this;
 }
 
+Tensor Tensor::copy() const {
+    return Tensor(std::make_shared<internal::BaseTensor>(baseTensor_->copy()));
+}
+
 Device Tensor::getDevice() const {
     return baseTensor_->getTensorStorage()->getDevice();
 }

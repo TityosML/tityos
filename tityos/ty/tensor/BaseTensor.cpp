@@ -42,6 +42,10 @@ namespace internal {
         return *this;
     }
 
+    BaseTensor BaseTensor::copy() const {
+        return BaseTensor(std::make_shared<TensorStorage>(*tensorStorage_), layout_, dtype_);
+    }
+
     void* BaseTensor::at(const size_t* indexStart) const {
         size_t byteOffset = layout_.computeByteIndex(indexStart, dtype_);
         return tensorStorage_->at(byteOffset);

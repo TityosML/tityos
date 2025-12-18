@@ -2,7 +2,7 @@
 
 namespace ty {
 Tensor add(const Tensor& a, const Tensor& b) {
-    Tensor result = a;
+    Tensor result = a.copy();
 
     internal::internalAdd(a.getDevice(), result, a, b);
 

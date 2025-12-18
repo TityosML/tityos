@@ -18,8 +18,6 @@ namespace internal {
 
         DType dtype_;
 
-        size_t endIndex() const;
-
       public:
         BaseTensor(std::shared_ptr<TensorStorage> data,
                    const ShapeStrides& layout,
@@ -29,6 +27,8 @@ namespace internal {
 
         BaseTensor& operator=(const BaseTensor& other);
         BaseTensor& operator=(BaseTensor&& other) noexcept;
+
+        BaseTensor copy() const;
 
         void* at(const size_t* indexStart) const;
         void* at(size_t index) const;
@@ -71,6 +71,9 @@ namespace internal {
 
         Iterator begin() const;
         Iterator end() const;
+
+        private:
+          size_t endIndex() const;
     };
 } // namespace internal
 } // namespace ty

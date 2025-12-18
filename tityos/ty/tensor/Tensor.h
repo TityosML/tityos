@@ -65,6 +65,9 @@ TITYOS_EXPORT class Tensor {
         : Tensor(std::vector<T>(data), std::vector<size_t>(shape), device,
                  dtype) {}
 
+    explicit Tensor(std::shared_ptr<internal::BaseTensor> baseTensor)
+        : baseTensor_(baseTensor) {}
+
     Tensor(const Tensor& other);
 
     Tensor(Tensor&& other) noexcept;
@@ -72,6 +75,8 @@ TITYOS_EXPORT class Tensor {
     Tensor& operator=(const Tensor& other);
 
     Tensor& operator=(Tensor&& other) noexcept;
+
+    Tensor copy() const;
 
     Device getDevice() const;
 

@@ -22,6 +22,14 @@ namespace internal {
 
         ~TensorStorage();
 
+        TensorStorage(const TensorStorage& other);
+
+        TensorStorage(TensorStorage&& other) noexcept;
+
+        TensorStorage& operator=(const TensorStorage& other);
+
+        TensorStorage& operator=(TensorStorage&& other) noexcept;
+
         void copyDataFromCpu(const void* dataStartPointer, size_t numBytes);
 
         void* at(size_t index);

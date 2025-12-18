@@ -7,16 +7,22 @@ Tensor::Tensor(Tensor&& other) noexcept
     : baseTensor_(std::move(other.baseTensor_)) {}
 
 Tensor& Tensor::operator=(const Tensor& other) {
-    if (this != &other) {
-        baseTensor_ = other.baseTensor_;
+    if (this == &other) {
+        return *this;
     }
+    
+    baseTensor_ = other.baseTensor_;
+
     return *this;
 }
 
 Tensor& Tensor::operator=(Tensor&& other) noexcept {
-    if (this != &other) {
-        baseTensor_ = std::move(other.baseTensor_);
+    if (this == &other) {
+        return *this;
     }
+
+    baseTensor_ = std::move(other.baseTensor_);
+
     return *this;
 }
 

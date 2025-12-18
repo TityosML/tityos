@@ -11,6 +11,52 @@ namespace internal {
         deallocate();
     }
 
+    TensorStorage::TensorStorage(const TensorStorage& other)
+        : size_(other.size_), device_(other.device_) {
+        allocate();
+        std::memcpy(startPointer_, other.startPointer_, size_);
+    }
+
+    TensorStorage::TensorStorage(TensorStorage&& other) noexcept
+        : startPointer_(other.startPointer_), size_(other.size_),
+          device_(other.device_) {
+        other.size_ = 0;
+        other.startPointer_ = nullptr;
+    }
+
+    TensorStorage& TensorStorage::operator=(const TensorStorage& other) {
+        if (this == &other) {
+            return *this;
+        }
+
+        deallocate();
+
+        size_ = other.size_;
+        device_ = other.device_;
+
+        allocate();
+        std::memcpy(startPointer_, other.startPointer_, size_);
+
+        return *this;
+    }
+
+    TensorStorage& TensorStorage::operator=(TensorStorage&& other) noexcept {
+        if (this == &other) {
+            return *this;
+        }
+
+        deallocate();
+
+        size_ = other.size_;
+        device_ = other.device_;
+        startPointer_ = other.startPointer_;
+
+        other.size_ = 0;
+        other.startPointer_ = nullptr;
+
+        return *this;
+    }
+
     void TensorStorage::copyDataFromCpu(const void* dataStartPointer,
                                         size_t numBytes) {
         if (device_.isCpu()) {

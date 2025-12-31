@@ -37,7 +37,6 @@ TEST_CASE("Tensor Addition", "[Operation][Pointwise]") {
 }
 
 TEST_CASE("Tensor Expand", "[Operation][Pointwise]") {
-
     // Floats
     ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}),
                         std::vector<size_t>({2, 2}));

@@ -2,8 +2,8 @@
 
 #include <stdexcept>
 
-#define DEFINE_FUNC_DISPATCH(func)                                             \
-    template <typename... Args> void func(Device device, Args&&... args) {     \
+#define DEFINE_FUNC_DISPATCH(func, RETURN_TYPE)                                             \
+    template <typename... Args> RETURN_TYPE func(Device device, Args&&... args) {     \
         if (device.isCuda()) {                                                 \
             if constexpr (func##CudaExists) {                                  \
                 func##Cuda(std::forward<Args>(args)...);                       \

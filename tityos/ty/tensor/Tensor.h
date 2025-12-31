@@ -84,7 +84,13 @@ TITYOS_EXPORT class Tensor {
 
     const std::array<size_t, internal::MAX_DIMS> getShape() const;
 
+    const std::array<size_t, internal::MAX_DIMS> getStrides() const;
+
     size_t getSize() const;
+
+    size_t getNDim() const;
+
+    std::shared_ptr<internal::BaseTensor> getBaseTensor() const;
 
     void* at(const size_t* indexStart, const size_t indexSize) const;
 

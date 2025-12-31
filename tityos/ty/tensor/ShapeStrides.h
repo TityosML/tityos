@@ -33,9 +33,10 @@ namespace internal {
         size_t tensorToLinearIndex(
             const std::array<size_t, MAX_DIMS>& linearIndex) const;
 
-        size_t getNDim() const;
         const std::array<size_t, MAX_DIMS>& getShape() const;
         const std::array<size_t, MAX_DIMS>& getStrides() const;
+        size_t getNDim() const;
+        size_t getOffset() const;
         size_t numElements() const;
 
         bool operator==(const ShapeStrides& other) const;

@@ -59,14 +59,17 @@ namespace internal {
         return linear;
     }
 
-    size_t ShapeStrides::getNDim() const {
-        return ndim_;
-    }
     const std::array<size_t, MAX_DIMS>& ShapeStrides::getShape() const {
         return shape_;
     }
     const std::array<size_t, MAX_DIMS>& ShapeStrides::getStrides() const {
         return strides_;
+    }
+    size_t ShapeStrides::getNDim() const {
+        return ndim_;
+    }
+    size_t ShapeStrides::getOffset() const {
+        return offset_;
     }
     size_t ShapeStrides::numElements() const {
         return std::accumulate(shape_.begin(), shape_.begin() + ndim_, 1,

@@ -1,4 +1,5 @@
 #include "tityos/ty/ops/add.h"
+#include "tityos/ty/ops/expand.h"
 #include "tityos/ty/tensor/Dtype.h"
 #include "tityos/ty/tensor/ShapeStrides.h"
 
@@ -34,3 +35,23 @@ TEST_CASE("Tensor Addition", "[Operation][Pointwise]") {
     CHECK(result2.elemAt<int>({1, 0}) == 10);
     CHECK(result2.elemAt<int>({1, 1}) == 12);
 }
+
+TEST_CASE("Tensor Expand", "[Operation][Pointwise]") {
+
+    // Floats
+    ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}),
+                        std::vector<size_t>({2, 2}));
+
+    auto result1 = ty::expand(example1, {4, 2, 2});
+
+    CHECK(result1.elemAt<float>({0, 0, 0}) == 1.0f);
+    CHECK(result1.elemAt<float>({0, 0, 1}) == 2.0f);
+    CHECK(result1.elemAt<float>({0, 1, 0}) == 3.0f);
+    CHECK(result1.elemAt<float>({0, 1, 1}) == 4.0f);
+
+    CHECK(result1.elemAt<float>({1, 0, 0}) == 1.0f);
+    CHECK(result1.elemAt<float>({2, 0, 1}) == 2.0f);
+    CHECK(result1.elemAt<float>({3, 1, 0}) == 3.0f);
+    CHECK(result1.elemAt<float>({3, 1, 1}) == 4.0f);
+}
+

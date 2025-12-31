@@ -10,7 +10,7 @@ Tensor& Tensor::operator=(const Tensor& other) {
     if (this == &other) {
         return *this;
     }
-    
+
     baseTensor_ = other.baseTensor_;
 
     return *this;
@@ -42,6 +42,10 @@ const std::array<size_t, internal::MAX_DIMS> Tensor::getShape() const {
     return baseTensor_->getLayout().getShape();
 }
 
+const std::array<size_t, internal::MAX_DIMS> Tensor::getStrides() const {
+    return baseTensor_->getLayout().getStrides();
+}
+
 size_t Tensor::getSize() const {
     size_t tensorSize = 1;
     const std::array<size_t, internal::MAX_DIMS>& shape = getShape();
@@ -49,6 +53,14 @@ size_t Tensor::getSize() const {
         tensorSize *= shape[i];
     }
     return tensorSize;
+}
+
+size_t Tensor::getNDim() const {
+    return baseTensor_->getLayout().getNDim();
+}
+
+std::shared_ptr<internal::BaseTensor> Tensor::getBaseTensor() const {
+    return baseTensor_;
 }
 
 void* Tensor::at(const size_t* indexStart, const size_t indexSize) const {

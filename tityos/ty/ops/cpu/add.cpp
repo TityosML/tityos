@@ -24,7 +24,6 @@ namespace internal {
 
     BaseTensor internalAddCpu(const BaseTensor& tensor1,
                               const BaseTensor& tensor2) {
-        // TODO: Make this account for broadcasting
         BaseTensor result = tensor1.copy();
 
         if (result.getDType() != tensor1.getDType() ||

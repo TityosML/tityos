@@ -9,6 +9,6 @@ namespace ty {
 namespace internal {
     DECLARE_NO_CUDA_DISPATCH_FUNCTION(internalAdd)
     DECLARE_AVX2_DISPATCH_FUNCTION(internalAdd)
-    DEFINE_FUNC_DISPATCH(internalAdd, void)
+    DEFINE_FUNC_DISPATCH(internalAdd, BaseTensor)
 } // namespace internal
 } // namespace ty

@@ -38,12 +38,8 @@ DType Tensor::getDType() const {
     return baseTensor_->getDType();
 }
 
-const std::array<size_t, internal::MAX_DIMS> Tensor::getShape() const {
+const std::array<size_t, internal::MAX_DIMS>& Tensor::getShape() const {
     return baseTensor_->getLayout().getShape();
-}
-
-const std::array<size_t, internal::MAX_DIMS> Tensor::getStrides() const {
-    return baseTensor_->getLayout().getStrides();
 }
 
 size_t Tensor::getSize() const {

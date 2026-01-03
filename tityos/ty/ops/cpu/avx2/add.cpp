@@ -4,10 +4,10 @@
 
 namespace ty {
 namespace internal {
-    void internalAddAvx2(Tensor& result, const Tensor& tensor1,
-                         const Tensor& tensor2) {
+    BaseTensor internalAddAvx2(const BaseTensor& tensor1,
+                               const BaseTensor& tensor2) {
         // TODO: Implment avx2 addition
-        internalAddCpu(result, tensor1, tensor2);
+        return internalAddCpu(tensor1, tensor2);
     }
 } // namespace internal
 } // namespace ty

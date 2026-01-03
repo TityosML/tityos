@@ -82,9 +82,7 @@ TITYOS_EXPORT class Tensor {
 
     DType getDType() const;
 
-    const std::array<size_t, internal::MAX_DIMS> getShape() const;
-
-    const std::array<size_t, internal::MAX_DIMS> getStrides() const;
+    const std::array<size_t, internal::MAX_DIMS>& getShape() const;
 
     size_t getSize() const;
 

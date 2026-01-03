@@ -60,6 +60,14 @@ namespace internal {
         return layout_;
     }
 
+    const std::array<size_t, MAX_DIMS>& BaseTensor::getShape() const {
+        return layout_.getShape();
+    }
+
+    const std::array<size_t, MAX_DIMS>& BaseTensor::getStrides() const {
+        return layout_.getStrides();
+    }
+
     const std::shared_ptr<TensorStorage>& BaseTensor::getTensorStorage() const {
         return tensorStorage_;
     }

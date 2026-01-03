@@ -6,8 +6,8 @@
 namespace ty {
 namespace internal {
     template <typename T>
-    void addCpuKernel(Tensor& result, const Tensor& tensor1,
-                      const Tensor& tensor2) {
+    void addCpuKernel(BaseTensor& result, const BaseTensor& tensor1,
+                      const BaseTensor& tensor2) {
         auto resultIt = result.begin();
         auto it1 = tensor1.begin();
         auto it2 = tensor2.begin();
@@ -22,8 +22,11 @@ namespace internal {
         }
     }
 
-    void internalAddCpu(Tensor& result, const Tensor& tensor1,
-                        const Tensor& tensor2) {
+    BaseTensor internalAddCpu(const BaseTensor& tensor1,
+                              const BaseTensor& tensor2) {
+        // TODO: Make this account for broadcasting
+        BaseTensor result = tensor1.copy();
+
         if (result.getDType() != tensor1.getDType() ||
             result.getDType() != tensor2.getDType()) {
             throw std::invalid_argument("Types must match for addition");
@@ -63,6 +66,8 @@ namespace internal {
         default:
             throw std::runtime_error("Unsupported dtype for addition");
         }
+
+        return result;
     }
 } // namespace internal
 } // namespace ty

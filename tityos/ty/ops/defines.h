@@ -2,23 +2,22 @@
 
 #include <stdexcept>
 
-#define DEFINE_FUNC_DISPATCH(func, RETURN_TYPE)                                             \
-    template <typename... Args> RETURN_TYPE func(Device device, Args&&... args) {     \
+#define DEFINE_FUNC_DISPATCH(func, RETURN_TYPE)                                \
+    template <typename... Args>                                                \
+    RETURN_TYPE func(Device device, Args&&... args) {                          \
         if (device.isCuda()) {                                                 \
             if constexpr (func##CudaExists) {                                  \
-                func##Cuda(std::forward<Args>(args)...);                       \
+                return func##Cuda(std::forward<Args>(args)...);                \
             } else {                                                           \
                 throw std::runtime_error("Cannot apply function to a cuda "    \
                                          "tensor CUDA is not available");      \
             }                                                                  \
-            return;                                                            \
         } else if (device.isCpu()) {                                           \
             if constexpr (func##Avx2Exists) {                                  \
-                func##Avx2(std::forward<Args>(args)...);                       \
+                return func##Avx2(std::forward<Args>(args)...);                \
             } else {                                                           \
-                func##Cpu(std::forward<Args>(args)...);                        \
+                return func##Cpu(std::forward<Args>(args)...);                 \
             }                                                                  \
-            return;                                                            \
         }                                                                      \
                                                                                \
         throw std::runtime_error("Unknown device");                            \

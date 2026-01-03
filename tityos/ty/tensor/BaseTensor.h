@@ -35,6 +35,10 @@ namespace internal {
 
         const ShapeStrides& getLayout() const;
 
+        const std::array<size_t, MAX_DIMS>& getShape() const;
+
+        const std::array<size_t, MAX_DIMS>& getStrides() const;
+
         const std::shared_ptr<TensorStorage>& getTensorStorage() const;
 
         DType getDType() const;

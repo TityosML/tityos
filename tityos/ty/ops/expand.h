@@ -5,5 +5,5 @@
 #include <algorithm>
 
 namespace ty {
-Tensor expand(const Tensor& a, std::vector<size_t> newShape);
+Tensor expand(const Tensor& tensor, std::vector<size_t> newShape);
 }

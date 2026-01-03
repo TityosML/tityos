@@ -1,13 +1,14 @@
 #include "tityos/ty/ops/expand.h"
 
 namespace ty {
-Tensor expand(const Tensor& a, std::vector<size_t> newShape) {
+Tensor expand(const Tensor& tensor, std::vector<size_t> newShape) {
     size_t newNDim = newShape.size();
-    size_t oldNDim = a.getNDim();
+    size_t oldNDim = tensor.getNDim();
     std::array<size_t, internal::MAX_DIMS> newStrides;
     std::array<size_t, internal::MAX_DIMS> newShapeArray;
-    auto oldShape = a.getShape();
-    auto oldStrides = a.getStrides();
+    auto baseTensor = tensor.getBaseTensor();
+    auto oldShape = baseTensor->getShape();
+    auto oldStrides = baseTensor->getStrides();
     size_t shapeOffset = oldNDim - newNDim;
 
     if (newNDim < oldNDim) {
@@ -39,12 +40,11 @@ Tensor expand(const Tensor& a, std::vector<size_t> newShape) {
         newShapeArray[i] = newShape[i];
     }
 
-    auto tensorStorage = a.getBaseTensor()->getTensorStorage();
-    auto offset = a.getBaseTensor()->getLayout().getOffset();
+    auto offset = tensor.getBaseTensor()->getLayout().getOffset();
     internal::ShapeStrides newLayout(newShapeArray, newStrides, offset,
                                      newNDim);
     auto newBaseTensor = std::make_shared<internal::BaseTensor>(
-        tensorStorage, newLayout, a.getDType());
+        baseTensor->getTensorStorage(), newLayout, tensor.getDType());
 
     return Tensor(newBaseTensor);
 }

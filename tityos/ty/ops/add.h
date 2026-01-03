@@ -1,6 +1,8 @@
 #pragma once
 
 #include "tityos/ty/ops/core/add.h"
+#include "tityos/ty/ops/utils.h"
+#include "tityos/ty/ops/expand.h"
 
 #include <memory>
 

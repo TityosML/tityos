@@ -44,6 +44,7 @@ option(TITYOS_BUILD_WARNINGS "Enable compiler warnings" OFF)
 
 # Testing options
 option(TITYOS_BUILD_TESTS "Build tests" OFF)
+option(TITYOS_ENABLE_PERFORMANCE_TESTS "Enable performance tests" OFF)
 
 # CUDA options
 option(TITYOS_USE_CUDA "Build to allow cuda" OFF)

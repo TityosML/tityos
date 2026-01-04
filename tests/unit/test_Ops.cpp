@@ -53,6 +53,32 @@ TEST_CASE("Tensor Addition", "[Operation][Pointwise]") {
     CHECK(result3.elemAt<int>({0, 1}) == 8);
     CHECK(result3.elemAt<int>({1, 0}) == 10);
     CHECK(result3.elemAt<int>({1, 1}) == 12);
+
+    // Int32 with broadcasting
+    ty::Tensor example7(std::vector<int>({1, 2, 3, 4, 5, 6}),
+                        std::vector<size_t>({1, 3, 2}),
+                        {ty::DeviceType::CPU, 0}, ty::DType::Int32);
+
+    ty::Tensor example8(std::vector<int>({10, 20, 30, 40, 50, 60, 70, 80}),
+                        std::vector<size_t>({4, 1, 2}),
+                        {ty::DeviceType::CPU, 0}, ty::DType::Int32);
+
+    auto result4 = ty::add(example7, example8);
+
+    CHECK(result4.elemAt<int>({0, 0, 0}) == 11);
+    CHECK(result4.elemAt<int>({0, 0, 1}) == 22);
+    CHECK(result4.elemAt<int>({0, 1, 0}) == 13);
+    CHECK(result4.elemAt<int>({0, 2, 1}) == 26);
+
+    CHECK(result4.elemAt<int>({1, 0, 0}) == 31);
+    CHECK(result4.elemAt<int>({1, 1, 1}) == 44);
+    CHECK(result4.elemAt<int>({1, 2, 0}) == 35);
+
+    CHECK(result4.elemAt<int>({2, 0, 1}) == 62);
+    CHECK(result4.elemAt<int>({2, 1, 0}) == 53);
+
+    CHECK(result4.elemAt<int>({3, 2, 0}) == 75);
+    CHECK(result4.elemAt<int>({3, 2, 1}) == 86);
 }
 
 TEST_CASE("Tensor Expand", "[Operation][Pointwise]") {

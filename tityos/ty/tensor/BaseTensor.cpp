@@ -60,6 +60,10 @@ namespace internal {
         return layout_;
     }
 
+    size_t BaseTensor::getNDim() const {
+        return layout_.getNDim();
+    }
+
     const std::array<size_t, MAX_DIMS>& BaseTensor::getShape() const {
         return layout_.getShape();
     }
@@ -68,8 +72,20 @@ namespace internal {
         return layout_.getStrides();
     }
 
+    size_t BaseTensor::getLogicalSize() const {
+        return layout_.numElements() * dtypeSize(dtype_);
+    }
+
+    size_t BaseTensor::getSize() const {
+        return tensorStorage_->getSize();
+    }
+
     const std::shared_ptr<TensorStorage>& BaseTensor::getTensorStorage() const {
         return tensorStorage_;
+    }
+
+    Device BaseTensor::getDevice() const {
+        return tensorStorage_->getDevice();
     }
 
     DType BaseTensor::getDType() const {

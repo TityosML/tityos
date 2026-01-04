@@ -24,7 +24,11 @@ namespace internal {
 
     BaseTensor internalAddCpu(const BaseTensor& tensor1,
                               const BaseTensor& tensor2) {
-        BaseTensor result = tensor1.copy();
+        // TODO: Replace this with the copy function when that gets updated
+        auto resultStorage = std::make_shared<TensorStorage>(
+            tensor1.getLogicalSize(), tensor1.getDevice());
+        ShapeStrides resultLayout(tensor1.getShape(), tensor1.getNDim());
+        BaseTensor result(resultStorage, resultLayout, tensor1.getDType());
 
         if (result.getDType() != tensor1.getDType() ||
             result.getDType() != tensor2.getDType()) {

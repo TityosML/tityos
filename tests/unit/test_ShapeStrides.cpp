@@ -15,15 +15,15 @@ TEST_CASE("Accessing ShapeStrides and Computing Byte Index", "[ShapeStrides]") {
 
     CHECK(unknownExample1.getNDim() == 2);
     CHECK(unknownExample1.getShape() ==
-          std::array<size_t, ty::internal::MAX_DIMS>{2, 2});
+          ty::internal::TensorShape{2, 2});
     CHECK(unknownExample1.getStrides() ==
-          std::array<size_t, ty::internal::MAX_DIMS>{2, 1});
+          ty::internal::TensorStrides{2, 1});
 
     CHECK(unknownExample2.getNDim() == 3);
     CHECK(unknownExample2.getShape() ==
-          std::array<size_t, ty::internal::MAX_DIMS>{2, 3, 4});
+          ty::internal::TensorShape{2, 3, 4});
     CHECK(unknownExample2.getStrides() ==
-          std::array<size_t, ty::internal::MAX_DIMS>{12, 4, 1});
+          ty::internal::TensorStrides{12, 4, 1});
 
     size_t index1[1] = {1};
     size_t index2[2] = {1, 0};

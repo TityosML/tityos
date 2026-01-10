@@ -37,7 +37,7 @@ TITYOS_EXPORT class Tensor {
             std::make_shared<internal::TensorStorage>(numBytes, device);
         dataStorage->copyDataFromCpu(std::data(data), numBytes);
 
-        std::array<size_t, internal::MAX_DIMS> storageShape{};
+        internal::TensorShape storageShape{};
         int i = 0;
         for (size_t s : shape) {
             storageShape[i++] = s;

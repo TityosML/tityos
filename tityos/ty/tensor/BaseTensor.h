@@ -37,9 +37,9 @@ namespace internal {
 
         size_t getNDim() const;
 
-        const std::array<size_t, MAX_DIMS>& getShape() const;
+        const TensorShape& getShape() const;
 
-        const std::array<size_t, MAX_DIMS>& getStrides() const;
+        const TensorStrides& getStrides() const;
 
         size_t getLogicalSize() const;
         

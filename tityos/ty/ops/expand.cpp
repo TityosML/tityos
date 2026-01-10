@@ -4,8 +4,8 @@ namespace ty {
 Tensor expand(const Tensor& tensor, std::vector<size_t> newShape) {
     size_t newNDim = newShape.size();
     size_t oldNDim = tensor.getNDim();
-    std::array<size_t, internal::MAX_DIMS> newStrides;
-    std::array<size_t, internal::MAX_DIMS> newShapeArray;
+    internal::TensorStrides newStrides;
+    internal::TensorShape newShapeArray;
     auto baseTensor = tensor.getBaseTensor();
     auto oldShape = baseTensor->getShape();
     auto oldStrides = baseTensor->getStrides();

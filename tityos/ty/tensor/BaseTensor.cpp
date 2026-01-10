@@ -64,11 +64,11 @@ namespace internal {
         return layout_.getNDim();
     }
 
-    const std::array<size_t, MAX_DIMS>& BaseTensor::getShape() const {
+    const TensorShape& BaseTensor::getShape() const {
         return layout_.getShape();
     }
 
-    const std::array<size_t, MAX_DIMS>& BaseTensor::getStrides() const {
+    const TensorStrides& BaseTensor::getStrides() const {
         return layout_.getStrides();
     }
 

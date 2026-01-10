@@ -140,7 +140,7 @@ std::string Tensor::toString() const {
     // TODO : get a copy of this tensor on the cpu if not already there
 
     const ty::internal::ShapeStrides& layout = baseTensor_->getLayout();
-    const std::array<size_t, internal::MAX_DIMS>& shape = layout.getShape();
+    const internal::TensorShape& shape = layout.getShape();
     const DType dtype = getDType();
     const size_t ndim = layout.getNDim();
     const size_t tensorSize = getSize();

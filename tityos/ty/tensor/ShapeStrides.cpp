@@ -2,12 +2,12 @@
 
 namespace ty {
 namespace internal {
-    ShapeStrides::ShapeStrides(const std::array<size_t, MAX_DIMS>& shape,
-                               const std::array<size_t, MAX_DIMS>& strides,
+    ShapeStrides::ShapeStrides(const TensorShape& shape,
+                               const TensorStrides& strides,
                                size_t offset, size_t ndim)
         : shape_(shape), strides_(strides), offset_(offset), ndim_(ndim) {}
 
-    ShapeStrides::ShapeStrides(const std::array<size_t, MAX_DIMS>& shape,
+    ShapeStrides::ShapeStrides(const TensorShape& shape,
                                size_t ndim)
         : shape_(shape), offset_(0), ndim_(ndim) {
         initialStrides();
@@ -59,10 +59,10 @@ namespace internal {
         return linear;
     }
 
-    const std::array<size_t, MAX_DIMS>& ShapeStrides::getShape() const {
+    const TensorShape& ShapeStrides::getShape() const {
         return shape_;
     }
-    const std::array<size_t, MAX_DIMS>& ShapeStrides::getStrides() const {
+    const TensorStrides& ShapeStrides::getStrides() const {
         return strides_;
     }
     size_t ShapeStrides::getNDim() const {
@@ -77,7 +77,7 @@ namespace internal {
     }
 
     void ShapeStrides::initialStrides() {
-        strides_ = std::array<size_t, MAX_DIMS>{};
+        strides_ = TensorStrides{};
         int currentStride = 1;
 
         for (int i = ndim_ - 1; i >= 0; i--) {

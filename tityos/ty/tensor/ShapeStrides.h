@@ -5,25 +5,28 @@
 #include <array>
 #include <cstddef>
 #include <numeric>
+#include <type_traits>
 
 namespace ty {
 namespace internal {
     constexpr size_t MAX_DIMS = 64;
+    using TensorStrides = std::array<ptrdiff_t, MAX_DIMS>;
+    using TensorShape = std::array<size_t, MAX_DIMS>;
 
     class ShapeStrides {
       private:
-        std::array<size_t, MAX_DIMS> shape_;
-        std::array<size_t, MAX_DIMS> strides_;
+        TensorShape shape_;
+        TensorStrides strides_;
 
         size_t offset_;
         size_t ndim_;
 
       public:
-        ShapeStrides(const std::array<size_t, MAX_DIMS>& shape,
-                     const std::array<size_t, MAX_DIMS>& strides, size_t offset,
+        ShapeStrides(const TensorShape& shape,
+                     const TensorStrides& strides, size_t offset,
                      size_t ndim);
 
-        ShapeStrides(const std::array<size_t, MAX_DIMS>& shape, size_t ndim);
+        ShapeStrides(const TensorShape& shape, size_t ndim);
 
         size_t computeByteIndex(const size_t* indexStart, DType dtype) const;
         size_t computeByteIndex(size_t index, DType dtype) const;
@@ -33,8 +36,8 @@ namespace internal {
         size_t tensorToLinearIndex(
             const std::array<size_t, MAX_DIMS>& linearIndex) const;
 
-        const std::array<size_t, MAX_DIMS>& getShape() const;
-        const std::array<size_t, MAX_DIMS>& getStrides() const;
+        const TensorShape& getShape() const;
+        const TensorStrides& getStrides() const;
         size_t getNDim() const;
         size_t getOffset() const;
         size_t numElements() const;

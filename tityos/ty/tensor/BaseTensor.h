@@ -33,6 +33,14 @@ namespace internal {
         void* at(const size_t* indexStart) const;
         void* at(size_t index) const;
 
+        template <typename T> T* elemAt(const size_t* indexStart) const {
+            return reinterpret_cast<T*>(at(indexStart));
+        }
+
+        template <typename T> T* elemAt(size_t index) const {
+            return reinterpret_cast<T*>(at(index));
+        }
+
         const ShapeStrides& getLayout() const;
 
         size_t getNDim() const;
@@ -42,7 +50,7 @@ namespace internal {
         const TensorStrides& getStrides() const;
 
         size_t getLogicalSize() const;
-        
+
         size_t getSize() const;
 
         const std::shared_ptr<TensorStorage>& getTensorStorage() const;
@@ -84,8 +92,8 @@ namespace internal {
         Iterator begin() const;
         Iterator end() const;
 
-        private:
-          size_t endIndex() const;
+      private:
+        size_t endIndex() const;
     };
 } // namespace internal
 } // namespace ty

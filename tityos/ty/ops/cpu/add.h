@@ -1,6 +1,7 @@
 #pragma once
 
 #include "tityos/ty/tensor/Tensor.h"
+#include "tityos/ty/ops/TensorView.h"
 
 #include <cstdint>
 #include <stdexcept>

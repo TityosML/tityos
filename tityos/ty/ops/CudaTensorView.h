@@ -14,10 +14,10 @@ namespace internal {
         size_t* shape;
         ptrdiff_t* strides;
         size_t offset;
-        int ndim;
+        size_t ndim;
 
-        __host__ __device__ T& operator[](size_t linear_idx) const {
-            size_t memIdx = offset;
+        __device__ T& operator[](size_t linear_idx) const {
+            ptrdiff_t memIdx = offset;
             size_t idx = linear_idx;
 
             for (int d = ndim - 1; d >= 0; d--) {
@@ -43,8 +43,8 @@ namespace internal {
         size_t ndim = tensor.getNDim();
 
         // copy shape and strides to gpu
-        cudaMalloc(&d_shape, sizeof(T) * ndim);
-        cudaMalloc(&d_strides, sizeof(T) * ndim);
+        cudaMalloc(&d_shape, sizeof(size_t) * ndim);
+        cudaMalloc(&d_strides, sizeof(ptrdiff_t) * ndim);
 
         cudaMemcpy(d_shape, tensor.getShape().data(), sizeof(size_t) * ndim,
                    cudaMemcpyHostToDevice);

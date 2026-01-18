@@ -59,6 +59,12 @@ namespace internal {
 
         DType getDType() const;
 
+        BaseTensor BaseTensor::slice(size_t dim, size_t start, size_t stop,
+                                     size_t step) const {
+            return BaseTensor(tensorStorage_,
+                              layout_.slice(dim, start, stop, step), dtype_);
+        };
+
         struct Iterator {
           private:
             const BaseTensor& baseTensor_;

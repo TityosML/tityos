@@ -1,14 +1,15 @@
 #include "tityos/ty/tensor/ShapeStrides.h"
 
+#include "tityos/ty/tensor/Tensor.h"
+
 namespace ty {
 namespace internal {
     ShapeStrides::ShapeStrides(const TensorShape& shape,
-                               const TensorStrides& strides,
-                               size_t offset, size_t ndim)
+                               const TensorStrides& strides, size_t offset,
+                               size_t ndim)
         : shape_(shape), strides_(strides), offset_(offset), ndim_(ndim) {}
 
-    ShapeStrides::ShapeStrides(const TensorShape& shape,
-                               size_t ndim)
+    ShapeStrides::ShapeStrides(const TensorShape& shape, size_t ndim)
         : shape_(shape), offset_(0), ndim_(ndim) {
         initialStrides();
     }
@@ -57,6 +58,30 @@ namespace internal {
         }
 
         return linear;
+    }
+
+    ShapeStrides ShapeStrides::slice(size_t dim, size_t start, size_t stop,
+                                     size_t step) const {
+        if (stop > shape_[dim])
+            stop = shape_[dim];
+
+        if (dim >= ndim_) {
+            throw std::out_of_range(
+                "Slice dimension exceeds tensor dimensions");
+        }
+
+        if (step == 0)
+            throw std::invalid_argument("Step cannot be 0.");
+
+        TensorShape newShape = shape_;
+        newShape[dim] = (stop - start + step - 1) / step;
+
+        TensorStrides newStrides = strides_;
+        newStrides[dim] *= step;
+
+        size_t newOffset = offset_ + start * strides_[dim];
+
+        return ShapeStrides(newShape, newStrides, newOffset, ndim_);
     }
 
     const TensorShape& ShapeStrides::getShape() const {

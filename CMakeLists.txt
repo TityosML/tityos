@@ -74,6 +74,7 @@ target_include_directories(
 
 # CUDA
 if (TITYOS_USE_CUDA)
+    set_target_properties(tityos PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
     find_package(CUDAToolkit REQUIRED)
     enable_language(CUDA)
     message(STATUS "Compiling using CUDA")
@@ -155,3 +156,4 @@ if(TITYOS_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
+

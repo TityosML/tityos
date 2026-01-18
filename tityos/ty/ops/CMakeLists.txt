@@ -7,3 +7,4 @@ target_sources(
 )
 
 include(${CMAKE_CURRENT_LIST_DIR}/cpu/CMakeLists.txt)
+include(${CMAKE_CURRENT_LIST_DIR}/cuda/CMakeLists.txt)

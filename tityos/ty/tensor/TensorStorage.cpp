@@ -64,8 +64,8 @@ namespace internal {
         }
 #ifdef TITYOS_USE_CUDA
         if (device_.isCuda()) {
-            cudaMemcpy(startPointer_, dataStartPointer, numBytes,
-                       cudaMemcpyHostToDevice);
+            CUDA_CHECK(cudaMemcpy(startPointer_, dataStartPointer, numBytes,
+                                  cudaMemcpyHostToDevice));
         }
 #endif
     }
@@ -102,7 +102,7 @@ namespace internal {
         if (device_.isCuda()) {
 #ifdef TITYOS_USE_CUDA
             if (cuda::isCudaAvailable()) {
-                cudaMalloc(&startPointer_, size_);
+                CUDA_CHECK(cudaMalloc(&startPointer_, size_));
             } else {
                 throw std::runtime_error("Cannot allocate Tensor Data to CUDA. "
                                          "CUDA is not available");
@@ -126,7 +126,7 @@ namespace internal {
 
         if (device_.isCuda()) {
 #ifdef TITYOS_USE_CUDA
-            cudaFree(startPointer_);
+            CUDA_CHECK(cudaFree(startPointer_));
             startPointer_ = nullptr;
 #endif
             return;

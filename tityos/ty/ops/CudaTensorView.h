@@ -43,13 +43,14 @@ namespace internal {
         size_t ndim = tensor.getNDim();
 
         // copy shape and strides to gpu
-        cudaMalloc(&d_shape, sizeof(size_t) * ndim);
-        cudaMalloc(&d_strides, sizeof(ptrdiff_t) * ndim);
+        CUDA_CHECK(cudaMalloc(&d_shape, sizeof(size_t) * ndim));
+        CUDA_CHECK(cudaMalloc(&d_strides, sizeof(ptrdiff_t) * ndim));
 
-        cudaMemcpy(d_shape, tensor.getShape().data(), sizeof(size_t) * ndim,
-                   cudaMemcpyHostToDevice);
-        cudaMemcpy(d_strides, tensor.getStrides().data(),
-                   sizeof(ptrdiff_t) * ndim, cudaMemcpyHostToDevice);
+        CUDA_CHECK(cudaMemcpy(d_shape, tensor.getShape().data(),
+                              sizeof(size_t) * ndim, cudaMemcpyHostToDevice));
+        CUDA_CHECK(cudaMemcpy(d_strides, tensor.getStrides().data(),
+                              sizeof(ptrdiff_t) * ndim,
+                              cudaMemcpyHostToDevice));
 
         tensorView.shape = d_shape;
         tensorView.strides = d_strides;

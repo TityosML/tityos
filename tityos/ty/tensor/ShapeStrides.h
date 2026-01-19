@@ -43,8 +43,8 @@ namespace internal {
 
         bool operator==(const ShapeStrides& other) const;
 
-        ShapeStrides ShapeStrides::slice(size_t dim, size_t start, size_t stop,
-                                         size_t step) const;
+        ShapeStrides ShapeStrides::slice(size_t dim, ptrdiff_t start, ptrdiff_t stop,
+                                         ptrdiff_t step) const;
 
       private:
         void initialStrides();

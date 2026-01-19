@@ -11,8 +11,8 @@ namespace internal {
 
     template <typename T> struct CudaTensorView {
         T* data;
-        size_t* shape;
-        ptrdiff_t* strides;
+        size_t shape[MAX_DIMS];
+        ptrdiff_t strides[MAX_DIMS];
         size_t offset;
         size_t ndim;
 
@@ -37,22 +37,15 @@ namespace internal {
         tensorView.data =
             reinterpret_cast<T*>(tensor.getTensorStorage()->begin());
 
-        size_t* d_shape;
-        ptrdiff_t* d_strides;
-
         size_t ndim = tensor.getNDim();
+        TensorShape shape = tensor.getShape();
+        TensorStrides strides = tensor.getStrides();
 
-        // copy shape and strides to gpu
-        cudaMalloc(&d_shape, sizeof(size_t) * ndim);
-        cudaMalloc(&d_strides, sizeof(ptrdiff_t) * ndim);
+        for (size_t i = 0; i < ndim; i++) {
+            tensorView.shape[i] = shape[i];
+            tensorView.strides[i] = strides[i];
+        }
 
-        cudaMemcpy(d_shape, tensor.getShape().data(), sizeof(size_t) * ndim,
-                   cudaMemcpyHostToDevice);
-        cudaMemcpy(d_strides, tensor.getStrides().data(),
-                   sizeof(ptrdiff_t) * ndim, cudaMemcpyHostToDevice);
-
-        tensorView.shape = d_shape;
-        tensorView.strides = d_strides;
         tensorView.offset = tensor.getLayout().getOffset();
         tensorView.ndim = ndim;
 

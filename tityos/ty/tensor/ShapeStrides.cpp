@@ -107,8 +107,7 @@ namespace internal {
         TensorStrides newStrides = strides_;
         newStrides[dim] *= step;
 
-        size_t newOffset = offset_ + static_cast<size_t>(start) *
-                                         static_cast<size_t>(strides_[dim]);
+        size_t newOffset = offset_ + static_cast<size_t>(start) * strides_[dim];
 
         return ShapeStrides(newShape, newStrides, newOffset, ndim_);
     }

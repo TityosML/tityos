@@ -2,6 +2,8 @@
 
 #include "tityos/ty/tensor/Tensor.h"
 
+#include <algorithm>
+
 namespace ty {
 namespace internal {
     ShapeStrides::ShapeStrides(const TensorShape& shape,
@@ -60,26 +62,46 @@ namespace internal {
         return linear;
     }
 
-    ShapeStrides ShapeStrides::slice(size_t dim, size_t start, size_t stop,
-                                     size_t step) const {
-        if (stop > shape_[dim])
-            stop = shape_[dim];
-
+    ShapeStrides ShapeStrides::slice(size_t dim, ptrdiff_t start,
+                                     ptrdiff_t stop, ptrdiff_t step) const {
         if (dim >= ndim_) {
             throw std::out_of_range(
                 "Slice dimension exceeds tensor dimensions");
         }
 
-        if (step == 0)
+        if (step == 0) {
             throw std::invalid_argument("Step cannot be 0.");
+        }
+
+        ptrdiff_t size = static_cast<ptrdiff_t>(shape_[dim]);
+
+        if (start < 0) {
+            start += size;
+        }
+
+        if (stop < 0) {
+            stop += size;
+        }
+
+        if (step > 0) {
+            start = std::clamp(start, ptrdiff_t{0}, size);
+            stop = std::clamp(stop, ptrdiff_t{0}, size);
+        } else {
+            start = std::clamp(start, ptrdiff_t{0}, size - 1);
+            stop = std::clamp(stop, ptrdiff_t{-1}, size - 1);
+        }
+
+        ptrdiff_t newSize = std::max<ptrdiff_t>(
+            0, (stop - start + step + (step > 0 ? -1 : 1)) / step);
 
         TensorShape newShape = shape_;
-        newShape[dim] = (stop - start + step - 1) / step;
+        newShape[dim] = static_cast<size_t>(newSize);
 
         TensorStrides newStrides = strides_;
         newStrides[dim] *= step;
 
-        size_t newOffset = offset_ + start * strides_[dim];
+        size_t newOffset = offset_ + static_cast<size_t>(start) *
+                                         static_cast<size_t>(strides_[dim]);
 
         return ShapeStrides(newShape, newStrides, newOffset, ndim_);
     }

@@ -62,8 +62,11 @@ namespace internal {
         return linear;
     }
 
-    ShapeStrides ShapeStrides::slice(size_t dim, ptrdiff_t start,
-                                     ptrdiff_t stop, ptrdiff_t step) const {
+    const ptrdiff_t None = std::numeric_limits<ptrdiff_t>::min();
+
+    ShapeStrides ShapeStrides::slice(size_t dim, ptrdiff_t start = None,
+                                     ptrdiff_t stop = None,
+                                     ptrdiff_t step = None) const {
         if (dim >= ndim_) {
             throw std::out_of_range(
                 "Slice dimension exceeds tensor dimensions");
@@ -75,11 +78,15 @@ namespace internal {
 
         ptrdiff_t size = static_cast<ptrdiff_t>(shape_[dim]);
 
-        if (start < 0) {
+        if (start == None) {
+            start = (step > 0) ? 0 : size - 1;
+        } else if (start < 0) {
             start += size;
         }
 
-        if (stop < 0) {
+        if (stop == None) {
+            stop = (step > 0) ? size : -1;
+        } else if (stop < 0) {
             stop += size;
         }
 

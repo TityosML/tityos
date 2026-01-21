@@ -3,9 +3,9 @@
 #include "tityos/ty/export.h"
 
 namespace ty {
-TITYOS_EXPORT enum class DeviceType { CPU, CUDA };
+enum class DeviceType { CPU, CUDA };
 
-TITYOS_EXPORT class Device {
+class Device {
   private:
     DeviceType type_;
     int index_;
@@ -16,6 +16,9 @@ TITYOS_EXPORT class Device {
     bool operator==(const Device& other) const {
         return other.type_ == type_ && other.index_ == index_;
     }
+
+    DeviceType type() const { return type_; }
+    int index() const { return index_; }
 
     bool isCpu() const { return type_ == DeviceType::CPU; }
     bool isCuda() const { return type_ == DeviceType::CUDA; }

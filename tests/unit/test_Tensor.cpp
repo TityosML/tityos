@@ -1,4 +1,3 @@
-#include "tityos/ty/tensor/Device.h"
 #include "tityos/ty/tensor/Dtype.h"
 #include "tityos/ty/tensor/Tensor.h"
 

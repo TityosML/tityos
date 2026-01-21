@@ -2,6 +2,7 @@
 #include "tityos/ty/tensor/ShapeStrides.h"
 
 #include <catch2/catch_all.hpp>
+#include <iostream>
 
 TEST_CASE("BaseTensor creation", "[BaseTensor]") {
     REQUIRE_NOTHROW(ty::internal::BaseTensor(

@@ -1,0 +1,50 @@
+#pragma once
+
+#include "tityos/ty/Device.h"
+#include "tityos/ty/export.h"
+
+#include <cstddef>
+#include <mutex>
+#include <stdexcept>
+
+#ifdef _WIN32
+    #include <windows.h>
+    #define LIB_EXTENSION ".dll"
+#else
+    #include <dlfcn.h>
+    #ifdef __APPLE__
+        #define LIB_EXTENSION ".dylib"
+    #else
+        #define LIB_EXTENSION ".so"
+    #endif
+#endif
+
+namespace ty {
+namespace internal {
+    namespace backend {
+        class Backend;
+
+        extern TITYOS_EXPORT Backend* cpuBackend;
+        extern TITYOS_EXPORT Backend* cudaBackend;
+        extern TITYOS_EXPORT std::mutex mtx;
+
+        class Backend {
+          public:
+            Backend() = default;
+            virtual ~Backend() = default;
+
+            virtual void* allocate(size_t bytes, int index) = 0;
+            virtual void deallocate(void* ptr) = 0;
+            virtual void copyData(void* destPtr, const void* srcPtr,
+                                  size_t numBytes) = 0;
+            virtual void copyDataFromCpu(void* destPtr, const void* srcPtr,
+                                         size_t numBytes) = 0;
+        };
+
+        TITYOS_EXPORT Backend* getBackend(DeviceType type);
+
+        bool tryLoadCpuBackend();
+        bool tryLoadCudaBackend();
+    } // namespace backend
+} // namespace internal
+} // namespace ty

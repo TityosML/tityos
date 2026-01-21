@@ -1,6 +1,5 @@
 #include "tityos/ty/ops/add.h"
 #include "tityos/ty/ops/expand.h"
-#include "tityos/ty/tensor/Device.h"
 #include "tityos/ty/tensor/Dtype.h"
 #include "tityos/ty/tensor/ShapeStrides.h"
 

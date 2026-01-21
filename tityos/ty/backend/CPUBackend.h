@@ -1,0 +1,20 @@
+#pragma once
+
+#include "tityos/ty/backend/Backend.h"
+
+namespace ty {
+namespace internal {
+    namespace backend {
+        class CPUBackend final : public Backend {
+          public:
+            void* allocate(size_t bytes, int index) override;
+            void deallocate(void* ptr) override;
+            void copyData(void* destPtr, const void* srcPtr, size_t numBytes) override;
+            void copyDataFromCpu(void* destPtr, const void* srcPtr,
+                                 size_t numBytes) override;
+        };
+    } // namespace backend
+} // namespace internal
+} // namespace ty
+
+extern "C" ty::internal::backend::Backend* registerCpuBackend();

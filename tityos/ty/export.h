@@ -1,24 +1,19 @@
 #pragma once
 
-#ifndef TITYOS_BUILD_SHARED
-    #define TITYOS_EXPORT
+#if defined(_WIN32) || defined(__CYGWIN__)
+    #ifdef tityos_EXPORTS
+        #define TITYOS_EXPORT __declspec(dllexport)
+    #else
+        #define TITYOS_EXPORT __declspec(dllimport)
+    #endif
     #define TITYOS_NO_EXPORT
 #else
-    #if defined(_WIN32) || defined(__CYGWIN__)
-        #ifdef tityos_EXPORTS
-            #define TITYOS_EXPORT __declspec(dllexport)
-        #else
-            #define TITYOS_EXPORT __declspec(dllimport)
-        #endif
-        #define TITYOS_NO_EXPORT
+    #if __GNUC__ >= 4
+        #define TITYOS_EXPORT __attribute__((visibility("default")))
+        #define TITYOS_NO_EXPORT __attribute__((visibility("hidden")))
     #else
-        #if __GNUC__ >= 4
-            #define TITYOS_EXPORT __attribute__((visibility("default")))
-            #define TITYOS_NO_EXPORT __attribute__((visibility("hidden")))
-        #else
-            #define TITYOS_EXPORT
-            #define TITYOS_NO_EXPORT
-        #endif
+        #define TITYOS_EXPORT
+        #define TITYOS_NO_EXPORT
     #endif
 #endif
 

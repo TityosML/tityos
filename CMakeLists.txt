@@ -19,24 +19,22 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_DEBUG_POSTFIX debug)
 
 if(CMAKE_SYSTEM_NAME MATCHES "CYGWIN" OR CMAKE_SYSTEM_NAME MATCHES "MSYS" OR CMAKE_SYSTEM_NAME MATCHES "MINGW")
-    set(CMAKE_CXX_EXTENSIONS ON)
+set(CMAKE_CXX_EXTENSIONS ON)
 endif()
+
 
 # ================================================================
 # Build Options
 # ================================================================
 
-# Build Shared/Static
-option(TITYOS_BUILD_SHARED "Build shared" OFF)
-
 # Sanitizing options
 option(TITYOS_SANITIZE_ADDRESS "Enable address sanitizer in tests" OFF)
 option(TITYOS_SANITIZE_MEMORY "Enable memroy sanitizer in tests" OFF)
 if (NOT(CMAKE_CXX_COMPILER_ID MATCHES "Clang") AND TITYOS_SANITIZE_MEMORY)
-    message(FATAL_ERROR "TITYOS_SANITIZE_MEMORY can only be enabled with Clang") 
+message(FATAL_ERROR "TITYOS_SANITIZE_MEMORY can only be enabled with Clang") 
 endif()
 if(TITYOS_SANITIZE_ADDRESS AND TITYOS_SANITIZE_MEMORY)
-    message(FATAL_ERROR "Only one of TITYOS_SANITIZE_ADDRESS and TITYOS_SANITIZE_MEMORY can be enabled")
+message(FATAL_ERROR "Only one of TITYOS_SANITIZE_ADDRESS and TITYOS_SANITIZE_MEMORY can be enabled")
 endif()
 
 # Compiler Warning options
@@ -47,24 +45,25 @@ option(TITYOS_BUILD_TESTS "Build tests" OFF)
 option(TITYOS_ENABLE_PERFORMANCE_TESTS "Enable performance tests" OFF)
 
 # CUDA options
-option(TITYOS_USE_CUDA "Build to allow cuda" OFF)
+option(TITYOS_BUILD_CUDA "Build to allow cuda" OFF)
 
 # CPU SIMD options
 option(TITYOS_USE_AVX "Build to allow AVX" OFF)
 option(TITYOS_USE_AVX2 "Build to allow AVX2" OFF)
 
+
 # ================================================================
-#  Shared or Static library
+#  Library
 # ================================================================
 
 include(CheckCXXCompilerFlag)
 
-if(TITYOS_BUILD_SHARED)
-    add_library(tityos SHARED)
-    target_compile_definitions(tityos PUBLIC TITYOS_BUILD_SHARED)
-else()
-    add_library(tityos STATIC)
-endif()
+add_library(tityos SHARED)
+add_library(tityos_cpu SHARED)
+target_link_libraries(tityos_cpu PRIVATE tityos)
+
+# TODO: Change this later
+set_target_properties(tityos PROPERTIES INSTALL_RPATH "$ORIGIN")
 
 target_include_directories(
     tityos
@@ -72,16 +71,29 @@ target_include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+target_include_directories(
+    tityos_cpu
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 # CUDA
-if (TITYOS_USE_CUDA)
-    set_target_properties(tityos PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+if (TITYOS_BUILD_CUDA)
     find_package(CUDAToolkit REQUIRED)
     enable_language(CUDA)
-    message(STATUS "Compiling using CUDA")
-    target_compile_definitions(tityos PUBLIC TITYOS_USE_CUDA)
+    message(STATUS "Building with CUDA")
 
-    target_link_libraries(tityos PUBLIC CUDA::cudart)
-    target_include_directories(tityos PUBLIC ${CUDAToolkit_INCLUDE_DIRS})
+    add_library(tityos_cuda SHARED)
+    target_link_libraries(tityos_cuda PRIVATE tityos)
+
+    set_target_properties(tityos_cuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+    target_link_libraries(tityos_cuda PUBLIC CUDA::cudart)
+    target_include_directories(
+        tityos_cuda
+        PUBLIC 
+            ${CMAKE_CURRENT_SOURCE_DIR}
+            ${CUDAToolkit_INCLUDE_DIRS}
+    )
 endif()
 
 
@@ -91,14 +103,14 @@ if (TITYOS_USE_AVX2)
     if(MSVC)
         check_cxx_compiler_flag("/arch:AVX2" COMPILER_ALLOWS_AVX2)
         if (COMPILER_ALLOWS_AVX2)
-            target_compile_options(tityos PRIVATE /arch:AVX2)
-            target_compile_definitions(tityos PUBLIC TITYOS_USE_AVX2)
+            target_compile_options(tityos_cpu PRIVATE /arch:AVX2)
+            target_compile_definitions(tityos_cpu PUBLIC TITYOS_USE_AVX2)
         endif()
     else()
         check_cxx_compiler_flag("-mavx2" COMPILER_ALLOWS_AVX2)
         if (COMPILER_ALLOWS_AVX2)
-            target_compile_options(tityos PRIVATE -mavx2)
-            target_compile_definitions(tityos PUBLIC TITYOS_USE_AVX2)
+            target_compile_options(tityos_cpu PRIVATE -mavx2)
+            target_compile_definitions(tityos_cpu PUBLIC TITYOS_USE_AVX2)
         endif()
     endif()
 
@@ -131,6 +143,11 @@ endif()
 # Hiding for non Win32
 if(NOT WIN32)
     set_target_properties(tityos PROPERTIES
+        CXX_VISIBILITY_PRESET "hidden"
+        VISIBILITY_INLINES_HIDDEN TRUE
+    )
+
+    set_target_properties(tityos_cpu PROPERTIES
         CXX_VISIBILITY_PRESET "hidden"
         VISIBILITY_INLINES_HIDDEN TRUE
     )

@@ -1,13 +1,13 @@
 #pragma once
 
 #include "tityos/ty/export.h"
-#include "tityos/ty/tensor/Device.h"
+#include "tityos/ty/Device.h"
 
 #include <any>
 #include <cstddef>
 
 namespace ty {
-TITYOS_EXPORT enum class DType {
+enum class DType {
     Int8,
     UInt8,
     Int16,

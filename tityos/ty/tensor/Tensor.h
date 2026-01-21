@@ -12,7 +12,7 @@
 #include <tuple>
 
 namespace ty {
-TITYOS_EXPORT class Tensor {
+class Tensor {
   private:
     std::shared_ptr<internal::BaseTensor> baseTensor_;
 

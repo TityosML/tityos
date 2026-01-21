@@ -1,7 +1,5 @@
 #include "tityos/ty/backend/Backend.h"
 
-#include <iostream>
-
 namespace ty {
 namespace internal {
     namespace backend {
@@ -47,8 +45,6 @@ namespace internal {
 #else
             void* handle = dlopen(libName, RTLD_NOW | RTLD_GLOBAL);
             if (!handle) {
-                const char* error = dlerror();
-                std::cerr << error << std::endl;
                 return false;
             }
 

@@ -62,11 +62,10 @@ namespace internal {
         return linear;
     }
 
-    const ptrdiff_t None = std::numeric_limits<ptrdiff_t>::min();
-
-    ShapeStrides ShapeStrides::slice(size_t dim, ptrdiff_t start = None,
-                                     ptrdiff_t stop = None,
-                                     ptrdiff_t step = None) const {
+    ShapeStrides ShapeStrides::slice(size_t dim,
+                                     std::optional<ptrdiff_t> start_opt,
+                                     std::optional<ptrdiff_t> stop_opt,
+                                     ptrdiff_t step) const {
         if (dim >= ndim_) {
             throw std::out_of_range(
                 "Slice dimension exceeds tensor dimensions");
@@ -78,16 +77,31 @@ namespace internal {
 
         ptrdiff_t size = static_cast<ptrdiff_t>(shape_[dim]);
 
-        if (start == None) {
-            start = (step > 0) ? 0 : size - 1;
-        } else if (start < 0) {
-            start += size;
+        if (size == 0) {
+            TensorShape newShape = shape_;
+            newShape[dim] = 0;
+            return ShapeStrides(newShape, strides_, offset_, ndim_);
         }
 
-        if (stop == None) {
+        ptrdiff_t start;
+        ptrdiff_t stop;
+
+        if (start_opt.has_value()) {
+            start = *start_opt;
+            if (start < 0) {
+                start += size;
+            };
+        } else {
+            start = (step > 0) ? 0 : size - 1;
+        }
+
+        if (stop_opt.has_value()) {
+            stop = *stop_opt;
+            if (stop < 0) {
+                stop += size;
+            };
+        } else {
             stop = (step > 0) ? size : -1;
-        } else if (stop < 0) {
-            stop += size;
         }
 
         if (step > 0) {

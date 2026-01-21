@@ -5,6 +5,7 @@
 #include <array>
 #include <cstddef>
 #include <numeric>
+#include <optional>
 #include <type_traits>
 
 namespace ty {
@@ -43,8 +44,10 @@ namespace internal {
 
         bool operator==(const ShapeStrides& other) const;
 
-        ShapeStrides slice(size_t dim, ptrdiff_t start, ptrdiff_t stop,
-                           ptrdiff_t step) const;
+        ShapeStrides slice(size_t dim,
+                           std::optional<ptrdiff_t> start = std::nullopt,
+                           std::optional<ptrdiff_t> stop = std::nullopt,
+                           ptrdiff_t step = 1) const;
 
       private:
         void initialStrides();

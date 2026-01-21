@@ -69,36 +69,28 @@ class Tensor {
         : baseTensor_(baseTensor) {}
 
     Tensor(const Tensor& other);
-
     Tensor(Tensor&& other) noexcept;
-
     Tensor& operator=(const Tensor& other);
-
     Tensor& operator=(Tensor&& other) noexcept;
 
     Tensor copy() const;
 
     Device getDevice() const;
-
     DType getDType() const;
-
     const std::array<size_t, internal::MAX_DIMS>& getShape() const;
-
     size_t getSize() const;
-
     size_t getNDim() const;
 
     std::shared_ptr<internal::BaseTensor> getBaseTensor() const;
 
     void* at(const size_t* indexStart, const size_t indexSize) const;
+    void* at(const std::vector<size_t>& index) const;
+    void* at(const std::initializer_list<size_t>& index) const;
 
     template <size_t N> void* at(const std::array<size_t, N>& index) const {
         return at(index.data(), N);
     }
 
-    void* at(const std::vector<size_t>& index) const;
-
-    void* at(const std::initializer_list<size_t>& index) const;
 
     template <typename T>
     T& elemAt(const size_t* indexStart, const size_t indexSize) {
@@ -122,11 +114,8 @@ class Tensor {
     using Iterator = internal::BaseTensor::Iterator;
 
     Iterator begin();
-
     Iterator end();
-
     Iterator begin() const;
-
     Iterator end() const;
 
     std::string toString() const;

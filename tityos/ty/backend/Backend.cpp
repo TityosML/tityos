@@ -36,8 +36,10 @@ namespace internal {
 
 #ifdef _WIN32
             HMODULE handle = LoadLibraryA(libName);
-            if (!handle)
+            if (!handle) {
                 return;
+            }
+
             auto registerFn = reinterpret_cast<Fn>(
                 GetProcAddress(handle, "registerCpuBackend"));
 #else
@@ -64,8 +66,10 @@ namespace internal {
 
 #ifdef _WIN32
             HMODULE handle = LoadLibraryA(libName);
-            if (!handle)
+            if (!handle) {
                 return;
+            }
+
             auto registerFn = reinterpret_cast<Fn>(
                 GetProcAddress(handle, "registerCudaBackend"));
 #else

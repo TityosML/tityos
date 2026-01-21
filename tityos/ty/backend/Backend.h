@@ -24,9 +24,9 @@ namespace internal {
     namespace backend {
         class Backend;
 
-        extern TITYOS_EXPORT Backend* cpuBackend;
-        extern TITYOS_EXPORT Backend* cudaBackend;
-        extern TITYOS_EXPORT std::mutex mtx;
+        extern Backend* cpuBackend;
+        extern Backend* cudaBackend;
+        extern std::mutex mtx;
 
         class Backend {
           public:
@@ -41,7 +41,7 @@ namespace internal {
                                          size_t numBytes) = 0;
         };
 
-        TITYOS_EXPORT Backend* getBackend(DeviceType type);
+        Backend* getBackend(DeviceType type);
 
         bool tryLoadCpuBackend();
         bool tryLoadCudaBackend();

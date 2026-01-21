@@ -1,7 +1,5 @@
 #include "tityos/ty/backend/CPUBackend.h"
 
-#include <iostream>
-
 namespace ty {
 namespace internal {
     namespace backend {

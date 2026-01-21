@@ -9,17 +9,15 @@ namespace internal {
 
         Backend* getBackend(DeviceType type) {
             std::lock_guard<std::mutex> lock(mtx);
-            if (type == DeviceType::CPU) {
+            switch (type) {
+            case DeviceType::CPU:
                 if (!cpuBackend) {
                     if (!tryLoadCpuBackend()) {
                         throw std::runtime_error("Unable to load CPU Backend");
                     }
                 }
-
                 return cpuBackend;
-            }
-
-            if (type == DeviceType::CUDA) {
+            case DeviceType::CUDA:
                 if (!cudaBackend) {
                     if (!tryLoadCudaBackend()) {
                         throw std::runtime_error("Unable to load CUDA Backend");
@@ -27,9 +25,9 @@ namespace internal {
                 }
 
                 return cudaBackend;
+            default:
+                return nullptr;
             }
-
-            return nullptr;
         }
 
         bool tryLoadCpuBackend() {
@@ -71,7 +69,7 @@ namespace internal {
             auto registerFn = reinterpret_cast<Fn>(
                 GetProcAddress(handle, "registerCudaBackend"));
 #else
-            void* handle = dlopen(libName, RTLD_NOW  | RTLD_GLOBAL);
+            void* handle = dlopen(libName, RTLD_NOW | RTLD_GLOBAL);
             if (!handle) {
                 return false;
             }

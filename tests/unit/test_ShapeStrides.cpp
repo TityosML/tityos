@@ -41,6 +41,8 @@ TEST_CASE("ShapeStrides Linear and Tensor index conversion idempotence",
 
 TEST_CASE("ShapeStrides Slicing", "[ShapeStrides]") {
     ty::internal::ShapeStrides example1D({10}, {1}, 0, 1);
+    ty::internal::ShapeStrides example2D({3, 4}, {4, 1}, 0, 2);
+
     CHECK(example1D.slice(0) == example1D);
     CHECK(example1D.slice(0, 6) == ty::internal::ShapeStrides({4}, {1}, 6, 1));
     CHECK(example1D.slice(0, 1, 8, 3) ==
@@ -51,4 +53,17 @@ TEST_CASE("ShapeStrides Slicing", "[ShapeStrides]") {
           ty::internal::ShapeStrides({5}, {2}, 0, 1));
     CHECK(example1D.slice(0, std::nullopt, std::nullopt, -1) ==
           ty::internal::ShapeStrides({10}, {-1}, 9, 1));
+
+    CHECK(example2D.slice(0) == example2D);
+    CHECK(example2D.slice(1) == example2D);
+    CHECK(example2D.slice(0, 0, 2) ==
+          ty::internal::ShapeStrides({2, 4}, {4, 1}, 0, 2));
+    CHECK(example2D.slice(0, 0, 2).slice(1, 1, 3) ==
+          ty::internal::ShapeStrides({2, 2}, {4, 1}, 1, 2));
+    CHECK(example2D.slice(0).slice(1, -2) ==
+          ty::internal::ShapeStrides({3, 2}, {4, 1}, 2, 2));
+    CHECK(example2D.slice(0, 0, 1).slice(1, 1) ==
+          ty::internal::ShapeStrides({1, 3}, {4, 1}, 1, 2));
+    CHECK(example2D.slice(0, std::nullopt, std::nullopt, 2).slice(1) ==
+          ty::internal::ShapeStrides({2, 4}, {8, 1}, 0, 2));
 }

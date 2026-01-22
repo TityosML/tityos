@@ -38,6 +38,7 @@ TEST_CASE("Benchmark Tensor Add Broadcasting (large tensors)",
     };
 }
 
+#ifdef TITYOS_BUILD_CUDA
 TEST_CASE("Benchmark CUDA Tensor Add Broadcasting (large tensors)",
           "[benchmark][broadcast][add]") {
     constexpr size_t D0 = 1;
@@ -69,3 +70,4 @@ TEST_CASE("Benchmark CUDA Tensor Add Broadcasting (large tensors)",
         return result;
     };
 }
+#endif

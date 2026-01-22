@@ -16,16 +16,21 @@ target_include_directories(
     tityos_tests
     PUBLIC
         ${TY_ROOT_DIR}
-    ${CUDAToolkit_INCLUDE_DIRS}
 )
+
+if (TITYOS_BUILD_CUDA)
+    target_include_directories(
+        tityos_tests
+        PUBLIC
+            ${CUDAToolkit_INCLUDE_DIRS}
+    )
+    target_link_libraries(tityos_tests PUBLIC CUDA::cudart)
+endif()
 
 
 target_link_directories(tityos_tests PRIVATE "../build")
 
-target_link_libraries(tityos_tests
-    PRIVATE Catch2::Catch2WithMain tityos
-    PUBLIC CUDA::cudart
-)
+target_link_libraries(tityos_tests PUBLIC Catch2::Catch2WithMain tityos)
 
 include(Catch)
 catch_discover_tests(tityos_tests)

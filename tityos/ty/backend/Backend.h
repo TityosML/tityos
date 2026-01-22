@@ -21,6 +21,8 @@
 
 namespace ty {
 namespace internal {
+    class BaseTensor;
+
     namespace backend {
         class Backend;
 
@@ -39,6 +41,9 @@ namespace internal {
                                   size_t numBytes) = 0;
             virtual void copyDataFromCpu(void* destPtr, const void* srcPtr,
                                          size_t numBytes) = 0;
+
+            virtual BaseTensor add(const BaseTensor& tensor1,
+                                   const BaseTensor& tensor2) = 0;
         };
 
         Backend* getBackend(DeviceType type);

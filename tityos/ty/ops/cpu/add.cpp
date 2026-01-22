@@ -46,8 +46,8 @@ namespace internal {
         }
     }
 
-    BaseTensor internalAddCpu(const BaseTensor& tensor1,
-                              const BaseTensor& tensor2) {
+    BaseTensor backend::CPUBackend::add(const BaseTensor& tensor1,
+                                        const BaseTensor& tensor2) {
         // TODO: Replace this with the copy function when that gets updated
         auto resultStorage = std::make_shared<TensorStorage>(
             tensor1.getLogicalSize(), tensor1.getDevice());

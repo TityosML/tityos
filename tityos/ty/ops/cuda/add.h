@@ -1,5 +1,6 @@
 #pragma once
 
+#include "tityos/ty/backend/CUDABackend.h"
 #include "tityos/ty/ops/CudaTensorView.h"
 #include "tityos/ty/tensor/Tensor.h"
 
@@ -8,9 +9,6 @@
 
 namespace ty {
 namespace internal {
-    BaseTensor internalAddCuda(const BaseTensor& tensor1,
-                               const BaseTensor& tensor2);
-
     template <typename T>
     __global__ void
     addCudaKernel(CudaTensorView<T> tensorView1, CudaTensorView<T> tensorView2,

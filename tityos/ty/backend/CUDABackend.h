@@ -13,6 +13,9 @@ namespace internal {
                           size_t numBytes) override;
             void copyDataFromCpu(void* destPtr, const void* srcPtr,
                                  size_t numBytes) override;
+
+            BaseTensor add(const BaseTensor& tensor1,
+                           const BaseTensor& tensor2) override;
         };
     } // namespace backend
 } // namespace internal

@@ -81,6 +81,7 @@ TEST_CASE("Tensor Addition", "[Operation][Pointwise]") {
     CHECK(result4.elemAt<int>({3, 2, 1}) == 86);
 }
 
+#ifdef TITYOS_BUILD_CUDA
 TEST_CASE("Tensor CUDA Addition", "[Operation][Pointwise]") {
 
     // Floats
@@ -191,6 +192,7 @@ TEST_CASE("Tensor CUDA Addition", "[Operation][Pointwise]") {
     CHECK(d10 == 75);
     CHECK(d11 == 86);
 }
+#endif
 
 TEST_CASE("Tensor Expand", "[Operation][Pointwise]") {
     // Floats

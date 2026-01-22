@@ -1,6 +1,6 @@
 target_sources(
     tityos
-    PRIVATE
+    PUBLIC
      ${CMAKE_CURRENT_LIST_DIR}/add.cpp
      ${CMAKE_CURRENT_LIST_DIR}/expand.cpp
      ${CMAKE_CURRENT_LIST_DIR}/utils.cpp

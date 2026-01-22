@@ -7,7 +7,7 @@ namespace internal {
     BaseTensor internalAddAvx2(const BaseTensor& tensor1,
                                const BaseTensor& tensor2) {
         // TODO: Implment avx2 addition
-        return internalAddCpu(tensor1, tensor2);
+        return tensor1;
     }
 } // namespace internal
 } // namespace ty

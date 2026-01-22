@@ -4,8 +4,8 @@
 
 namespace ty {
 namespace internal {
-    BaseTensor internalAddCuda(const BaseTensor& tensor1,
-                               const BaseTensor& tensor2) {
+    BaseTensor backend::CUDABackend::add(const BaseTensor& tensor1,
+                                         const BaseTensor& tensor2) {
 
         if (tensor1.getDType() != tensor2.getDType()) {
             throw std::invalid_argument("Types must match for addition");

@@ -13,7 +13,7 @@ TEST_CASE("TensorStorage can be allocated to CPU", "[TensorStorage]") {
     }
 }
 
-#ifdef TITYOS_USE_CUDA
+#ifdef TITYOS_BUILD_CUDA
 TEST_CASE("TensorStorage can be allocated to GPU with CUDA",
           "[TensorStorage]") {
     REQUIRE_NOTHROW(ty::internal::TensorStorage(4 * sizeof(int),

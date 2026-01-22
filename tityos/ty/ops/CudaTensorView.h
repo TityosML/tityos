@@ -1,10 +1,10 @@
 #pragma once
-#include "tityos/ty/cuda/cuda_import.h"
 #include "tityos/ty/tensor/BaseTensor.h"
 
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <cuda_runtime>
 
 namespace ty {
 namespace internal {

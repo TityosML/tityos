@@ -85,6 +85,7 @@ if (TITYOS_BUILD_CUDA)
 
     add_library(tityos_cuda SHARED)
     target_link_libraries(tityos_cuda PRIVATE tityos)
+    target_compile_definitions(tityos PUBLIC TITYOS_BUILD_CUDA)
 
     set_target_properties(tityos_cuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
     target_link_libraries(tityos_cuda PUBLIC CUDA::cudart)

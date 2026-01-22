@@ -18,7 +18,7 @@ namespace internal {
         cudaFree(ptr);
     }
 
-    void backend::CUDABackend::copyDataFromCpu(void* destPtr,
+    void backend::CUDABackend::copyData(void* destPtr,
                                                const void* srcPtr,
                                                size_t numBytes) {
         cudaMemcpy(destPtr, srcPtr, numBytes, cudaMemcpyHostToHost)

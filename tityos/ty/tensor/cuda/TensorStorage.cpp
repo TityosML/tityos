@@ -18,16 +18,15 @@ namespace internal {
         cudaFree(ptr);
     }
 
-    void backend::CUDABackend::copyData(void* destPtr,
-                                               const void* srcPtr,
-                                               size_t numBytes) {
-        cudaMemcpy(destPtr, srcPtr, numBytes, cudaMemcpyHostToHost)
+    void backend::CUDABackend::copyData(void* destPtr, const void* srcPtr,
+                                        size_t numBytes) {
+        cudaMemcpy(destPtr, srcPtr, numBytes, cudaMemcpyHostToHost);
     }
 
     void backend::CUDABackend::copyDataFromCpu(void* destPtr,
                                                const void* srcPtr,
                                                size_t numBytes) {
-        cudaMemcpy(destPtr, srcPtr, numBytes, cudaMemcpyHostToDevice)
+        cudaMemcpy(destPtr, srcPtr, numBytes, cudaMemcpyHostToDevice);
     }
 } // namespace internal
 } // namespace ty

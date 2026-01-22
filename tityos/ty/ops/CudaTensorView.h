@@ -4,7 +4,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
-#include <cuda_runtime>
+#include <cuda_runtime.h>
 
 namespace ty {
 namespace internal {

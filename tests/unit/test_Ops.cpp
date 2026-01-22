@@ -5,6 +5,10 @@
 
 #include <catch2/catch_all.hpp>
 
+#ifdef TITYOS_BUILD_CUDA
+    #include <cuda_runtime.h>
+#endif
+
 TEST_CASE("Tensor Addition", "[Operation][Pointwise]") {
 
     // Floats

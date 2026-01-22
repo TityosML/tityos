@@ -16,6 +16,7 @@ target_include_directories(
     tityos_tests
     PUBLIC
         ${TY_ROOT_DIR}
+    ${CUDAToolkit_INCLUDE_DIRS}
 )
 
 
@@ -23,6 +24,7 @@ target_link_directories(tityos_tests PRIVATE "../build")
 
 target_link_libraries(tityos_tests
     PRIVATE Catch2::Catch2WithMain tityos
+    PUBLIC CUDA::cudart
 )
 
 include(Catch)

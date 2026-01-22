@@ -1,7 +1,7 @@
 #include "tityos/ty/ops/CudaTensorView.h"
 #include "tityos/ty/ops/cuda/add.h"
 
-#include <cuda_runtime>
+#include <cuda_runtime.h>
 
 namespace ty {
 namespace internal {
@@ -33,7 +33,7 @@ namespace internal {
         // launch the add kernel
         addCudaKernel<T><<<blocks, threadsPerBlock>>>(
             tensorView1, tensorView2, resultTensorView, numElements);
-        CUDA_CHECK(cudaPeekAtLastError());
+        cudaPeekAtLastError();
     }
 
     // force compiler to compile each type

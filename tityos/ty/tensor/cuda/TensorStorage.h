@@ -1,6 +1,7 @@
 #pragma once
 
 #include "tityos/ty/backend/CUDABackend.h"
+#include "tityos/ty/cuda/cuda_utils.h"
 
-#include <stdexcept>
 #include <cuda_runtime.h>
+#include <stdexcept>

@@ -33,7 +33,7 @@ namespace internal {
         // launch the add kernel
         addCudaKernel<T><<<blocks, threadsPerBlock>>>(
             tensorView1, tensorView2, resultTensorView, numElements);
-        cudaPeekAtLastError();
+        CUDA_CHECK(cudaPeekAtLastError());
     }
 
     // force compiler to compile each type

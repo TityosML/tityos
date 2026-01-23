@@ -92,6 +92,10 @@ namespace internal {
         return dtype_;
     }
 
+    bool BaseTensor::isContiguous() const {
+        return layout_.isContiguous();
+    }
+
     BaseTensor::Iterator::Iterator(const BaseTensor& baseTensor,
                                    size_t linearStartIndex)
         : baseTensor_(baseTensor), linearIndex_(linearStartIndex),

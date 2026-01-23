@@ -143,6 +143,19 @@ namespace internal {
                                std::multiplies<size_t>());
     }
 
+    bool ShapeStrides::isContiguous() const {
+        size_t expectedStride = 1;
+
+        for (size_t i = ndim_; i-- > 0;) {
+            if (strides_[i] != expectedStride) {
+                return false;
+            }
+            expectedStride *= shape_[i];
+        }
+
+        return true;
+    }
+
     void ShapeStrides::initialStrides() {
         strides_ = TensorStrides{};
         int currentStride = 1;

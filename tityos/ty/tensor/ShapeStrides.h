@@ -42,6 +42,8 @@ namespace internal {
         size_t getOffset() const;
         size_t numElements() const;
 
+        bool isContiguous() const;
+
         bool operator==(const ShapeStrides& other) const;
 
         ShapeStrides slice(size_t dim,

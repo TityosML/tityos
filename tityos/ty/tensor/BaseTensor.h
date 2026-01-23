@@ -42,22 +42,16 @@ namespace internal {
         }
 
         const ShapeStrides& getLayout() const;
-
         size_t getNDim() const;
-
         const TensorShape& getShape() const;
-
         const TensorStrides& getStrides() const;
-
         size_t getLogicalSize() const;
-
         size_t getSize() const;
-
         const std::shared_ptr<TensorStorage>& getTensorStorage() const;
-
         Device getDevice() const;
-
         DType getDType() const;
+
+        bool isContiguous() const;
 
         BaseTensor slice(size_t dim, size_t start, size_t stop,
                                      size_t step) const {

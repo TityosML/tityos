@@ -1,7 +1,5 @@
 #include "tityos/ty/ops/cuda/add.h"
 
-#include "tityos/ty/ops/CudaTensorView.h"
-
 namespace ty {
 namespace internal {
     BaseTensor backend::CUDABackend::add(const BaseTensor& tensor1,

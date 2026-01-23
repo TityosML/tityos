@@ -1,4 +1,3 @@
-#include "tityos/ty/ops/CudaTensorView.h"
 #include "tityos/ty/ops/cuda/add.h"
 
 #include <cuda_runtime.h>

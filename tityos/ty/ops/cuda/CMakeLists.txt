@@ -4,5 +4,7 @@ if (TITYOS_BUILD_CUDA)
         PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/add.cpp
         ${CMAKE_CURRENT_LIST_DIR}/add.cu
+        ${CMAKE_CURRENT_LIST_DIR}/bmm.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/bmm.cu
     )
 endif()

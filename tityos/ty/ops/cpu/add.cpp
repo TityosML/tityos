@@ -59,6 +59,12 @@ namespace internal {
             throw std::invalid_argument("Types must match for addition");
         }
 
+        // Avx2 Optimized kernel
+        if (tensor1.isContiguous() && tensor2.isContiguous()) {
+            addAvx2(result, tensor1, tensor2);
+            return result;
+        }
+
         switch (result.getDType()) {
         case DType::Int8:
             addCpuKernel<int8_t>(result, tensor1, tensor2);

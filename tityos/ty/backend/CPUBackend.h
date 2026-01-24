@@ -16,6 +16,8 @@ namespace internal {
 
             BaseTensor add(const BaseTensor& tensor1,
                            const BaseTensor& tensor2) override;
+            BaseTensor bmm(const BaseTensor& batch1,
+                           const BaseTensor& batch2) override;
         };
     } // namespace backend
 } // namespace internal

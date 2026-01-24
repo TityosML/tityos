@@ -43,7 +43,8 @@ namespace internal {
     }
 
     BaseTensor BaseTensor::copy() const {
-        return BaseTensor(std::make_shared<TensorStorage>(*tensorStorage_), layout_, dtype_);
+        return BaseTensor(std::make_shared<TensorStorage>(*tensorStorage_),
+                          layout_, dtype_);
     }
 
     void* BaseTensor::at(const size_t* indexStart) const {
@@ -95,6 +96,13 @@ namespace internal {
     bool BaseTensor::isContiguous() const {
         return layout_.isContiguous();
     }
+
+    BaseTensor BaseTensor::slice(size_t dim, std::optional<ptrdiff_t> start,
+                                 std::optional<ptrdiff_t> stop,
+                                 ptrdiff_t step) const {
+        return BaseTensor(tensorStorage_, layout_.slice(dim, start, stop, step),
+                          dtype_);
+    };
 
     BaseTensor::Iterator::Iterator(const BaseTensor& baseTensor,
                                    size_t linearStartIndex)

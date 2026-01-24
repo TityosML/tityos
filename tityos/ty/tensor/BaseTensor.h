@@ -53,11 +53,10 @@ namespace internal {
 
         bool isContiguous() const;
 
-        BaseTensor slice(size_t dim, size_t start, size_t stop,
-                                     size_t step) const {
-            return BaseTensor(tensorStorage_,
-                              layout_.slice(dim, start, stop, step), dtype_);
-        };
+        BaseTensor slice(size_t dim,
+                         std::optional<ptrdiff_t> start = std::nullopt,
+                         std::optional<ptrdiff_t> stop = std::nullopt,
+                         ptrdiff_t step = 1) const;
 
         struct Iterator {
           private:

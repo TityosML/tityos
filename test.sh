@@ -11,9 +11,6 @@ for arg in "$@"; do
     --cuda)
       CUDA_FLAG=ON
       ;;
-    --avx2)
-      AVX2_FLAG=ON
-      ;;
     --perf)
       PERF_FLAG=ON
       ;;
@@ -37,7 +34,6 @@ done
 cmake -S . -B build \
   -DTITYOS_BUILD_TESTS=ON \
   -DTITYOS_BUILD_WARNINGS=OFF \
-  -DTITYOS_USE_AVX2=${AVX2_FLAG} \
   -DTITYOS_BUILD_CUDA=${CUDA_FLAG} \
   -DTITYOS_ENABLE_PERFORMANCE_TESTS=${PERF_FLAG} 
 

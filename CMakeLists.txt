@@ -47,10 +47,6 @@ option(TITYOS_ENABLE_PERFORMANCE_TESTS "Enable performance tests" OFF)
 # CUDA options
 option(TITYOS_BUILD_CUDA "Build to allow cuda" OFF)
 
-# CPU SIMD options
-option(TITYOS_USE_AVX "Build to allow AVX" OFF)
-option(TITYOS_USE_AVX2 "Build to allow AVX2" OFF)
-
 
 # ================================================================
 #  Library
@@ -99,28 +95,22 @@ endif()
 
 
 # CPU SIMD
-if (TITYOS_USE_AVX2)
-    message(STATUS "Checking for AVX2 support")
-    if(MSVC)
-        check_cxx_compiler_flag("/arch:AVX2" COMPILER_ALLOWS_AVX2)
-        if (COMPILER_ALLOWS_AVX2)
-            target_compile_options(tityos_cpu PRIVATE /arch:AVX2)
-            target_compile_definitions(tityos_cpu PUBLIC TITYOS_USE_AVX2)
-        endif()
-    else()
-        check_cxx_compiler_flag("-mavx2" COMPILER_ALLOWS_AVX2)
-        if (COMPILER_ALLOWS_AVX2)
-            target_compile_options(tityos_cpu PRIVATE -mavx2)
-            target_compile_definitions(tityos_cpu PUBLIC TITYOS_USE_AVX2)
-        endif()
+if(MSVC)
+    check_cxx_compiler_flag("/arch:AVX2" COMPILER_ALLOWS_AVX2)
+    if (COMPILER_ALLOWS_AVX2)
+        target_compile_options(tityos_cpu PRIVATE /arch:AVX2)
     endif()
+else()
+    check_cxx_compiler_flag("-mavx2" COMPILER_ALLOWS_AVX2)
+    if (COMPILER_ALLOWS_AVX2)
+        target_compile_options(tityos_cpu PRIVATE -mavx2)
+    endif()
+endif()
 
-    if(NOT COMPILER_ALLOWS_AVX2)
-        message(WARNING "Checking for AVX2 support - Failed")
-        message(WARNING "AVX2 not supported - continuing without AVX2")
-    else()
-        message(STATUS "Checking for AVX2 support - Success")
-    endif()
+if(NOT COMPILER_ALLOWS_AVX2)
+    message(ERROR "Checking for AVX2 support - Failed")
+else()
+    message(STATUS "Checking for AVX2 support - Success")
 endif()
 
 # Warnings

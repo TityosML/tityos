@@ -227,8 +227,9 @@ TEST_CASE("Tensor CUDA Batch Matrix-Matrix Multiplication", "[Operation]") {
     ty::Tensor example2(std::vector<float>({13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f, 21.0f, 22.0f, 23.0f, 24.0f}),
                         std::vector<size_t>({3, 2, 2}), {ty::DeviceType::CUDA, 0});
 
+    // note tests are in form ayx
     auto result1 = ty::bmm(example1, example2);
-
+    //                           z  y  x
     float a00, a01, a10, a11;
     cudaMemcpy(&a00, result1.at({0, 0, 0}), sizeof(float), cudaMemcpyDeviceToHost);
     cudaMemcpy(&a01, result1.at({0, 0, 1}), sizeof(float), cudaMemcpyDeviceToHost);
@@ -295,28 +296,28 @@ TEST_CASE("Tensor CUDA Batch Matrix-Matrix Multiplication", "[Operation]") {
     CHECK(d00 == 45.0f);
     CHECK(d01 == 48.0f);
     CHECK(d02 == 51.0f);
-    CHECK(d10 == 109.0f);
-    CHECK(d11 == 116.0f);
-    CHECK(d12 == 123.0f);
-    CHECK(d20 == 173.0f);
-    CHECK(d21 == 184.0f);
-    CHECK(d22 == 195.0f);
+    CHECK(d10 == 103.0f);
+    CHECK(d11 == 110.0f);
+    CHECK(d12 == 117.0f);
+    CHECK(d20 == 161.0f);
+    CHECK(d21 == 172.0f);
+    CHECK(d22 == 183.0f);
 
     CHECK(e00 == 309.0f);
-    CHECK(e01 == 322.0f);
-    CHECK(e02 == 335.0f);
-    CHECK(e10 == 387.0f);
-    CHECK(e11 == 402.0f);
-    CHECK(e12 == 417.0f);
-    CHECK(e20 == 465.0f);
-    CHECK(e21 == 482.0f);
-    CHECK(e22 == 499.0f);
+    CHECK(e01 == 324.0f);
+    CHECK(e02 == 339.0f);
+    CHECK(e10 == 391.0f);
+    CHECK(e11 == 410.0f);
+    CHECK(e12 == 429.0f);
+    CHECK(e20 == 473.0f);
+    CHECK(e21 == 496.0f);
+    CHECK(e22 == 519.0f);
 
     // Int32 2x2
     ty::Tensor example5(std::vector<int>({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}),
-                        std::vector<size_t>({3, 2, 2}), {ty::DeviceType::CUDA, 0});
+                        std::vector<size_t>({3, 2, 2}), {ty::DeviceType::CUDA, 0}, ty::DType::Int32);
     ty::Tensor example6(std::vector<int>({13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24}),
-                        std::vector<size_t>({3, 2, 2}), {ty::DeviceType::CUDA, 0});
+                        std::vector<size_t>({3, 2, 2}), {ty::DeviceType::CUDA, 0}, ty::DType::Int32);
 
     auto result3 = ty::bmm(example5, example6);
 
@@ -343,21 +344,21 @@ TEST_CASE("Tensor CUDA Batch Matrix-Matrix Multiplication", "[Operation]") {
     CHECK(ai10 == 99);
     CHECK(ai11 == 106);
 
-    CHECK(ai00 == 199);
-    CHECK(ai01 == 210);
-    CHECK(ai10 == 271);
-    CHECK(ai11 == 286);
+    CHECK(bi00 == 199);
+    CHECK(bi01 == 210);
+    CHECK(bi10 == 271);
+    CHECK(bi11 == 286);
 
-    CHECK(ai00 == 419);
-    CHECK(ai01 == 438);
-    CHECK(ai10 == 507);
-    CHECK(ai11 == 530);
+    CHECK(ci00 == 419);
+    CHECK(ci01 == 438);
+    CHECK(ci10 == 507);
+    CHECK(ci11 == 530);
 
     // Ints 3x2 @ 2x3 -> 3x3
     ty::Tensor example7(std::vector<int>({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}),
-                        std::vector<size_t>({2, 3, 2}), {ty::DeviceType::CUDA, 0});
+                        std::vector<size_t>({2, 3, 2}), {ty::DeviceType::CUDA, 0}, ty::DType::Int32);
     ty::Tensor example8(std::vector<int>({13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24}),
-                        std::vector<size_t>({2, 2, 3}), {ty::DeviceType::CUDA, 0});
+                        std::vector<size_t>({2, 2, 3}), {ty::DeviceType::CUDA, 0}, ty::DType::Int32);
 
     auto result4 = ty::bmm(example7, example8);
 
@@ -383,25 +384,25 @@ TEST_CASE("Tensor CUDA Batch Matrix-Matrix Multiplication", "[Operation]") {
     cudaMemcpy(&ei21, result4.at({1, 2, 1}), sizeof(int), cudaMemcpyDeviceToHost);
     cudaMemcpy(&ei22, result4.at({1, 2, 2}), sizeof(int), cudaMemcpyDeviceToHost);
 
+    
     CHECK(di00 == 45);
     CHECK(di01 == 48);
     CHECK(di02 == 51);
-    CHECK(di10 == 109);
-    CHECK(di11 == 116);
-    CHECK(di12 == 123);
-    CHECK(di20 == 173);
-    CHECK(di21 == 184);
-    CHECK(di22 == 195);
+    CHECK(di10 == 103);
+    CHECK(di11 == 110);
+    CHECK(di12 == 117);
+    CHECK(di20 == 161);
+    CHECK(di21 == 172);
+    CHECK(di22 == 183);
 
     CHECK(ei00 == 309);
-    CHECK(ei01 == 322);
-    CHECK(ei02 == 335);
-    CHECK(ei10 == 387);
-    CHECK(ei11 == 402);
-    CHECK(ei12 == 417);
-    CHECK(ei20 == 465);
-    CHECK(ei21 == 482);
-    CHECK(ei22 == 499);
-
+    CHECK(ei01 == 324);
+    CHECK(ei02 == 339);
+    CHECK(ei10 == 391);
+    CHECK(ei11 == 410);
+    CHECK(ei12 == 429);
+    CHECK(ei20 == 473);
+    CHECK(ei21 == 496);
+    CHECK(ei22 == 519);
 }
 #endif

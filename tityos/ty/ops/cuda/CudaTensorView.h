@@ -28,6 +28,13 @@ namespace internal {
 
             return data[memIdx];
         }
+        
+        // Prereq: ndim = 3, pass variables to reduce repeated array accesses
+        __device__ __forceinline__ 
+        T& at3d(int x, int y, int z,
+            int strideX, int strideY, int strideZ) const {
+            return data[offset +  (x * strideX + y * strideY + z * strideZ)];
+        }
     };
 
     template <typename T>

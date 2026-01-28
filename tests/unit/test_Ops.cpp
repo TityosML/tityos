@@ -495,17 +495,17 @@ TEST_CASE("Tensor CUDA contiguous", "[Operation]") {
     CHECK(exampleSliced.isContiguous() == false);
     CHECK(result.isContiguous() == true);
 
-    int e1, e2;
-    cudaMemcpy(&e1, exampleSliced.at({0, 0}), sizeof(float),
-               cudaMemcpyDeviceToHost);
-    cudaMemcpy(&e2, exampleSliced.at({1, 0}), sizeof(float),
-               cudaMemcpyDeviceToHost);
+    float e1, e2;
+    cudaMemcpy(&e1, example1.at({0, 0}), sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(&e2, example1.at({1, 0}), sizeof(float), cudaMemcpyDeviceToHost);
 
-    int r1, r2;
+    float r1, r2;
     cudaMemcpy(&r1, result.at({0, 0}), sizeof(float), cudaMemcpyDeviceToHost);
     cudaMemcpy(&r2, result.at({1, 0}), sizeof(float), cudaMemcpyDeviceToHost);
 
     CHECK(e1 == r1);
     CHECK(e2 == r2);
+
+    CHECK(e1 == 1.0f);
 }
 #endif

@@ -54,11 +54,6 @@ namespace internal {
         ShapeStrides resultLayout(tensor1.getShape(), tensor1.getNDim());
         BaseTensor result(resultStorage, resultLayout, tensor1.getDType());
 
-        if (result.getDType() != tensor1.getDType() ||
-            result.getDType() != tensor2.getDType()) {
-            throw std::invalid_argument("Types must match for addition");
-        }
-
         // Avx2 Optimized kernel
         if (tensor1.isContiguous() && tensor2.isContiguous()) {
             addAvx2(result, tensor1, tensor2);

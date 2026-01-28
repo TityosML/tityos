@@ -6,88 +6,8 @@
 #include "tityos/ty/tensor/ShapeStrides.h"
 
 #include <catch2/catch_all.hpp>
+#include <cuda_runtime.h>
 
-#ifdef TITYOS_BUILD_CUDA
-    #include <cuda_runtime.h>
-#endif
-
-TEST_CASE("Tensor Addition", "[Operation][Pointwise]") {
-
-    // Floats
-    ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}),
-                        std::vector<size_t>({2, 2}));
-    ty::Tensor example2(std::vector<float>({5.0f, 6.0f, 7.0f, 8.0f}),
-                        std::vector<size_t>({2, 2}));
-
-    auto result1 = ty::add(example1, example2);
-
-    CHECK(result1.elemAt<float>({0, 0}) == 6.0f);
-    CHECK(result1.elemAt<float>({0, 1}) == 8.0f);
-    CHECK(result1.elemAt<float>({1, 0}) == 10.0f);
-    CHECK(result1.elemAt<float>({1, 1}) == 12.0f);
-
-    // Floats with broadcasting
-    ty::Tensor example3(
-        std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f}),
-        std::vector<size_t>({3, 2}));
-
-    ty::Tensor example4(std::vector<float>({10.0f, 20.0f}),
-                        std::vector<size_t>({2}));
-
-    auto result2 = ty::add(example3, example4);
-
-    CHECK(result2.elemAt<float>({0, 0}) == 11.0f);
-    CHECK(result2.elemAt<float>({0, 1}) == 22.0f);
-
-    CHECK(result2.elemAt<float>({1, 0}) == 13.0f);
-    CHECK(result2.elemAt<float>({1, 1}) == 24.0f);
-
-    CHECK(result2.elemAt<float>({2, 0}) == 15.0f);
-    CHECK(result2.elemAt<float>({2, 1}) == 26.0f);
-
-    // Int32
-    ty::Tensor example5(std::vector<int>({1, 2, 3, 4}),
-                        std::vector<size_t>({2, 2}), {ty::DeviceType::CPU, 0},
-                        ty::DType::Int32);
-    ty::Tensor example6(std::vector<int>({5, 6, 7, 8}),
-                        std::vector<size_t>({2, 2}), {ty::DeviceType::CPU, 0},
-                        ty::DType::Int32);
-
-    auto result3 = ty::add(example5, example6);
-
-    CHECK(result3.elemAt<int>({0, 0}) == 6);
-    CHECK(result3.elemAt<int>({0, 1}) == 8);
-    CHECK(result3.elemAt<int>({1, 0}) == 10);
-    CHECK(result3.elemAt<int>({1, 1}) == 12);
-
-    // Int32 with broadcasting
-    ty::Tensor example7(std::vector<int>({1, 2, 3, 4, 5, 6}),
-                        std::vector<size_t>({1, 3, 2}),
-                        {ty::DeviceType::CPU, 0}, ty::DType::Int32);
-
-    ty::Tensor example8(std::vector<int>({10, 20, 30, 40, 50, 60, 70, 80}),
-                        std::vector<size_t>({4, 1, 2}),
-                        {ty::DeviceType::CPU, 0}, ty::DType::Int32);
-
-    auto result4 = ty::add(example7, example8);
-
-    CHECK(result4.elemAt<int>({0, 0, 0}) == 11);
-    CHECK(result4.elemAt<int>({0, 0, 1}) == 22);
-    CHECK(result4.elemAt<int>({0, 1, 0}) == 13);
-    CHECK(result4.elemAt<int>({0, 2, 1}) == 26);
-
-    CHECK(result4.elemAt<int>({1, 0, 0}) == 31);
-    CHECK(result4.elemAt<int>({1, 1, 1}) == 44);
-    CHECK(result4.elemAt<int>({1, 2, 0}) == 35);
-
-    CHECK(result4.elemAt<int>({2, 0, 1}) == 62);
-    CHECK(result4.elemAt<int>({2, 1, 0}) == 53);
-
-    CHECK(result4.elemAt<int>({3, 2, 0}) == 75);
-    CHECK(result4.elemAt<int>({3, 2, 1}) == 86);
-}
-
-#ifdef TITYOS_BUILD_CUDA
 TEST_CASE("Tensor CUDA Addition", "[Operation][Pointwise]") {
 
     // Floats
@@ -198,27 +118,7 @@ TEST_CASE("Tensor CUDA Addition", "[Operation][Pointwise]") {
     CHECK(d10 == 75);
     CHECK(d11 == 86);
 }
-#endif
 
-TEST_CASE("Tensor Expand", "[Operation][Pointwise]") {
-    // Floats
-    ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}),
-                        std::vector<size_t>({2, 2}));
-
-    auto result1 = ty::expand(example1, {4, 2, 2});
-
-    CHECK(result1.elemAt<float>({0, 0, 0}) == 1.0f);
-    CHECK(result1.elemAt<float>({0, 0, 1}) == 2.0f);
-    CHECK(result1.elemAt<float>({0, 1, 0}) == 3.0f);
-    CHECK(result1.elemAt<float>({0, 1, 1}) == 4.0f);
-
-    CHECK(result1.elemAt<float>({1, 0, 0}) == 1.0f);
-    CHECK(result1.elemAt<float>({2, 0, 1}) == 2.0f);
-    CHECK(result1.elemAt<float>({3, 1, 0}) == 3.0f);
-    CHECK(result1.elemAt<float>({3, 1, 1}) == 4.0f);
-}
-
-#ifdef TITYOS_BUILD_CUDA
 TEST_CASE("Tensor CUDA Batch Matrix-Matrix Multiplication", "[Operation]") {
 
     // Floats 2x2
@@ -480,9 +380,7 @@ TEST_CASE("Tensor CUDA Batch Matrix-Matrix Multiplication", "[Operation]") {
     CHECK(ei21 == 496);
     CHECK(ei22 == 519);
 }
-#endif
 
-#ifdef TITYOS_BUILD_CUDA
 TEST_CASE("Tensor CUDA contiguous", "[Operation]") {
     ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}),
                         std::vector<size_t>({2, 2}), {ty::DeviceType::CUDA, 0});
@@ -508,4 +406,3 @@ TEST_CASE("Tensor CUDA contiguous", "[Operation]") {
 
     CHECK(e1 == 1.0f);
 }
-#endif

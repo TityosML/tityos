@@ -5,6 +5,9 @@
 namespace ty {
 namespace internal {
     BaseTensor backend::CUDABackend::toCpu(const BaseTensor& tensor) {
+        // TODO: upgrade implementation so it doesnt require first making a
+        // contiguous copy on the gpu
+
         Device cpuDevice(DeviceType::CPU);
 
         auto resultStorage =

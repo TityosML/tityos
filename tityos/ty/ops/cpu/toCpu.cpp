@@ -3,6 +3,7 @@
 namespace ty {
 namespace internal {
     BaseTensor backend::CPUBackend::toCpu(const BaseTensor& tensor) {
+        // Potentially make copy? to be decided
         return tensor;
     }
 }; // namespace internal

@@ -83,7 +83,6 @@ TEST_CASE("Tensor Addition", "[Operation][Pointwise]") {
     CHECK(result4.elemAt<int>({3, 2, 1}) == 86);
 }
 
-
 TEST_CASE("Tensor Expand", "[Operation][Pointwise]") {
     // Floats
     ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}),
@@ -100,4 +99,22 @@ TEST_CASE("Tensor Expand", "[Operation][Pointwise]") {
     CHECK(result1.elemAt<float>({2, 0, 1}) == 2.0f);
     CHECK(result1.elemAt<float>({3, 1, 0}) == 3.0f);
     CHECK(result1.elemAt<float>({3, 1, 1}) == 4.0f);
+}
+
+TEST_CASE("Tensor CPU contiguous", "[Operation]") {
+    ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}),
+                        std::vector<size_t>({2, 2}));
+
+    ty::Tensor exampleSliced(std::make_shared<ty::internal::BaseTensor>(
+        example1.getBaseTensor()->slice(1, 0, 1)));
+
+    auto result = ty::contiguous(exampleSliced);
+
+    CHECK(exampleSliced.isContiguous() == false);
+    CHECK(result.isContiguous() == true);
+
+    CHECK(exampleSliced.elemAt<float>({0, 0}) == result.elemAt<float>({0, 0}));
+    CHECK(exampleSliced.elemAt<float>({1, 0}) == result.elemAt<float>({1, 0}));
+
+    CHECK(exampleSliced.elemAt<float>({0, 0}) == 1.0f);
 }

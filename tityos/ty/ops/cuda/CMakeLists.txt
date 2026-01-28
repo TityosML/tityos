@@ -7,6 +7,7 @@ if (TITYOS_BUILD_CUDA)
         ${CMAKE_CURRENT_LIST_DIR}/bmm.cpp
         ${CMAKE_CURRENT_LIST_DIR}/bmm.cu
         ${CMAKE_CURRENT_LIST_DIR}/contiguous.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/contiguous.cu
+        ${CMAKE_CURRENT_LIST_DIR}/contiguous.cu        
+        ${CMAKE_CURRENT_LIST_DIR}/toCpu.cpp
     )
 endif()

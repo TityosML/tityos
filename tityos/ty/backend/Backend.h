@@ -47,6 +47,7 @@ namespace internal {
             virtual BaseTensor bmm(const BaseTensor& batch1,
                                    const BaseTensor& batch2) = 0;
             virtual BaseTensor contiguous(const BaseTensor& tensor) = 0;
+            virtual BaseTensor toCpu(const BaseTensor& tensor) = 0;
         };
 
         Backend* getBackend(DeviceType type);

@@ -16,7 +16,11 @@ namespace internal {
         size_t offset;
         size_t ndim;
 
-        __device__ T& operator[](size_t linear_idx) const {
+        __device__ T& operator[](size_t mem_offset) const {
+            return data[offset + mem_offset];
+        }
+
+        __device__ __forceinline__ T& atLinear(size_t linear_idx) const {
             ptrdiff_t memIdx = offset;
             size_t idx = linear_idx;
 
@@ -28,12 +32,11 @@ namespace internal {
 
             return data[memIdx];
         }
-        
+
         // Prereq: ndim = 3, pass variables to reduce repeated array accesses
-        __device__ __forceinline__ 
-        T& at3d(int x, int y, int z,
-            int strideX, int strideY, int strideZ) const {
-            return data[offset +  (x * strideX + y * strideY + z * strideZ)];
+        __device__ __forceinline__ T& at3d(int x, int y, int z, int strideX,
+                                           int strideY, int strideZ) const {
+            return data[offset + (x * strideX + y * strideY + z * strideZ)];
         }
     };
 

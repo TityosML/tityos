@@ -91,7 +91,6 @@ class Tensor {
         return at(index.data(), N);
     }
 
-
     template <typename T>
     T& elemAt(const size_t* indexStart, const size_t indexSize) {
         return *static_cast<T*>(at(indexStart, indexSize));
@@ -117,6 +116,8 @@ class Tensor {
     Iterator end();
     Iterator begin() const;
     Iterator end() const;
+
+    bool isContiguous() const;
 
     std::string toString() const;
 

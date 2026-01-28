@@ -1,7 +1,5 @@
 #include "tityos/ty/ops/add.h"
 
-#include <iostream>
-
 namespace ty {
 Tensor add(const Tensor& tensor1, const Tensor& tensor2) {
     auto broadcastShape =

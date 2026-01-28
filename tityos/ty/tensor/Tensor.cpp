@@ -132,6 +132,10 @@ std::string Tensor::itemToStringCpu(const void* item, const DType dtype) const {
     return "";
 }
 
+bool Tensor::isContiguous() const {
+    return baseTensor_->isContiguous();
+}
+
 std::string Tensor::toString() const {
     const int ElideAfter = 0; // currently 0 for testing, should be 1000
     const int ElidedElementsPrinted = 3;

@@ -12,7 +12,8 @@ namespace internal {
 
         // guard in case block is not full
         if (idx < numElements) {
-            resultTensorView[idx] = tensorView1[idx] + tensorView2[idx];
+            resultTensorView.atLinear(idx) =
+                tensorView1.atLinear(idx) + tensorView2.atLinear(idx);
         }
     };
 

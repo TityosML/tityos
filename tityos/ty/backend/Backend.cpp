@@ -47,6 +47,11 @@ namespace internal {
 #else
             void* handle = dlopen(libName, RTLD_NOW | RTLD_GLOBAL);
             if (!handle) {
+                auto error = dlerror();
+
+                throw std::runtime_error("Unable to load Cpu backend: " +
+                                         std::string(error));
+
                 return false;
             }
 
@@ -77,6 +82,11 @@ namespace internal {
 #else
             void* handle = dlopen(libName, RTLD_NOW | RTLD_GLOBAL);
             if (!handle) {
+                auto error = dlerror();
+
+                throw std::runtime_error("Unable to load Cpu backend: " +
+                                         std::string(error));
+
                 return false;
             }
 

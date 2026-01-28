@@ -12,7 +12,7 @@ namespace internal {
 
         // result tensor view is assumed contiguous allowing []
         if (idx < numElements) {
-            resultTensorView.atLinear(idx) = tensorView.atLinear(idx);
+            resultTensorView[idx] = tensorView.atLinear(idx);
         }
     };
 

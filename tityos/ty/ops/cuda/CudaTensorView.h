@@ -16,10 +16,12 @@ namespace internal {
         size_t offset;
         size_t ndim;
 
-        __device__ T& operator[](size_t mem_offset) const {
-            return data[offset + mem_offset];
+        // assumes contiguous in memory
+        __device__ T& operator[](size_t linear_idx) const {
+            return data[offset + linear_idx];
         }
 
+        // doesn't assume contiguous in memory
         __device__ __forceinline__ T& atLinear(size_t linear_idx) const {
             ptrdiff_t memIdx = offset;
             size_t idx = linear_idx;

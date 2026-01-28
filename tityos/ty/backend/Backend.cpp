@@ -84,7 +84,7 @@ namespace internal {
             if (!handle) {
                 auto error = dlerror();
 
-                throw std::runtime_error("Unable to load Cpu backend: " +
+                throw std::runtime_error("Unable to load Cuda backend: " +
                                          std::string(error));
 
                 return false;

@@ -39,8 +39,7 @@ TEST_CASE("Benchmark Tensor Add Broadcasting CPU (large tensors)",
     };
 }
 
-TEST_CASE("Benchmark Tensor Add Avx2(large tensors)",
-          "[benchmark][add]") {
+TEST_CASE("Benchmark Tensor Add Avx2(large tensors)", "[benchmark][add]") {
     constexpr size_t D0 = 64;
     constexpr size_t D1 = 64;
     constexpr size_t D2 = 128;
@@ -79,8 +78,8 @@ TEST_CASE("Benchmark Batched MatMul CPU (large tensors)",
         dataA[i] = static_cast<int>(i % 13);
     }
 
-    ty::Tensor A(dataA, std::vector<size_t>{BATCH, M, N}, {ty::DeviceType::CPU, 0},
-                 ty::DType::Int32);
+    ty::Tensor A(dataA, std::vector<size_t>{BATCH, M, N},
+                 {ty::DeviceType::CPU, 0}, ty::DType::Int32);
 
     std::vector<int> dataB(BATCH * N * K);
     for (size_t i = 0; i < dataB.size(); ++i) {
@@ -88,7 +87,7 @@ TEST_CASE("Benchmark Batched MatMul CPU (large tensors)",
     }
 
     ty::Tensor B(dataB, std::vector<size_t>{BATCH, N, K},
-                        {ty::DeviceType::CPU, 0}, ty::DType::Int32);
+                 {ty::DeviceType::CPU, 0}, ty::DType::Int32);
 
     BENCHMARK("bmm int32 CPU") {
         auto result = ty::bmm(A, B);

@@ -102,7 +102,7 @@ if(MSVC)
 else()
     check_cxx_compiler_flag("-mavx2" COMPILER_ALLOWS_AVX2)
     if (COMPILER_ALLOWS_AVX2)
-        target_compile_options(tityos_cpu PRIVATE -mavx2)
+        target_compile_options(tityos_cpu PRIVATE -mavx2 -mfma)
     endif()
 endif()
 

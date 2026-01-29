@@ -13,10 +13,13 @@ namespace internal {
         const size_t M = outView.shape[1];
         const size_t N = batch1View.shape[2];
         const size_t K = outView.shape[2];
+        const size_t total = B * M * K;
 
         T* outData = outView.data + outView.offset;
         const T* batch1Data = batch1View.data + batch1View.offset;
         const T* batch2Data = batch2View.data + batch2View.offset;
+
+        std::memset(outData, 0, total * sizeof(T));
 
         T buffer[lanes];
 
@@ -25,55 +28,41 @@ namespace internal {
         size_t batch2Idx;
 
         for (size_t batch = 0; batch < B; batch++) {
-            for (size_t k = 0; k < K; k++) {
-                
-                size_t n = 0;
-                for (; n + lanes <= N; n += lanes) {
-                    batch2Idx = batch * batch2View.strides[0] +
-                                n * batch2View.strides[1] +
-                                k * batch2View.strides[2];
+            for (size_t n = 0; n < N; n++) {
+                for (size_t m = 0; m < M; m++) {
+                    batch1Idx = batch * batch1View.strides[0] +
+                                m * batch1View.strides[1] +
+                                n * batch1View.strides[2];
 
-                    for (size_t i = 0; i < lanes; i++) {
-                        buffer[i] = batch2Data[batch2Idx];
-                        batch2Idx += batch2View.strides[1];
-                    }
-                    Vec vecBatch2 = Avx2Traits<T>::load(buffer);
+                    Vec vecBatch1 =
+                        Avx2Traits<T>::set1(*(batch1Data + batch1Idx));
 
-                    for (size_t m = 0; m < M; m++) {
+                    size_t k = 0;
+                    for (; k + lanes <= K; k += lanes) {
                         outIdx = batch * outView.strides[0] +
                                  m * outView.strides[1] +
                                  k * outView.strides[2];
-                        batch1Idx = batch * batch1View.strides[0] +
-                                    m * batch1View.strides[1] +
-                                    n * batch1View.strides[2];
+                        batch2Idx = batch * batch2View.strides[0] +
+                                    n * batch2View.strides[1] +
+                                    k * batch2View.strides[2];
 
-                        Vec vecBatch1 =
-                            Avx2Traits<T>::load(batch1Data + batch1Idx);
-                        Vec probVec = Avx2Traits<T>::mul(vecBatch1, vecBatch2);
+                        Vec vecOut = Avx2Traits<T>::load(outData + outIdx);
+                        Vec vecBatch2 =
+                            Avx2Traits<T>::load(batch2Data + batch2Idx);
 
-                        if (n == 0) {
-                            outData[outIdx] = 0;
-                        }
+                        vecOut =
+                            Avx2Traits<T>::fma(vecBatch1, vecBatch2, vecOut);
 
-                        outData[outIdx] += Avx2Traits<T>::sum(probVec);
+                        Avx2Traits<T>::store(outData + outIdx, vecOut);
                     }
-                }
 
-                for (; n < N; n++) {
-                    batch2Idx = batch * batch2View.strides[0] +
-                                n * batch2View.strides[1] +
-                                k * batch2View.strides[2];
-                    for (size_t m = 0; m < batch1View.shape[1]; m++) {
+                    for (; k < K; k++) {
                         outIdx = batch * outView.strides[0] +
                                  m * outView.strides[1] +
                                  k * outView.strides[2];
-                        batch1Idx = batch * batch1View.strides[0] +
-                                    m * batch1View.strides[1] +
-                                    n * batch1View.strides[2];
-
-                        if (n == 0) {
-                            outData[outIdx] = 0;
-                        }
+                        batch2Idx = batch * batch2View.strides[0] +
+                                    n * batch2View.strides[1] +
+                                    k * batch2View.strides[2];
 
                         outData[outIdx] +=
                             batch1Data[batch1Idx] * batch2Data[batch2Idx];

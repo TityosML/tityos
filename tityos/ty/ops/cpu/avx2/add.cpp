@@ -9,7 +9,7 @@ namespace internal {
         using Vec = typename Avx2Traits<T>::Vec;
         constexpr int lanes = Avx2Traits<T>::lanes;
 
-        size_t total =
+        const size_t total =
             std::accumulate(outView.shape, outView.shape + outView.ndim, 1,
                             std::multiplies<size_t>());
 

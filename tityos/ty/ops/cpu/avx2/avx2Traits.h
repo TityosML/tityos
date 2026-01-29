@@ -61,6 +61,9 @@ namespace internal {
 
             return static_cast<int8_t>(_mm_cvtsi128_si32(aSum));
         }
+
+        static Vec set1(int8_t val) { return _mm256_set1_epi8(val); }
+        static Vec fma(Vec a, Vec b, Vec c) { return add(mul(a, b), c); }
     };
 
     template <> struct Avx2Traits<uint8_t> {
@@ -116,6 +119,9 @@ namespace internal {
 
             return static_cast<uint8_t>(_mm_cvtsi128_si32(aSum));
         }
+
+        static Vec set1(uint8_t val) { return _mm256_set1_epi8(val); }
+        static Vec fma(Vec a, Vec b, Vec c) { return add(mul(a, b), c); }
     };
 
     template <> struct Avx2Traits<int16_t> {
@@ -142,6 +148,11 @@ namespace internal {
             aSum = _mm_hadd_epi16(aSum, aSum);
 
             return static_cast<int16_t>(_mm_cvtsi128_si32(aSum));
+        }
+
+        static Vec set1(int16_t val) { return _mm256_set1_epi16(val); }
+        static Vec fma(Vec a, Vec b, Vec c) {
+            return _mm256_add_epi16(_mm256_mullo_epi16(a, b), c);
         }
     };
 
@@ -170,6 +181,11 @@ namespace internal {
 
             return static_cast<uint16_t>(_mm_cvtsi128_si32(aSum));
         }
+
+        static Vec set1(uint16_t val) { return _mm256_set1_epi16(val); }
+        static Vec fma(Vec a, Vec b, Vec c) {
+            return _mm256_add_epi16(_mm256_mullo_epi16(a, b), c);
+        }
     };
 
     template <> struct Avx2Traits<int32_t> {
@@ -196,6 +212,11 @@ namespace internal {
 
             return _mm_cvtsi128_si32(aSum);
         }
+
+        static Vec set1(int32_t val) { return _mm256_set1_epi32(val); }
+        static Vec fma(Vec a, Vec b, Vec c) {
+            return _mm256_add_epi32(_mm256_mullo_epi32(a, b), c);
+        }
     };
 
     template <> struct Avx2Traits<uint32_t> {
@@ -221,6 +242,11 @@ namespace internal {
             aSum = _mm_hadd_epi32(aSum, aSum);
 
             return _mm_cvtsi128_si32(aSum);
+        }
+
+        static Vec set1(uint32_t val) { return _mm256_set1_epi32(val); }
+        static Vec fma(Vec a, Vec b, Vec c) {
+            return _mm256_add_epi32(_mm256_mullo_epi32(a, b), c);
         }
     };
 
@@ -261,6 +287,9 @@ namespace internal {
 
             return _mm_cvtsi128_si64(aLower);
         }
+
+        static Vec set1(int64_t val) { return _mm256_set1_epi64x(val); }
+        static Vec fma(Vec a, Vec b, Vec c) { return add(mul(a, b), c); }
     };
 
     template <> struct Avx2Traits<uint64_t> {
@@ -274,18 +303,13 @@ namespace internal {
         }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi64(a, b); }
         static Vec mul(Vec a, Vec b) {
-            const __m256i mask32 = _mm256_set1_epi64x(0xFFFFFFFF);
-
-            __m256i aLower = _mm256_and_si256(a, mask32);
-            __m256i bLower = _mm256_and_si256(b, mask32);
+            __m256i lower = _mm256_mul_epu32(a, b);
 
             __m256i aUpper = _mm256_srli_epi64(a, 32);
             __m256i bUpper = _mm256_srli_epi64(b, 32);
 
-            __m256i lower = _mm256_mul_epu32(aLower, bLower);
-
-            __m256i cross1 = _mm256_mul_epu32(aLower, bUpper);
-            __m256i cross2 = _mm256_mul_epu32(aUpper, bLower);
+            __m256i cross1 = _mm256_mul_epu32(a, bUpper);
+            __m256i cross2 = _mm256_mul_epu32(aUpper, b);
 
             __m256i cross = _mm256_add_epi64(cross1, cross2);
             cross = _mm256_slli_epi64(cross, 32);
@@ -306,6 +330,9 @@ namespace internal {
 
             return _mm_cvtsi128_si64(aLower);
         }
+
+        static Vec set1(uint64_t val) { return _mm256_set1_epi64x(val); }
+        static Vec fma(Vec a, Vec b, Vec c) { return add(mul(a, b), c); }
     };
 
     template <> struct Avx2Traits<float> {
@@ -328,6 +355,9 @@ namespace internal {
 
             return _mm_cvtss_f32(aSum);
         }
+
+        static Vec set1(float val) { return _mm256_set1_ps(val); }
+        static Vec fma(Vec a, Vec b, Vec c) { return _mm256_fmadd_ps(a, b, c); }
     };
 
     template <> struct Avx2Traits<double> {
@@ -349,6 +379,9 @@ namespace internal {
 
             return _mm_cvtsd_f64(aSum);
         }
+
+        static Vec set1(double val) { return _mm256_set1_pd(val); }
+        static Vec fma(Vec a, Vec b, Vec c) { return _mm256_fmadd_pd(a, b, c); }
     };
 }; // namespace internal
 } // namespace ty

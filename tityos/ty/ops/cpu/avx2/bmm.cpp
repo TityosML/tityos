@@ -21,8 +21,6 @@ namespace internal {
 
         std::memset(outData, 0, total * sizeof(T));
 
-        T buffer[lanes];
-
         size_t outIdx;
         size_t batch1Idx;
         size_t batch2Idx;

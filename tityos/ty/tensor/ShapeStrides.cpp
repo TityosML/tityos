@@ -126,6 +126,43 @@ namespace internal {
         return ShapeStrides(newShape, newStrides, newOffset, ndim_);
     }
 
+    ShapeStrides ShapeStrides::select(size_t dim, ptrdiff_t select) const {
+        if (dim >= ndim_) {
+            throw std::out_of_range(
+                "Select dimension exceeds tensor dimensions");
+        }
+
+        ptrdiff_t size = static_cast<ptrdiff_t>(shape_[dim]);
+
+        if (select < 0) {
+            select += size;
+        }
+
+        if (select < 0 || select >= size) {
+            throw std::out_of_range("Index out of bounds");
+        }
+
+        size_t newOffset =
+            offset_ + static_cast<size_t>(select) * strides_[dim];
+
+        size_t newDim = ndim_ - 1;
+
+        TensorShape newShape{};
+        TensorStrides newStrides{};
+
+        for (size_t i = 0; i < dim; ++i) {
+            newShape[i] = shape_[i];
+            newStrides[i] = strides_[i];
+        }
+
+        for (size_t i = dim + 1; i < ndim_; ++i) {
+            newShape[i - 1] = shape_[i];
+            newStrides[i - 1] = strides_[i];
+        }
+
+        return ShapeStrides(newShape, newStrides, newOffset, ndim_ - 1);
+    }
+
     const TensorShape& ShapeStrides::getShape() const {
         return shape_;
     }

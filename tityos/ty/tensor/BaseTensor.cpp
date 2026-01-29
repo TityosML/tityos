@@ -104,6 +104,30 @@ namespace internal {
                           dtype_);
     };
 
+    BaseTensor BaseTensor::indexList(IndexList indices) const {
+        ShapeStrides newLayout = layout_;
+
+        size_t dim = 0;
+
+        for (const auto& idx : indices) {
+            if (dim >= layout_.getNDim()) {
+                throw std::out_of_range("Invalid index");
+            }
+
+            if (std::holds_alternative<Slice>(idx)) {
+                const Slice& slice = std::get<Slice>(idx);
+                newLayout =
+                    newLayout.slice(dim, slice.start, slice.stop, slice.step);
+                dim++;
+            } else {
+                ptrdiff_t select = std::get<ptrdiff_t>(idx);
+                newLayout = newLayout.select(dim, select);
+            }
+        }
+
+        return BaseTensor(tensorStorage_, newLayout, dtype_);
+    }
+
     BaseTensor::Iterator::Iterator(const BaseTensor& baseTensor,
                                    size_t linearStartIndex)
         : baseTensor_(baseTensor), linearIndex_(linearStartIndex),

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "tityos/ty/tensor/Dtype.h"
+#include "tityos/ty/tensor/Index.h"
 #include "tityos/ty/tensor/ShapeStrides.h"
 #include "tityos/ty/tensor/TensorStorage.h"
 
@@ -57,6 +58,8 @@ namespace internal {
                          std::optional<ptrdiff_t> start = std::nullopt,
                          std::optional<ptrdiff_t> stop = std::nullopt,
                          ptrdiff_t step = 1) const;
+
+        BaseTensor indexList(IndexList indices) const;
 
         struct Iterator {
           private:

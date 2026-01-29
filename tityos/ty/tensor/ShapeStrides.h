@@ -51,6 +51,8 @@ namespace internal {
                            std::optional<ptrdiff_t> stop = std::nullopt,
                            ptrdiff_t step = 1) const;
 
+        ShapeStrides select(size_t dim, ptrdiff_t select) const;
+
       private:
         void initialStrides();
     };

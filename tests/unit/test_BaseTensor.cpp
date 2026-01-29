@@ -1,4 +1,5 @@
 #include "tityos/ty/tensor/BaseTensor.h"
+#include "tityos/ty/tensor/Index.h"
 #include "tityos/ty/tensor/ShapeStrides.h"
 
 #include <catch2/catch_all.hpp>
@@ -48,4 +49,27 @@ TEST_CASE("Accessing BaseTensor", "[BaseTensor]") {
     CHECK(example2.getTensorStorage() == storage2);
     CHECK(example1.getDType() == ty::DType::Int32);
     CHECK(example2.getDType() == ty::DType::Float32);
+}
+
+TEST_CASE("BaseTensor IndexList", "[BaseTensor]") {
+    auto storage = std::make_shared<ty::internal::TensorStorage>(48);
+
+    ty::internal::BaseTensor example(
+        storage, ty::internal::ShapeStrides({3, 4}, {4, 1}, 0, 2),
+        ty::DType::Int32);
+
+    CHECK(example.indexList({ty::Slice(0, 2), ty::Slice(1, 3)}).getLayout() ==
+          ty::internal::ShapeStrides({2, 2}, {4, 1}, 1, 2));
+    CHECK(example.indexList({ty::Slice(), ty::Slice(-2)}).getLayout() ==
+          ty::internal::ShapeStrides({3, 2}, {4, 1}, 2, 2));
+    CHECK(example.indexList({0, ty::Slice(1)}).getLayout() ==
+          ty::internal::ShapeStrides({3}, {1}, 1, 1));
+    CHECK(
+        example
+            .indexList({ty::Slice(std::nullopt, std::nullopt, 2), ty::Slice()})
+            .getLayout() == ty::internal::ShapeStrides({2, 4}, {8, 1}, 0, 2));
+    CHECK(example.indexList({2}).getLayout() ==
+          ty::internal::ShapeStrides({4}, {1}, 8, 1));
+    CHECK(example.indexList({1, 3}).getLayout() ==
+          ty::internal::ShapeStrides({}, {}, 7, 0));
 }

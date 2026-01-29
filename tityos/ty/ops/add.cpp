@@ -9,6 +9,10 @@ Tensor add(const Tensor& tensor1, const Tensor& tensor2) {
     auto broadcastedTensor1 = expand(tensor1, broadcastShape);
     auto broadcastedTensor2 = expand(tensor2, broadcastShape);
 
+    if (tensor1.getDType() != tensor2.getDType()) {
+        throw std::invalid_argument("Types must match for addition");
+    }
+
     auto b = internal::backend::getBackend(tensor1.getDevice().type());
     auto resultBase = std::make_shared<internal::BaseTensor>(
         b->add(*broadcastedTensor1.getBaseTensor(),

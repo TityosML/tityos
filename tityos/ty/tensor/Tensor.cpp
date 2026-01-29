@@ -142,6 +142,8 @@ std::string Tensor::toString() const {
     const int DecimalsDisplayed = 6;
 
     // TODO : get a copy of this tensor on the cpu if not already there
+    auto b = internal::backend::getBackend(getDevice().type());
+    const auto baseTensorCpu = b->toCpu(*baseTensor_);
 
     const ty::internal::ShapeStrides& layout = baseTensor_->getLayout();
     const internal::TensorShape& shape = layout.getShape();
@@ -185,7 +187,7 @@ std::string Tensor::toString() const {
     {
         // First pass, finds length of items to determine padding
         bool active = true;
-        auto it = begin();
+        auto it = baseTensorCpu.begin();
         auto idx = it.getIndex();
 
         while (active) {
@@ -224,7 +226,7 @@ std::string Tensor::toString() const {
 
     {
         // Second pass, constructs the output string
-        auto it = begin();
+        auto it = baseTensorCpu.begin();
         auto index = it.getIndex();
 
         bool active = true;

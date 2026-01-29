@@ -19,6 +19,7 @@ namespace internal {
             BaseTensor bmm(const BaseTensor& batch1,
                            const BaseTensor& batch2) override;
             BaseTensor contiguous(const BaseTensor& tensor) override;
+            BaseTensor toCpu(const BaseTensor& tensor) override;
         };
     } // namespace backend
 } // namespace internal

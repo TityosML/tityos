@@ -119,8 +119,87 @@ TEST_CASE("Tensor CPU contiguous", "[Operation]") {
     CHECK(exampleSliced.elemAt<float>({0, 0}) == 1.0f);
 }
 
-TEST_CASE("Tensor CPU Batch Matrix-Matrix Multiplication", "[Operation]") {
+TEST_CASE("Tensor CPU Batch Matrix-Matrix Multiplication (large with AVX2 "
+          "optimization)",
+          "[Operation]") {
+    // Float
+    std::vector<float> data1(64);
+    std::vector<float> data2(64, 0.0f);
 
+    for (int i = 0; i < 64; ++i) {
+        data1[i] = static_cast<float>(i + 1);
+
+        if (i / 8 == i % 8) {
+            data2[i] = 1.0f;
+        }
+    }
+
+    ty::Tensor example1(data1, {1, 8, 8});
+    ty::Tensor example2(data2, {1, 8, 8});
+
+    auto result1 = ty::bmm(example1, example2);
+
+    for (size_t y = 0; y < 8; ++y) {
+        for (size_t x = 0; x < 8; ++x) {
+            float expected = static_cast<float>(y * 8 + x + 1);
+            CHECK(result1.elemAt<float>({0, y, x}) == expected);
+        }
+    }
+
+    // Int64
+    std::vector<int64_t> data3(64);
+    std::vector<int64_t> data4(64, 0);
+
+    for (int64_t i = 0; i < 64; ++i) {
+        data3[i] = static_cast<int64_t>(i + 1);
+
+        if (i / 8 == i % 8) {
+            data4[i] = 1;
+        }
+    }
+
+    ty::Tensor example3(data3, {1, 8, 8}, {ty::DeviceType::CPU, 0},
+                        ty::DType::Int64);
+    ty::Tensor example4(data4, {1, 8, 8}, {ty::DeviceType::CPU, 0},
+                        ty::DType::Int64);
+
+    auto result2 = ty::bmm(example3, example4);
+
+    for (size_t y = 0; y < 8; ++y) {
+        for (size_t x = 0; x < 8; ++x) {
+            int64_t expected = static_cast<int64_t>(y * 8 + x + 1);
+            CHECK(result2.elemAt<int64_t>({0, y, x}) == expected);
+        }
+    }
+
+    // Int8
+    std::vector<int8_t> data5(64);
+    std::vector<int8_t> data6(64, 0);
+
+    for (int8_t i = 0; i < 64; ++i) {
+        data5[i] = static_cast<int8_t>(i + 1);
+
+        if (i / 8 == i % 8) {
+            data6[i] = 1;
+        }
+    }
+
+    ty::Tensor example5(data5, {1, 8, 8}, {ty::DeviceType::CPU, 0},
+                        ty::DType::Int8);
+    ty::Tensor example6(data6, {1, 8, 8}, {ty::DeviceType::CPU, 0},
+                        ty::DType::Int8);
+
+    auto result3 = ty::bmm(example5, example6);
+
+    for (size_t y = 0; y < 8; ++y) {
+        for (size_t x = 0; x < 8; ++x) {
+            int8_t expected = static_cast<int8_t>(y * 8 + x + 1);
+            CHECK(result3.elemAt<int8_t>({0, y, x}) == expected);
+        }
+    }
+}
+
+TEST_CASE("Tensor CPU Batch Matrix-Matrix Multiplication", "[Operation]") {
     // Floats 2x2
     ty::Tensor example1(
         std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f,

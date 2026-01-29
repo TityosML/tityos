@@ -235,18 +235,13 @@ namespace internal {
         }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi64(a, b); }
         static Vec mul(Vec a, Vec b) {
-            const __m256i mask32 = _mm256_set1_epi64x(0xFFFFFFFF);
-
-            __m256i aLower = _mm256_and_si256(a, mask32);
-            __m256i bLower = _mm256_and_si256(b, mask32);
+            __m256i lower = _mm256_mul_epu32(a, b);
 
             __m256i aUpper = _mm256_srli_epi64(a, 32);
             __m256i bUpper = _mm256_srli_epi64(b, 32);
 
-            __m256i lower = _mm256_mul_epu32(aLower, bLower);
-
-            __m256i cross1 = _mm256_mul_epu32(aLower, bUpper);
-            __m256i cross2 = _mm256_mul_epu32(aUpper, bLower);
+            __m256i cross1 = _mm256_mul_epu32(a, bUpper);
+            __m256i cross2 = _mm256_mul_epu32(aUpper, b);
 
             __m256i cross = _mm256_add_epi64(cross1, cross2);
             cross = _mm256_slli_epi64(cross, 32);
@@ -261,7 +256,6 @@ namespace internal {
             __m128i aUpper = _mm256_extracti128_si256(a, 1);
 
             aLower = _mm_add_epi64(aLower, aUpper);
-
             __m128i tmp = _mm_unpackhi_epi64(aLower, aLower);
             aLower = _mm_add_epi64(aLower, tmp);
 

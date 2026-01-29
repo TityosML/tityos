@@ -9,36 +9,37 @@ namespace internal {
         using Vec = typename Avx2Traits<T>::Vec;
         constexpr int lanes = Avx2Traits<T>::lanes;
 
+        const size_t B = outView.shape[0];
+        const size_t M = outView.shape[1];
+        const size_t N = batch1View.shape[2];
+        const size_t K = outView.shape[2];
+
         T* outData = outView.data + outView.offset;
         const T* batch1Data = batch1View.data + batch1View.offset;
         const T* batch2Data = batch2View.data + batch2View.offset;
 
         T buffer[lanes];
 
-        size_t n;
         size_t outIdx;
         size_t batch1Idx;
         size_t batch2Idx;
 
-        for (size_t batch = 0; batch < outView.shape[0]; batch++) {
-
-            for (size_t k = 0; k < batch2View.shape[2]; k++) {
-
-                // Grouping values
-                n = 0;
-                for (; n + lanes <= batch1View.shape[2]; n += lanes) {
+        for (size_t batch = 0; batch < B; batch++) {
+            for (size_t k = 0; k < K; k++) {
+                
+                size_t n = 0;
+                for (; n + lanes <= N; n += lanes) {
                     batch2Idx = batch * batch2View.strides[0] +
                                 n * batch2View.strides[1] +
                                 k * batch2View.strides[2];
 
-                    // Load the partial rows from batch2
                     for (size_t i = 0; i < lanes; i++) {
                         buffer[i] = batch2Data[batch2Idx];
                         batch2Idx += batch2View.strides[1];
                     }
                     Vec vecBatch2 = Avx2Traits<T>::load(buffer);
 
-                    for (size_t m = 0; m < batch1View.shape[1]; m++) {
+                    for (size_t m = 0; m < M; m++) {
                         outIdx = batch * outView.strides[0] +
                                  m * outView.strides[1] +
                                  k * outView.strides[2];
@@ -58,8 +59,7 @@ namespace internal {
                     }
                 }
 
-                // Trailing values
-                for (; n < batch1View.shape[2]; n++) {
+                for (; n < N; n++) {
                     batch2Idx = batch * batch2View.strides[0] +
                                 n * batch2View.strides[1] +
                                 k * batch2View.strides[2];
@@ -75,7 +75,8 @@ namespace internal {
                             outData[outIdx] = 0;
                         }
 
-                        outData[outIdx] += batch1Data[batch1Idx] * batch2Data[batch2Idx];
+                        outData[outIdx] +=
+                            batch1Data[batch1Idx] * batch2Data[batch2Idx];
                     }
                 }
             }

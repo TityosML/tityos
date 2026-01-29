@@ -97,6 +97,11 @@ namespace internal {
         return layout_.isContiguous();
     }
 
+    bool BaseTensor::operator==(const BaseTensor& other) const {
+        return tensorStorage_ == other.tensorStorage_ && layout_ == other.layout_ &&
+               dtype_ == other.dtype_;
+    }
+
     BaseTensor BaseTensor::slice(size_t dim, std::optional<ptrdiff_t> start,
                                  std::optional<ptrdiff_t> stop,
                                  ptrdiff_t step) const {

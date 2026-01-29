@@ -72,4 +72,8 @@ TEST_CASE("BaseTensor IndexList", "[BaseTensor]") {
           ty::internal::ShapeStrides({4}, {1}, 8, 1));
     CHECK(example.indexList({1, 3}).getLayout() ==
           ty::internal::ShapeStrides({}, {}, 7, 0));
+
+    CHECK(example.indexList({0}).indexList({ty::Slice(1)}) ==
+          example.indexList({0, ty::Slice(1)}));
+    CHECK(example.indexList({1}).indexList({3}) == example.indexList({1, 3}));
 }

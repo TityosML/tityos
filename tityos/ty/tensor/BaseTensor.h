@@ -54,6 +54,8 @@ namespace internal {
 
         bool isContiguous() const;
 
+        bool operator==(const BaseTensor& other) const;
+
         BaseTensor slice(size_t dim,
                          std::optional<ptrdiff_t> start = std::nullopt,
                          std::optional<ptrdiff_t> stop = std::nullopt,

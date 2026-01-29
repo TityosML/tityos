@@ -22,7 +22,7 @@ namespace internal {
 
         for (size_t batch = 0; batch < outView.shape[0]; batch++) {
 
-            for (size_t k = 0; k < batch2View.strides[2]; k++) {
+            for (size_t k = 0; k < batch2View.shape[2]; k++) {
 
                 // Grouping values
                 n = 0;
@@ -41,7 +41,7 @@ namespace internal {
                     for (size_t m = 0; m < batch1View.shape[1]; m++) {
                         outIdx = batch * outView.strides[0] +
                                  m * outView.strides[1] +
-                                 n * outView.strides[2];
+                                 k * outView.strides[2];
                         batch1Idx = batch * batch1View.strides[0] +
                                     m * batch1View.strides[1] +
                                     n * batch1View.strides[2];
@@ -66,7 +66,7 @@ namespace internal {
                     for (size_t m = 0; m < batch1View.shape[1]; m++) {
                         outIdx = batch * outView.strides[0] +
                                  m * outView.strides[1] +
-                                 n * outView.strides[2];
+                                 k * outView.strides[2];
                         batch1Idx = batch * batch1View.strides[0] +
                                     m * batch1View.strides[1] +
                                     n * batch1View.strides[2];
@@ -75,7 +75,7 @@ namespace internal {
                             outData[outIdx] = 0;
                         }
 
-                        outData[outIdx] += batch1Data[batch1Idx] + batch2Data[batch2Idx];
+                        outData[outIdx] += batch1Data[batch1Idx] * batch2Data[batch2Idx];
                     }
                 }
             }

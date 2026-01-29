@@ -51,6 +51,12 @@ namespace internal {
             batch1.getDevice());
         BaseTensor result(resultStorage, resultLayout, batch1.getDType());
 
+        // Avx2 Optimized kernel
+        if (batch1.isContiguous() && batch2.isContiguous()) {
+            bmmAvx2(result, batch1, batch2);
+            return result;
+        }
+
         switch (result.getDType()) {
         case DType::Int8:
             bmmCpuKernel<int8_t>(result, batch1, batch2);

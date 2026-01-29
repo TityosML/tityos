@@ -19,6 +19,48 @@ namespace internal {
             _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v);
         }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi8(a, b); }
+        static Vec mul(Vec a, Vec b) {
+            __m256i aLower = _mm256_cvtepi8_epi16(_mm256_castsi256_si128(a));
+            __m256i aUpper =
+                _mm256_cvtepi8_epi16(_mm256_extracti128_si256(a, 1));
+
+            aLower = _mm256_mullo_epi16(aLower, b);
+            aUpper = _mm256_mullo_epi16(aUpper, b);
+
+            return _mm256_packs_epi16(aLower, aUpper);
+        }
+
+        static Vec empty() { return _mm256_setzero_si256(); }
+
+        static int8_t sum(Vec a) {
+            __m128i aLower = _mm256_castsi256_si128(a);
+            __m128i aUpper = _mm256_extracti128_si256(a, 1);
+
+            __m256i aLower16 = _mm256_cvtepi8_epi16(aLower);
+            __m256i aUpper16 = _mm256_cvtepi8_epi16(aUpper);
+
+            // Calculate Lower sum
+            aLower = _mm256_castsi256_si128(aLower16);
+            aUpper = _mm256_extracti128_si256(aLower16, 1);
+
+            __m128i aLowerSum = _mm_hadd_epi16(aLower, aUpper);
+            aLowerSum = _mm_hadd_epi16(aLowerSum, aLowerSum);
+            aLowerSum = _mm_hadd_epi16(aLowerSum, aLowerSum);
+            aLowerSum = _mm_hadd_epi16(aLowerSum, aLowerSum);
+
+            // Calculate Upper sum
+            aLower = _mm256_castsi256_si128(aUpper16);
+            aUpper = _mm256_extracti128_si256(aUpper16, 1);
+
+            __m128i aUpperSum = _mm_hadd_epi16(aLower, aUpper);
+            aUpperSum = _mm_hadd_epi16(aUpperSum, aUpperSum);
+            aUpperSum = _mm_hadd_epi16(aUpperSum, aUpperSum);
+            aUpperSum = _mm_hadd_epi16(aUpperSum, aUpperSum);
+
+            __m128i aSum = _mm_hadd_epi16(aLowerSum, aUpperSum);
+
+            return static_cast<int8_t>(_mm_cvtsi128_si32(aSum));
+        }
     };
 
     template <> struct Avx2Traits<uint8_t> {
@@ -31,6 +73,49 @@ namespace internal {
             _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v);
         }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi8(a, b); }
+        static Vec mul(Vec a, Vec b) {
+            __m256i aLower =
+                _mm256_cvtepi8_epi16(_mm256_extracti128_si256(a, 0));
+            __m256i aUpper =
+                _mm256_cvtepi8_epi16(_mm256_extracti128_si256(a, 1));
+
+            aLower = _mm256_mullo_epi16(aLower, b);
+            aUpper = _mm256_mullo_epi16(aUpper, b);
+
+            return _mm256_packs_epi16(aLower, aUpper);
+        }
+
+        static Vec empty() { return _mm256_setzero_si256(); }
+
+        static uint8_t sum(Vec a) {
+            __m128i aLower = _mm256_castsi256_si128(a);
+            __m128i aUpper = _mm256_extracti128_si256(a, 1);
+
+            __m256i aLower16 = _mm256_cvtepi8_epi16(aLower);
+            __m256i aUpper16 = _mm256_cvtepi8_epi16(aUpper);
+
+            // Calculate Lower sum
+            aLower = _mm256_castsi256_si128(aLower16);
+            aUpper = _mm256_extracti128_si256(aLower16, 1);
+
+            __m128i aLowerSum = _mm_hadd_epi16(aLower, aUpper);
+            aLowerSum = _mm_hadd_epi16(aLowerSum, aLowerSum);
+            aLowerSum = _mm_hadd_epi16(aLowerSum, aLowerSum);
+            aLowerSum = _mm_hadd_epi16(aLowerSum, aLowerSum);
+
+            // Calculate Upper sum
+            aLower = _mm256_castsi256_si128(aUpper16);
+            aUpper = _mm256_extracti128_si256(aUpper16, 1);
+
+            __m128i aUpperSum = _mm_hadd_epi16(aLower, aUpper);
+            aUpperSum = _mm_hadd_epi16(aUpperSum, aUpperSum);
+            aUpperSum = _mm_hadd_epi16(aUpperSum, aUpperSum);
+            aUpperSum = _mm_hadd_epi16(aUpperSum, aUpperSum);
+
+            __m128i aSum = _mm_hadd_epi16(aLowerSum, aUpperSum);
+
+            return static_cast<uint8_t>(_mm_cvtsi128_si32(aSum));
+        }
     };
 
     template <> struct Avx2Traits<int16_t> {
@@ -43,6 +128,21 @@ namespace internal {
             _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v);
         }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi16(a, b); }
+        static Vec mul(Vec a, Vec b) { return _mm256_mullo_epi16(a, b); }
+
+        static Vec empty() { return _mm256_setzero_si256(); }
+
+        static int16_t sum(Vec a) {
+            __m128i aLower = _mm256_castsi256_si128(a);
+            __m128i aUpper = _mm256_extracti128_si256(a, 1);
+
+            __m128i aSum = _mm_hadd_epi16(aLower, aUpper);
+            aSum = _mm_hadd_epi16(aSum, aSum);
+            aSum = _mm_hadd_epi16(aSum, aSum);
+            aSum = _mm_hadd_epi16(aSum, aSum);
+
+            return static_cast<int16_t>(_mm_cvtsi128_si32(aSum));
+        }
     };
 
     template <> struct Avx2Traits<uint16_t> {
@@ -55,6 +155,21 @@ namespace internal {
             _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v);
         }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi16(a, b); }
+        static Vec mul(Vec a, Vec b) { return _mm256_mullo_epi16(a, b); }
+
+        static Vec empty() { return _mm256_setzero_si256(); }
+
+        static uint16_t sum(Vec a) {
+            __m128i aLower = _mm256_castsi256_si128(a);
+            __m128i aUpper = _mm256_extracti128_si256(a, 1);
+
+            __m128i aSum = _mm_hadd_epi16(aLower, aUpper);
+            aSum = _mm_hadd_epi16(aSum, aSum);
+            aSum = _mm_hadd_epi16(aSum, aSum);
+            aSum = _mm_hadd_epi16(aSum, aSum);
+
+            return static_cast<uint16_t>(_mm_cvtsi128_si32(aSum));
+        }
     };
 
     template <> struct Avx2Traits<int32_t> {
@@ -67,6 +182,20 @@ namespace internal {
             _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v);
         }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi32(a, b); }
+        static Vec mul(Vec a, Vec b) { return _mm256_mullo_epi32(a, b); }
+
+        static Vec empty() { return _mm256_setzero_si256(); }
+
+        static int32_t sum(Vec a) {
+            __m128i aLower = _mm256_castsi256_si128(a);
+            __m128i aUpper = _mm256_extracti128_si256(a, 1);
+
+            __m128i aSum = _mm_hadd_epi32(aLower, aUpper);
+            aSum = _mm_hadd_epi32(aSum, aSum);
+            aSum = _mm_hadd_epi32(aSum, aSum);
+
+            return _mm_cvtsi128_si32(aSum);
+        }
     };
 
     template <> struct Avx2Traits<uint32_t> {
@@ -79,6 +208,20 @@ namespace internal {
             _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v);
         }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi32(a, b); }
+        static Vec mul(Vec a, Vec b) { return _mm256_mullo_epi32(a, b); }
+
+        static Vec empty() { return _mm256_setzero_si256(); }
+
+        static uint32_t sum(Vec a) {
+            __m128i aLower = _mm256_castsi256_si128(a);
+            __m128i aUpper = _mm256_extracti128_si256(a, 1);
+
+            __m128i aSum = _mm_hadd_epi32(aLower, aUpper);
+            aSum = _mm_hadd_epi32(aSum, aSum);
+            aSum = _mm_hadd_epi32(aSum, aSum);
+
+            return _mm_cvtsi128_si32(aSum);
+        }
     };
 
     template <> struct Avx2Traits<int64_t> {
@@ -91,6 +234,28 @@ namespace internal {
             _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v);
         }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi64(a, b); }
+        static Vec mul(Vec a, Vec b) { return a; } // TODO: FIX THIS
+
+        static Vec empty() { return _mm256_setzero_si256(); }
+
+        static int64_t sum(Vec a) {
+            __m128i aLower = _mm256_castsi256_si128(a);
+            __m128i aUpper = _mm256_extracti128_si256(a, 1);
+
+            __m128i aSum = _mm_add_epi64(aLower, aUpper);
+            aSum = _mm_hadd_epi32(aSum, aSum);
+            aSum = _mm_hadd_epi32(aSum, aSum);
+
+            __m128i tmp = _mm_shuffle_epi32(aLower, _MM_SHUFFLE(1, 0, 3, 2));
+            __m128i aLowerSum = _mm_add_epi64(aLower, tmp);
+
+            tmp = _mm_shuffle_epi32(aUpper, _MM_SHUFFLE(1, 0, 3, 2));
+            __m128i aUpperSum = _mm_add_epi64(aUpper, tmp);
+
+            aSum = _mm_add_epi64(aLower, aUpper);
+
+            return _mm_cvtsi128_si64(aSum);
+        }
     };
 
     template <> struct Avx2Traits<uint64_t> {
@@ -103,6 +268,28 @@ namespace internal {
             _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v);
         }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi64(a, b); }
+        static Vec mul(Vec a, Vec b) { return a; } // TODO: FIX THIS
+
+        static Vec empty() { return _mm256_setzero_si256(); }
+
+        static int64_t sum(Vec a) {
+            __m128i aLower = _mm256_castsi256_si128(a);
+            __m128i aUpper = _mm256_extracti128_si256(a, 1);
+
+            __m128i aSum = _mm_add_epi64(aLower, aUpper);
+            aSum = _mm_hadd_epi32(aSum, aSum);
+            aSum = _mm_hadd_epi32(aSum, aSum);
+
+            __m128i tmp = _mm_shuffle_epi32(aLower, _MM_SHUFFLE(1, 0, 3, 2));
+            __m128i aLowerSum = _mm_add_epi64(aLower, tmp);
+
+            tmp = _mm_shuffle_epi32(aUpper, _MM_SHUFFLE(1, 0, 3, 2));
+            __m128i aUpperSum = _mm_add_epi64(aUpper, tmp);
+
+            aSum = _mm_add_epi64(aLower, aUpper);
+
+            return _mm_cvtsi128_si64(aSum);
+        }
     };
 
     template <> struct Avx2Traits<float> {
@@ -111,6 +298,20 @@ namespace internal {
         static Vec load(const float* p) { return _mm256_loadu_ps(p); }
         static void store(float* p, Vec v) { _mm256_storeu_ps(p, v); }
         static Vec add(Vec a, Vec b) { return _mm256_add_ps(a, b); }
+        static Vec mul(Vec a, Vec b) { return _mm256_mul_ps(a, b); }
+
+        static Vec empty() { return _mm256_setzero_ps(); }
+
+        static float sum(Vec a) {
+            __m128 aLower = _mm256_castps256_ps128(a);
+            __m128 aUpper = _mm256_extractf128_ps(a, 1);
+
+            __m128 aSum = _mm_hadd_ps(aLower, aUpper);
+            aSum = _mm_hadd_ps(aSum, aSum);
+            aSum = _mm_hadd_ps(aSum, aSum);
+
+            return _mm_cvtss_f32(aSum);
+        }
     };
 
     template <> struct Avx2Traits<double> {
@@ -119,6 +320,19 @@ namespace internal {
         static Vec load(const double* p) { return _mm256_loadu_pd(p); }
         static void store(double* p, Vec v) { _mm256_storeu_pd(p, v); }
         static Vec add(Vec a, Vec b) { return _mm256_add_pd(a, b); }
+        static Vec mul(Vec a, Vec b) { return _mm256_mul_pd(a, b); }
+
+        static Vec empty() { return _mm256_setzero_pd(); }
+
+        static double sum(Vec a) {
+            __m128d aLower = _mm256_castpd256_pd128(a);
+            __m128d aUpper = _mm256_extractf128_pd(a, 1);
+
+            __m128d aSum = _mm_hadd_pd(aLower, aUpper);
+            aSum = _mm_hadd_pd(aSum, aSum);
+
+            return _mm_cvtsd_f64(aSum);
+        }
     };
 }; // namespace internal
 } // namespace ty

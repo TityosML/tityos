@@ -34,7 +34,7 @@ namespace internal {
                     // Load the partial rows from batch2
                     for (size_t i = 0; i < lanes; i++) {
                         buffer[i] = batch2Data[batch2Idx];
-                        batch2Idx += batch2View.strides[2];
+                        batch2Idx += batch2View.strides[1];
                     }
                     Vec vecBatch2 = Avx2Traits<T>::load(buffer);
 

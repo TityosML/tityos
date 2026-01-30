@@ -21,28 +21,26 @@ namespace internal {
 
         std::memset(outData, 0, total * sizeof(T));
 
-        size_t outIdx;
-        size_t batch1Idx;
-        size_t batch2Idx;
-
+#pragma omp parallel for
         for (size_t batch = 0; batch < B; batch++) {
             for (size_t n = 0; n < N; n++) {
+
                 for (size_t m = 0; m < M; m++) {
-                    batch1Idx = batch * batch1View.strides[0] +
-                                m * batch1View.strides[1] +
-                                n * batch1View.strides[2];
+                    size_t batch1Idx = batch * batch1View.strides[0] +
+                                       m * batch1View.strides[1] +
+                                       n * batch1View.strides[2];
 
                     Vec vecBatch1 =
                         Avx2Traits<T>::set1(*(batch1Data + batch1Idx));
 
                     size_t k = 0;
                     for (; k + lanes <= K; k += lanes) {
-                        outIdx = batch * outView.strides[0] +
-                                 m * outView.strides[1] +
-                                 k * outView.strides[2];
-                        batch2Idx = batch * batch2View.strides[0] +
-                                    n * batch2View.strides[1] +
-                                    k * batch2View.strides[2];
+                        size_t outIdx = batch * outView.strides[0] +
+                                        m * outView.strides[1] +
+                                        k * outView.strides[2];
+                        size_t batch2Idx = batch * batch2View.strides[0] +
+                                           n * batch2View.strides[1] +
+                                           k * batch2View.strides[2];
 
                         Vec vecOut = Avx2Traits<T>::load(outData + outIdx);
                         Vec vecBatch2 =
@@ -55,12 +53,12 @@ namespace internal {
                     }
 
                     for (; k < K; k++) {
-                        outIdx = batch * outView.strides[0] +
-                                 m * outView.strides[1] +
-                                 k * outView.strides[2];
-                        batch2Idx = batch * batch2View.strides[0] +
-                                    n * batch2View.strides[1] +
-                                    k * batch2View.strides[2];
+                        size_t outIdx = batch * outView.strides[0] +
+                                        m * outView.strides[1] +
+                                        k * outView.strides[2];
+                        size_t batch2Idx = batch * batch2View.strides[0] +
+                                           n * batch2View.strides[1] +
+                                           k * batch2View.strides[2];
 
                         outData[outIdx] +=
                             batch1Data[batch1Idx] * batch2Data[batch2Idx];

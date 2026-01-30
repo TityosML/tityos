@@ -7,3 +7,4 @@
 
 #include <cstdint>
 #include <stdexcept>
+#include <omp.h>

@@ -92,6 +92,14 @@ if (TITYOS_BUILD_CUDA)
     )
 endif()
 
+# OpenMP
+find_package(OpenMP)
+if (OpenMP_CXX_FOUND)
+    target_link_libraries(tityos_cpu PUBLIC OpenMP::OpenMP_CXX)
+    message(STATUS "Checking for OpenMP - Success")
+else()
+    message(FATAL_ERROR "Checking for OpenMP - Failed")
+endif()
 
 # CPU SIMD
 if(MSVC)
@@ -107,7 +115,7 @@ else()
 endif()
 
 if(NOT COMPILER_ALLOWS_AVX2)
-    message(ERROR "Checking for AVX2 support - Failed")
+    message(FATAL_ERROR "Checking for AVX2 support - Failed")
 else()
     message(STATUS "Checking for AVX2 support - Success")
 endif()

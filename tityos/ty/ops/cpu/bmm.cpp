@@ -12,24 +12,22 @@ namespace internal {
         const T* __restrict__ tensor2Data =
             tensor2View.data + tensor2View.offset;
 
-        size_t outIdx;
-        size_t tensor1Idx;
-        size_t tensor2Idx;
-
+#pragma omp parallel for
         for (size_t batch = 0; batch < outView.shape[0]; batch++) {
             for (size_t m = 0; m < tensor1View.shape[1]; m++) {
                 for (size_t k = 0; k < tensor2View.shape[2]; k++) {
-                    outIdx = batch * outView.strides[0] +
-                             m * outView.strides[1] + k * outView.strides[2];
+                    size_t outIdx = batch * outView.strides[0] +
+                                    m * outView.strides[1] +
+                                    k * outView.strides[2];
 
                     outData[outIdx] = 0;
                     for (size_t n = 0; n < tensor2View.shape[1]; n++) {
-                        tensor1Idx = batch * tensor1View.strides[0] +
-                                     m * tensor1View.strides[1] +
-                                     n * tensor1View.strides[2];
-                        tensor2Idx = batch * tensor2View.strides[0] +
-                                     n * tensor2View.strides[1] +
-                                     k * tensor2View.strides[2];
+                        size_t tensor1Idx = batch * tensor1View.strides[0] +
+                                            m * tensor1View.strides[1] +
+                                            n * tensor1View.strides[2];
+                        size_t tensor2Idx = batch * tensor2View.strides[0] +
+                                            n * tensor2View.strides[1] +
+                                            k * tensor2View.strides[2];
 
                         outData[outIdx] +=
                             tensor1Data[tensor1Idx] * tensor2Data[tensor2Idx];

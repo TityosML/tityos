@@ -5,6 +5,7 @@
 #include "tityos/ty/tensor/Tensor.h"
 
 #include <immintrin.h>
+#include <omp.h>
 
 namespace ty {
 namespace internal {

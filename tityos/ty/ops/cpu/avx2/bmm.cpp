@@ -23,15 +23,13 @@ namespace internal {
 
 #pragma omp parallel for
         for (size_t batch = 0; batch < B; batch++) {
-            for (size_t n = 0; n < N; n++) {
-
-                for (size_t m = 0; m < M; m++) {
+            for (size_t m = 0; m < M; m++) {
+                for (size_t n = 0; n < N; n++) {
                     size_t batch1Idx = batch * batch1View.strides[0] +
                                        m * batch1View.strides[1] +
                                        n * batch1View.strides[2];
 
-                    Vec vecBatch1 =
-                        Avx2Traits<T>::set1(*(batch1Data + batch1Idx));
+                    Vec vecBatch1 = Avx2Traits<T>::set1(batch1Data[batch1Idx]);
 
                     size_t k = 0;
                     for (; k + lanes <= K; k += lanes) {

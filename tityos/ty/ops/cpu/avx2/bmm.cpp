@@ -22,6 +22,8 @@ namespace internal {
 
 #pragma omp parallel for collapse(2) schedule(static)
         for (size_t batch = 0; batch < B; batch++) {
+            Vec outVecs[NACC];
+            Vec batch2Vecs[NACC];
             for (size_t m = 0; m < M; m++) {
 
                 size_t k = 0;
@@ -33,9 +35,6 @@ namespace internal {
                                        m * batch1View.strides[1];
                     size_t batch2Idx = batch * batch2View.strides[0] +
                                        k * batch2View.strides[2];
-
-                    Vec outVecs[NACC];
-                    Vec batch2Vecs[NACC];
 
                     for (size_t i = 0; i < NACC; i++) {
                         outVecs[i] = Avx2Traits<T>::empty();

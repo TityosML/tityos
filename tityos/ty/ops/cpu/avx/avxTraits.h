@@ -7,9 +7,9 @@
 
 namespace ty {
 namespace internal {
-    template <typename T> struct Avx2Traits;
+    template <typename T> struct AvxTraits;
 
-    template <> struct Avx2Traits<int8_t> {
+    template <> struct AvxTraits<int8_t> {
         using Vec = __m256i;
         static constexpr int lanes = 32;
         static Vec load(const int8_t* p) {
@@ -66,7 +66,7 @@ namespace internal {
         static Vec fma(Vec a, Vec b, Vec c) { return add(mul(a, b), c); }
     };
 
-    template <> struct Avx2Traits<uint8_t> {
+    template <> struct AvxTraits<uint8_t> {
         using Vec = __m256i;
         static constexpr int lanes = 32;
         static Vec load(const uint8_t* p) {
@@ -124,7 +124,7 @@ namespace internal {
         static Vec fma(Vec a, Vec b, Vec c) { return add(mul(a, b), c); }
     };
 
-    template <> struct Avx2Traits<int16_t> {
+    template <> struct AvxTraits<int16_t> {
         using Vec = __m256i;
         static constexpr int lanes = 16;
         static Vec load(const int16_t* p) {
@@ -156,7 +156,7 @@ namespace internal {
         }
     };
 
-    template <> struct Avx2Traits<uint16_t> {
+    template <> struct AvxTraits<uint16_t> {
         using Vec = __m256i;
         static constexpr int lanes = 16;
         static Vec load(const uint16_t* p) {
@@ -188,7 +188,7 @@ namespace internal {
         }
     };
 
-    template <> struct Avx2Traits<int32_t> {
+    template <> struct AvxTraits<int32_t> {
         using Vec = __m256i;
         static constexpr int lanes = 8;
         static Vec load(const int32_t* p) {
@@ -219,7 +219,7 @@ namespace internal {
         }
     };
 
-    template <> struct Avx2Traits<uint32_t> {
+    template <> struct AvxTraits<uint32_t> {
         using Vec = __m256i;
         static constexpr int lanes = 8;
         static Vec load(const uint32_t* p) {
@@ -250,7 +250,7 @@ namespace internal {
         }
     };
 
-    template <> struct Avx2Traits<int64_t> {
+    template <> struct AvxTraits<int64_t> {
         using Vec = __m256i;
         static constexpr int lanes = 4;
         static Vec load(const int64_t* p) {
@@ -292,7 +292,7 @@ namespace internal {
         static Vec fma(Vec a, Vec b, Vec c) { return add(mul(a, b), c); }
     };
 
-    template <> struct Avx2Traits<uint64_t> {
+    template <> struct AvxTraits<uint64_t> {
         using Vec = __m256i;
         static constexpr int lanes = 4;
         static Vec load(const uint64_t* p) {
@@ -335,7 +335,7 @@ namespace internal {
         static Vec fma(Vec a, Vec b, Vec c) { return add(mul(a, b), c); }
     };
 
-    template <> struct Avx2Traits<float> {
+    template <> struct AvxTraits<float> {
         using Vec = __m256;
         static constexpr int lanes = 8;
         static Vec load(const float* p) { return _mm256_loadu_ps(p); }
@@ -360,7 +360,7 @@ namespace internal {
         static Vec fma(Vec a, Vec b, Vec c) { return _mm256_fmadd_ps(a, b, c); }
     };
 
-    template <> struct Avx2Traits<double> {
+    template <> struct AvxTraits<double> {
         using Vec = __m256d;
         static constexpr int lanes = 4;
         static Vec load(const double* p) { return _mm256_loadu_pd(p); }

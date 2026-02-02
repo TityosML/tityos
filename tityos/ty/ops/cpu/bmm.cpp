@@ -49,9 +49,9 @@ namespace internal {
             batch1.getDevice());
         BaseTensor result(resultStorage, resultLayout, batch1.getDType());
 
-        // Avx2 Optimized kernel
+        // Avx Optimized kernel
         if (batch1.isContiguous() && batch2.isContiguous()) {
-            bmmAvx2(result, batch1, batch2);
+            bmmAvx(result, batch1, batch2);
             return result;
         }
 

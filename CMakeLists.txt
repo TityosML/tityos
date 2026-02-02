@@ -73,6 +73,16 @@ target_include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+# Compiler flags
+if(MSVC)
+    target_compile_options(tityos PRIVATE /O2)
+    target_compile_options(tityos_cpu PRIVATE /O2)
+else()
+    target_compile_options(tityos PRIVATE -O2)
+    target_compile_options(tityos_cpu PRIVATE -O2)
+endif()
+
+
 # CUDA
 if (TITYOS_BUILD_CUDA)
     find_package(CUDAToolkit REQUIRED)

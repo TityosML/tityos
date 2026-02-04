@@ -9,7 +9,7 @@ namespace internal {
             throw std::invalid_argument("Types must match for addition");
         }
 
-        auto result = emptyLike(tensor1);
+        BaseTensor result = internal::emptyLike(tensor1);
 
         switch (tensor1.getDType()) {
         case DType::Int8:

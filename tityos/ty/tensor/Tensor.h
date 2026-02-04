@@ -28,7 +28,7 @@ class Tensor {
            Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32) {
         using T = typename DataContainer::value_type;
 
-        if (std::size(shape) > internal::MAX_DIMS) {
+        if (std::size(shape) > TY_MAX_DIMS) {
             throw std::runtime_error("Tensor shape has too many dimensions.");
         }
 
@@ -38,7 +38,7 @@ class Tensor {
             std::make_shared<internal::TensorStorage>(numBytes, device);
         dataStorage->copyDataFromCpu(std::data(data), numBytes);
 
-        internal::TensorShape storageShape{};
+        TensorShape storageShape{};
         int i = 0;
         for (size_t s : shape) {
             storageShape[i++] = s;
@@ -78,7 +78,7 @@ class Tensor {
 
     Device getDevice() const;
     DType getDType() const;
-    const std::array<size_t, internal::MAX_DIMS>& getShape() const;
+    const std::array<size_t, TY_MAX_DIMS>& getShape() const;
     size_t getSize() const;
     size_t getNDim() const;
 

@@ -38,13 +38,13 @@ DType Tensor::getDType() const {
     return baseTensor_->getDType();
 }
 
-const std::array<size_t, internal::MAX_DIMS>& Tensor::getShape() const {
+const std::array<size_t, TY_MAX_DIMS>& Tensor::getShape() const {
     return baseTensor_->getLayout().getShape();
 }
 
 size_t Tensor::getSize() const {
     size_t tensorSize = 1;
-    const std::array<size_t, internal::MAX_DIMS>& shape = getShape();
+    const std::array<size_t, TY_MAX_DIMS>& shape = getShape();
     for (size_t i = 0; i < baseTensor_->getLayout().getNDim(); i++) {
         tensorSize *= shape[i];
     }
@@ -67,7 +67,7 @@ void* Tensor::at(const size_t* indexStart, const size_t indexSize) const {
             std::to_string(indexSize));
     }
 
-    const std::array<size_t, internal::MAX_DIMS>& shape =
+    const std::array<size_t, TY_MAX_DIMS>& shape =
         baseTensor_->getLayout().getShape();
     for (size_t i = 0; i < indexSize; i++) {
         if (indexStart[i] >= shape[i]) {
@@ -146,7 +146,7 @@ std::string Tensor::toString() const {
     const auto baseTensorCpu = b->toCpu(*baseTensor_);
 
     const ty::internal::ShapeStrides& layout = baseTensor_->getLayout();
-    const internal::TensorShape& shape = layout.getShape();
+    const TensorShape& shape = layout.getShape();
     const DType dtype = getDType();
     const size_t ndim = layout.getNDim();
     const size_t tensorSize = getSize();

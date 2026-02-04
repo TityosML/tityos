@@ -37,9 +37,9 @@ namespace internal {
         return indexByte * dtypeSize(dtype) + offset_;
     }
 
-    std::array<size_t, MAX_DIMS>
+    std::array<size_t, TY_MAX_DIMS>
     ShapeStrides::linearToTensorIndex(size_t linearIndex) const {
-        std::array<size_t, MAX_DIMS> index{};
+        std::array<size_t, TY_MAX_DIMS> index{};
 
         for (size_t i = ndim_; i-- > 0;) {
             index[i] = linearIndex % shape_[i];
@@ -50,7 +50,7 @@ namespace internal {
     }
 
     size_t ShapeStrides::tensorToLinearIndex(
-        const std::array<size_t, MAX_DIMS>& index) const {
+        const std::array<size_t, TY_MAX_DIMS>& index) const {
         size_t linear = 0;
         size_t dimProduct = 1;
 

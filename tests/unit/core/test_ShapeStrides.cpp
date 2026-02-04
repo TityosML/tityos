@@ -14,13 +14,12 @@ TEST_CASE("Accessing ShapeStrides and Computing Byte Index", "[ShapeStrides]") {
     ty::internal::ShapeStrides unknownExample2({2, 3, 4}, 3);
 
     CHECK(unknownExample1.getNDim() == 2);
-    CHECK(unknownExample1.getShape() == ty::internal::TensorShape{2, 2});
-    CHECK(unknownExample1.getStrides() == ty::internal::TensorStrides{2, 1});
+    CHECK(unknownExample1.getShape() == ty::TensorShape{2, 2});
+    CHECK(unknownExample1.getStrides() == ty::TensorStrides{2, 1});
 
     CHECK(unknownExample2.getNDim() == 3);
-    CHECK(unknownExample2.getShape() == ty::internal::TensorShape{2, 3, 4});
-    CHECK(unknownExample2.getStrides() ==
-          ty::internal::TensorStrides{12, 4, 1});
+    CHECK(unknownExample2.getShape() == ty::TensorShape{2, 3, 4});
+    CHECK(unknownExample2.getStrides() == ty::TensorStrides{12, 4, 1});
 
     size_t index1[1] = {1};
     size_t index2[2] = {1, 0};

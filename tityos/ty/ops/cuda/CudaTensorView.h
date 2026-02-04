@@ -11,8 +11,8 @@ namespace internal {
 
     template <typename T> struct CudaTensorView {
         T* data;
-        size_t shape[MAX_DIMS];
-        ptrdiff_t strides[MAX_DIMS];
+        size_t shape[TY_MAX_DIMS];
+        ptrdiff_t strides[TY_MAX_DIMS];
         size_t offset;
         size_t ndim;
 

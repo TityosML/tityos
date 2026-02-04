@@ -3,7 +3,7 @@
 namespace ty {
 namespace internal {
     BaseTensor backend::CUDABackend::contiguous(const BaseTensor& tensor) {
-        auto result = emptyLike(tensor);
+        BaseTensor result = internal::emptyLike(tensor);
 
         switch (tensor.getDType()) {
         case DType::Int8:

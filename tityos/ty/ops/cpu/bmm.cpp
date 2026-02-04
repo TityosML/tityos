@@ -43,7 +43,7 @@ namespace internal {
         auto shape2 = batch2.getShape();
 
         TensorShape resultShape = {shape1[0], shape1[1], shape2[2]};
-        auto result = empty(resultShape, 3, batch1.getDType(), batch1.getDevice());
+        BaseTensor result = internal::empty(resultShape, 3, batch1.getDType(), batch1.getDevice());
 
         // Avx Optimized kernel
         if (batch1.isContiguous() && batch2.isContiguous()) {

@@ -2,7 +2,8 @@
 
 namespace ty {
 namespace internal {
-    BaseTensor empty(TensorShape shape, size_t ndim, DType dtype, Device device) {
+    BaseTensor empty(const TensorShape& shape, size_t ndim, DType dtype,
+                     Device device) {
         auto numBytes = std::accumulate(shape.begin(), shape.begin() + ndim, 1,
                                         std::multiplies<size_t>()) *
                         dtypeSize(dtype);
@@ -11,11 +12,22 @@ namespace internal {
         return BaseTensor(resultStorage, resultLayout, dtype);
     }
 
-    BaseTensor emptyLike(BaseTensor tensor) {
+    BaseTensor emptyLike(const BaseTensor& tensor) {
         auto resultStorage = std::make_shared<TensorStorage>(
             tensor.getLogicalSize(), tensor.getDevice());
         ShapeStrides resultLayout(tensor.getShape(), tensor.getNDim());
         return BaseTensor(resultStorage, resultLayout, tensor.getDType());
     }
 } // namespace internal
+
+Tensor empty(const TensorShape& shape, size_t ndim, DType dtype,
+             Device device) {
+    return Tensor(std::make_shared<internal::BaseTensor>(
+        internal::empty(shape, ndim, dtype, device)));
+}
+
+Tensor emptyLike(const Tensor& tensor) {
+    return Tensor(std::make_shared<internal::BaseTensor>(
+        internal::emptyLike(*tensor.getBaseTensor())));
+}
 } // namespace ty

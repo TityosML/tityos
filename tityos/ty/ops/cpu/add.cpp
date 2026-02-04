@@ -18,7 +18,7 @@ namespace internal {
         const T* __restrict__ tensor2Data =
             tensor2View.data + tensor2View.offset;
 
-        size_t idx[MAX_DIMS];
+        size_t idx[TY_MAX_DIMS];
         for (size_t i = 0; i < outView.ndim; i++) {
             idx[i] = 0;
         }
@@ -48,7 +48,7 @@ namespace internal {
 
     BaseTensor backend::CPUBackend::add(const BaseTensor& tensor1,
                                         const BaseTensor& tensor2) {
-        auto result = emptyLike(tensor1);
+        BaseTensor result = internal::emptyLike(tensor1);
 
         // Avx Optimized kernel
         if (tensor1.isContiguous() && tensor2.isContiguous()) {

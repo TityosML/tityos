@@ -12,7 +12,7 @@ namespace internal {
         T* __restrict__ outData = outView.data + outView.offset;
         const T* __restrict__ tensorData = tensorView.data + tensorView.offset;
 
-        size_t idx[MAX_DIMS];
+        size_t idx[TY_MAX_DIMS];
         for (size_t i = 0; i < outView.ndim; i++) {
             idx[i] = 0;
         }
@@ -39,7 +39,7 @@ namespace internal {
     }
 
     BaseTensor backend::CPUBackend::contiguous(const BaseTensor& tensor) {
-        auto result = emptyLike(tensor);
+        BaseTensor result = internal::emptyLike(tensor);
 
         switch (result.getDType()) {
         case DType::Int8:

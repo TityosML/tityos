@@ -9,11 +9,7 @@ namespace internal {
             throw std::invalid_argument("Types must match for addition");
         }
 
-        // TODO: Replace this with the copy function when that gets updated
-        auto resultStorage = std::make_shared<TensorStorage>(
-            tensor1.getLogicalSize(), tensor1.getDevice());
-        ShapeStrides resultLayout(tensor1.getShape(), tensor1.getNDim());
-        BaseTensor result(resultStorage, resultLayout, tensor1.getDType());
+        auto result = emptyLike(tensor1);
 
         switch (tensor1.getDType()) {
         case DType::Int8:

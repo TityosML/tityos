@@ -42,12 +42,8 @@ namespace internal {
         auto shape1 = batch1.getShape();
         auto shape2 = batch2.getShape();
 
-        ShapeStrides resultLayout(
-            ty::internal::TensorShape{shape1[0], shape1[1], shape2[2]}, 3);
-        auto resultStorage = std::make_shared<TensorStorage>(
-            resultLayout.numElements() * dtypeSize(batch1.getDType()),
-            batch1.getDevice());
-        BaseTensor result(resultStorage, resultLayout, batch1.getDType());
+        TensorShape resultShape = {shape1[0], shape1[1], shape2[2]};
+        auto result = empty(resultShape, 3, batch1.getDType(), batch1.getDevice());
 
         // Avx Optimized kernel
         if (batch1.isContiguous() && batch2.isContiguous()) {

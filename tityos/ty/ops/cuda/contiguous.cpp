@@ -3,12 +3,7 @@
 namespace ty {
 namespace internal {
     BaseTensor backend::CUDABackend::contiguous(const BaseTensor& tensor) {
-
-        // TODO: Replace this with the copy function when that gets updated
-        auto resultStorage = std::make_shared<TensorStorage>(
-            tensor.getLogicalSize(), tensor.getDevice());
-        ShapeStrides resultLayout(tensor.getShape(), tensor.getNDim());
-        BaseTensor result(resultStorage, resultLayout, tensor.getDType());
+        auto result = emptyLike(tensor);
 
         switch (tensor.getDType()) {
         case DType::Int8:

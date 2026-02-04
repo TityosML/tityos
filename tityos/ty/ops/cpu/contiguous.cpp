@@ -39,10 +39,7 @@ namespace internal {
     }
 
     BaseTensor backend::CPUBackend::contiguous(const BaseTensor& tensor) {
-        auto resultStorage = std::make_shared<TensorStorage>(
-            tensor.getLogicalSize(), tensor.getDevice());
-        ShapeStrides resultLayout(tensor.getShape(), tensor.getNDim());
-        BaseTensor result(resultStorage, resultLayout, tensor.getDType());
+        auto result = emptyLike(tensor);
 
         switch (result.getDType()) {
         case DType::Int8:

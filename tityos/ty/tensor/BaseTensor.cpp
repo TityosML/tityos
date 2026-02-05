@@ -98,8 +98,8 @@ namespace internal {
     }
 
     bool BaseTensor::operator==(const BaseTensor& other) const {
-        return tensorStorage_ == other.tensorStorage_ && layout_ == other.layout_ &&
-               dtype_ == other.dtype_;
+        return tensorStorage_ == other.tensorStorage_ &&
+               layout_ == other.layout_ && dtype_ == other.dtype_;
     }
 
     BaseTensor BaseTensor::slice(size_t dim, std::optional<ptrdiff_t> start,
@@ -110,27 +110,10 @@ namespace internal {
     };
 
     BaseTensor BaseTensor::indexList(IndexList indices) const {
-        ShapeStrides newLayout = layout_;
+        internal::IndexingResult result =
+            internal::resolveIndices(indices, layout_, std::nullopt);
 
-        size_t dim = 0;
-
-        for (const auto& idx : indices) {
-            if (dim >= layout_.getNDim()) {
-                throw std::out_of_range("Invalid index");
-            }
-
-            if (std::holds_alternative<Slice>(idx)) {
-                const Slice& slice = std::get<Slice>(idx);
-                newLayout =
-                    newLayout.slice(dim, slice.start, slice.stop, slice.step);
-                dim++;
-            } else {
-                ptrdiff_t select = std::get<ptrdiff_t>(idx);
-                newLayout = newLayout.select(dim, select);
-            }
-        }
-
-        return BaseTensor(tensorStorage_, newLayout, dtype_);
+        return BaseTensor(tensorStorage_, result.newLayout, dtype_);
     }
 
     BaseTensor::Iterator::Iterator(const BaseTensor& baseTensor,

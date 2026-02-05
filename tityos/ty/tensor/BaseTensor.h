@@ -2,6 +2,7 @@
 
 #include "tityos/ty/tensor/Dtype.h"
 #include "tityos/ty/tensor/Index.h"
+#include "tityos/ty/tensor/Indexing.h"
 #include "tityos/ty/tensor/ShapeStrides.h"
 #include "tityos/ty/tensor/TensorStorage.h"
 

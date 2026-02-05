@@ -13,7 +13,7 @@ namespace internal {
 
         DISPATCH_KERNEL_DTYPE_TABLE(
             kernelTable, launchAddKernel,
-            (const TensorView&, const TensorView&, const TensorView&))
+            (const BaseTensor&, const BaseTensor&, BaseTensor&))
 
         kernelTable[static_cast<size_t>(tensor1.getDType())](result, tensor1,
                                                              tensor2);

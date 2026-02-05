@@ -11,40 +11,12 @@ namespace internal {
 
         BaseTensor result = internal::emptyLike(tensor1);
 
-        switch (tensor1.getDType()) {
-        case DType::Int8:
-            launchAddKernel<int8_t>(tensor1, tensor2, result);
-            break;
-        case DType::UInt8:
-            launchAddKernel<uint8_t>(tensor1, tensor2, result);
-            break;
-        case DType::Int16:
-            launchAddKernel<int16_t>(tensor1, tensor2, result);
-            break;
-        case DType::UInt16:
-            launchAddKernel<uint16_t>(tensor1, tensor2, result);
-            break;
-        case DType::Int32:
-            launchAddKernel<int32_t>(tensor1, tensor2, result);
-            break;
-        case DType::UInt32:
-            launchAddKernel<uint32_t>(tensor1, tensor2, result);
-            break;
-        case DType::Int64:
-            launchAddKernel<int64_t>(tensor1, tensor2, result);
-            break;
-        case DType::UInt64:
-            launchAddKernel<uint64_t>(tensor1, tensor2, result);
-            break;
-        case DType::Float32:
-            launchAddKernel<float>(tensor1, tensor2, result);
-            break;
-        case DType::Float64:
-            launchAddKernel<double>(tensor1, tensor2, result);
-            break;
-        default:
-            throw std::runtime_error("Unsupported dtype for addition");
-        }
+        DISPATCH_KERNEL_DTYPE_TABLE(
+            kernelTable, launchAddKernel,
+            (const TensorView&, const TensorView&, const TensorView&))
+
+        kernelTable[static_cast<size_t>(tensor1.getDType())](result, tensor1,
+                                                             tensor2);
 
         return result;
     }

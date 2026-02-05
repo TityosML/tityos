@@ -8,43 +8,15 @@ namespace internal {
         auto shape2 = batch2.getShape();
 
         TensorShape resultShape = {shape1[0], shape1[1], shape2[2]};
-        BaseTensor result = internal::empty(resultShape, 3, batch1.getDType(), batch1.getDevice());
+        BaseTensor result = internal::empty(resultShape, 3, batch1.getDType(),
+                                            batch1.getDevice());
 
-        switch (batch1.getDType()) {
-        case DType::Int8:
-            launchBMMKernel<int8_t>(batch1, batch2, result);
-            break;
-        case DType::UInt8:
-            launchBMMKernel<uint8_t>(batch1, batch2, result);
-            break;
-        case DType::Int16:
-            launchBMMKernel<int16_t>(batch1, batch2, result);
-            break;
-        case DType::UInt16:
-            launchBMMKernel<uint16_t>(batch1, batch2, result);
-            break;
-        case DType::Int32:
-            launchBMMKernel<int32_t>(batch1, batch2, result);
-            break;
-        case DType::UInt32:
-            launchBMMKernel<uint32_t>(batch1, batch2, result);
-            break;
-        case DType::Int64:
-            launchBMMKernel<int64_t>(batch1, batch2, result);
-            break;
-        case DType::UInt64:
-            launchBMMKernel<uint64_t>(batch1, batch2, result);
-            break;
-        case DType::Float32:
-            launchBMMKernel<float>(batch1, batch2, result);
-            break;
-        case DType::Float64:
-            launchBMMKernel<double>(batch1, batch2, result);
-            break;
-        default:
-            throw std::runtime_error(
-                "Unsupported dtype for batch matrix-matrix product");
-        }
+        DISPATCH_KERNEL_DTYPE_TABLE(
+            kernelTable, launchBMMKernel,
+            (const TensorView&, const TensorView&, const TensorView&))
+
+        kernelTable[static_cast<size_t>(tensor1.getDType())](result, tensor1,
+                                                             tensor2);
 
         return result;
     }

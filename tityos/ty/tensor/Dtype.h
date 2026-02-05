@@ -7,6 +7,8 @@
 #include <cstddef>
 
 namespace ty {
+constexpr size_t TY_NUM_DTYPES = 10;
+
 enum class DType {
     Int8,
     UInt8,

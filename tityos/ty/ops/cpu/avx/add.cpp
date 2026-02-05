@@ -3,9 +3,8 @@
 namespace ty {
 namespace internal {
     template <typename T>
-    void addAvxKernel(const TensorView<T>& outView,
-                       const TensorView<T>& tensor1View,
-                       const TensorView<T>& tensor2View) {
+    void addAvxKernel(const TensorView& outView, const TensorView& tensor1View,
+                      const TensorView& tensor2View) {
         using Vec = typename AvxTraits<T>::Vec;
         constexpr int lanes = AvxTraits<T>::lanes;
 
@@ -13,9 +12,11 @@ namespace internal {
             std::accumulate(outView.shape, outView.shape + outView.ndim, 1,
                             std::multiplies<size_t>());
 
-        T* outData = outView.data + outView.offset;
-        const T* tensor1Data = tensor1View.data + tensor1View.offset;
-        const T* tensor2Data = tensor2View.data + tensor2View.offset;
+        T* outData = static_cast<T*>(outView.data) + outView.offset;
+        const T* tensor1Data =
+            static_cast<T*>(tensor1View.data) + tensor1View.offset;
+        const T* tensor2Data =
+            static_cast<T*>(tensor2View.data) + tensor2View.offset;
 
         size_t i = 0;
         for (; i + lanes <= total; i += lanes) {
@@ -32,41 +33,13 @@ namespace internal {
     }
 
     void addAvx(BaseTensor& result, const BaseTensor& tensor1,
-                       const BaseTensor& tensor2) {
-        switch (result.getDType()) {
-        case DType::Int8:
-            addAvxKernel<int8_t>(result, tensor1, tensor2);
-            break;
-        case DType::UInt8:
-            addAvxKernel<uint8_t>(result, tensor1, tensor2);
-            break;
-        case DType::Int16:
-            addAvxKernel<int16_t>(result, tensor1, tensor2);
-            break;
-        case DType::UInt16:
-            addAvxKernel<uint16_t>(result, tensor1, tensor2);
-            break;
-        case DType::Int32:
-            addAvxKernel<int32_t>(result, tensor1, tensor2);
-            break;
-        case DType::UInt32:
-            addAvxKernel<uint32_t>(result, tensor1, tensor2);
-            break;
-        case DType::Int64:
-            addAvxKernel<int64_t>(result, tensor1, tensor2);
-            break;
-        case DType::UInt64:
-            addAvxKernel<uint64_t>(result, tensor1, tensor2);
-            break;
-        case DType::Float32:
-            addAvxKernel<float>(result, tensor1, tensor2);
-            break;
-        case DType::Float64:
-            addAvxKernel<double>(result, tensor1, tensor2);
-            break;
-        default:
-            throw std::runtime_error("Unsupported dtype for addition");
-        }
+                const BaseTensor& tensor2) {
+        DISPATCH_KERNEL_DTYPE_TABLE(
+            kernelTable, addAvxKernel,
+            (const TensorView&, const TensorView&, const TensorView&))
+
+        kernelTable[static_cast<size_t>(tensor1.getDType())](result, tensor1,
+                                                             tensor2);
     }
 } // namespace internal
 } // namespace ty

@@ -5,6 +5,7 @@
 #include "tityos/ty/tensor/BaseTensor.h"
 #include "tityos/ty/ops/cpu/avx/add.h"
 #include "tityos/ty/ops/empty.h"
+#include "tityos/ty/ops/dispatchDType.h"
 
 #include <cstdint>
 #include <stdexcept>

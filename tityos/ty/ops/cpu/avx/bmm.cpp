@@ -3,9 +3,8 @@
 namespace ty {
 namespace internal {
     template <typename T>
-    void bmmAvxKernel(const TensorView<T>& outView,
-                       const TensorView<T>& batch1View,
-                       const TensorView<T>& batch2View) {
+    void bmmAvxKernel(const TensorView& outView, const TensorView& batch1View,
+                      const TensorView& batch2View) {
         using Vec = typename AvxTraits<T>::Vec;
         constexpr int lanes = AvxTraits<T>::lanes;
         constexpr size_t NACC = 2;
@@ -16,9 +15,11 @@ namespace internal {
         const size_t K = outView.shape[2];
         const size_t total = B * M * K;
 
-        T* outData = outView.data + outView.offset;
-        const T* batch1Data = batch1View.data + batch1View.offset;
-        const T* batch2Data = batch2View.data + batch2View.offset;
+        T* outData = static_cast<T*>(outView.data) + outView.offset;
+        const T* batch1Data =
+            static_cast<T*>(batch1View.data) + batch1View.offset;
+        const T* batch2Data =
+            static_cast<T*>(batch2View.data) + batch2View.offset;
 
         const auto outStride0 = outView.strides[0];
         const auto outStride1 = outView.strides[1];
@@ -68,7 +69,7 @@ namespace internal {
 
                     for (size_t i = 0; i < NACC; i++) {
                         AvxTraits<T>::store(outData + outIdx + i * lanes,
-                                             outVecs[i]);
+                                            outVecs[i]);
                     }
                 }
 
@@ -86,10 +87,10 @@ namespace internal {
                         Vec batch1Vec =
                             AvxTraits<T>::set1(batch1Data[batch1Idx]);
 
-                        batch2Vecs[0] = AvxTraits<T>::load(
-                            batch2Data + batch2Idx);
-                        outVecs[0] = AvxTraits<T>::fma(
-                            batch1Vec, batch2Vecs[0], outVecs[0]);
+                        batch2Vecs[0] =
+                            AvxTraits<T>::load(batch2Data + batch2Idx);
+                        outVecs[0] = AvxTraits<T>::fma(batch1Vec, batch2Vecs[0],
+                                                       outVecs[0]);
 
                         batch1Idx += batch1Stride2;
                         batch2Idx += batch2Stride1;
@@ -120,41 +121,13 @@ namespace internal {
     }
 
     void bmmAvx(BaseTensor& result, const BaseTensor& batch1,
-                 const BaseTensor& batch2) {
-        switch (result.getDType()) {
-        case DType::Int8:
-            bmmAvxKernel<int8_t>(result, batch1, batch2);
-            break;
-        case DType::UInt8:
-            bmmAvxKernel<uint8_t>(result, batch1, batch2);
-            break;
-        case DType::Int16:
-            bmmAvxKernel<int16_t>(result, batch1, batch2);
-            break;
-        case DType::UInt16:
-            bmmAvxKernel<uint16_t>(result, batch1, batch2);
-            break;
-        case DType::Int32:
-            bmmAvxKernel<int32_t>(result, batch1, batch2);
-            break;
-        case DType::UInt32:
-            bmmAvxKernel<uint32_t>(result, batch1, batch2);
-            break;
-        case DType::Int64:
-            bmmAvxKernel<int64_t>(result, batch1, batch2);
-            break;
-        case DType::UInt64:
-            bmmAvxKernel<uint64_t>(result, batch1, batch2);
-            break;
-        case DType::Float32:
-            bmmAvxKernel<float>(result, batch1, batch2);
-            break;
-        case DType::Float64:
-            bmmAvxKernel<double>(result, batch1, batch2);
-            break;
-        default:
-            throw std::runtime_error("Unsupported dtype for addition");
-        }
+                const BaseTensor& batch2) {
+        DISPATCH_KERNEL_DTYPE_TABLE(
+            kernelTable, bmmAvxKernel,
+            (const TensorView&, const TensorView&, const TensorView&))
+
+        kernelTable[static_cast<size_t>(batch1.getDType())](result, batch1,
+                                                            batch2);
     }
 } // namespace internal
 } // namespace ty

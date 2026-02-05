@@ -3,14 +3,16 @@
 namespace ty {
 namespace internal {
     template <typename T>
-    void contiguousCpuKernel(const TensorView<T>& outView,
-                             const TensorView<T>& tensorView) {
+    void contiguousCpuKernel(const TensorView& outView,
+                             const TensorView& tensorView) {
         size_t total =
             std::accumulate(outView.shape, outView.shape + outView.ndim, 1,
                             std::multiplies<size_t>());
 
-        T* __restrict__ outData = outView.data + outView.offset;
-        const T* __restrict__ tensorData = tensorView.data + tensorView.offset;
+        T* __restrict__ outData =
+            static_cast<T*>(outView.data) + outView.offset;
+        const T* __restrict__ tensorData =
+            static_cast<T*>(tensorView.data) + tensorView.offset;
 
         size_t idx[TY_MAX_DIMS];
         for (size_t i = 0; i < outView.ndim; i++) {
@@ -41,40 +43,10 @@ namespace internal {
     BaseTensor backend::CPUBackend::contiguous(const BaseTensor& tensor) {
         BaseTensor result = internal::emptyLike(tensor);
 
-        switch (result.getDType()) {
-        case DType::Int8:
-            contiguousCpuKernel<int8_t>(result, tensor);
-            break;
-        case DType::UInt8:
-            contiguousCpuKernel<uint8_t>(result, tensor);
-            break;
-        case DType::Int16:
-            contiguousCpuKernel<int16_t>(result, tensor);
-            break;
-        case DType::UInt16:
-            contiguousCpuKernel<uint16_t>(result, tensor);
-            break;
-        case DType::Int32:
-            contiguousCpuKernel<int32_t>(result, tensor);
-            break;
-        case DType::UInt32:
-            contiguousCpuKernel<uint32_t>(result, tensor);
-            break;
-        case DType::Int64:
-            contiguousCpuKernel<int64_t>(result, tensor);
-            break;
-        case DType::UInt64:
-            contiguousCpuKernel<uint64_t>(result, tensor);
-            break;
-        case DType::Float32:
-            contiguousCpuKernel<float>(result, tensor);
-            break;
-        case DType::Float64:
-            contiguousCpuKernel<double>(result, tensor);
-            break;
-        default:
-            throw std::runtime_error("Unsupported dtype for addition");
-        }
+        DISPATCH_KERNEL_DTYPE_TABLE(kernelTable, contiguousCpuKernel,
+                                    (const TensorView&, const TensorView&))
+
+        kernelTable[static_cast<size_t>(tensor.getDType())](result, tensor);
 
         return result;
     }

@@ -3,14 +3,14 @@
 namespace ty {
 namespace internal {
     template <typename T>
-    void bmmCpuKernel(const TensorView<T>& outView,
-                      const TensorView<T>& tensor1View,
-                      const TensorView<T>& tensor2View) {
-        T* __restrict__ outData = outView.data + outView.offset;
+    void bmmCpuKernel(const TensorView& outView, const TensorView& tensor1View,
+                      const TensorView& tensor2View) {
+        T* __restrict__ outData =
+            static_cast<T*>(outView.data) + outView.offset;
         const T* __restrict__ tensor1Data =
-            tensor1View.data + tensor1View.offset;
+            static_cast<T*>(tensor1View.data) + tensor1View.offset;
         const T* __restrict__ tensor2Data =
-            tensor2View.data + tensor2View.offset;
+            static_cast<T*>(tensor2View.data) + tensor2View.offset;
 
 #pragma omp parallel for
         for (size_t batch = 0; batch < outView.shape[0]; batch++) {
@@ -43,7 +43,8 @@ namespace internal {
         auto shape2 = batch2.getShape();
 
         TensorShape resultShape = {shape1[0], shape1[1], shape2[2]};
-        BaseTensor result = internal::empty(resultShape, 3, batch1.getDType(), batch1.getDevice());
+        BaseTensor result = internal::empty(resultShape, 3, batch1.getDType(),
+                                            batch1.getDevice());
 
         // Avx Optimized kernel
         if (batch1.isContiguous() && batch2.isContiguous()) {
@@ -51,40 +52,12 @@ namespace internal {
             return result;
         }
 
-        switch (result.getDType()) {
-        case DType::Int8:
-            bmmCpuKernel<int8_t>(result, batch1, batch2);
-            break;
-        case DType::UInt8:
-            bmmCpuKernel<uint8_t>(result, batch1, batch2);
-            break;
-        case DType::Int16:
-            bmmCpuKernel<int16_t>(result, batch1, batch2);
-            break;
-        case DType::UInt16:
-            bmmCpuKernel<uint16_t>(result, batch1, batch2);
-            break;
-        case DType::Int32:
-            bmmCpuKernel<int32_t>(result, batch1, batch2);
-            break;
-        case DType::UInt32:
-            bmmCpuKernel<uint32_t>(result, batch1, batch2);
-            break;
-        case DType::Int64:
-            bmmCpuKernel<int64_t>(result, batch1, batch2);
-            break;
-        case DType::UInt64:
-            bmmCpuKernel<uint64_t>(result, batch1, batch2);
-            break;
-        case DType::Float32:
-            bmmCpuKernel<float>(result, batch1, batch2);
-            break;
-        case DType::Float64:
-            bmmCpuKernel<double>(result, batch1, batch2);
-            break;
-        default:
-            throw std::runtime_error("Unsupported dtype for addition");
-        }
+        DISPATCH_KERNEL_DTYPE_TABLE(
+            kernelTable, bmmCpuKernel,
+            (const TensorView&, const TensorView&, const TensorView&))
+
+        kernelTable[static_cast<size_t>(batch1.getDType())](result, batch1,
+                                                             batch2);
 
         return result;
     }

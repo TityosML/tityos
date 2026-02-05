@@ -18,8 +18,8 @@ namespace internal {
     };
 
     template <typename T>
-    void launchAddKernel(const BaseTensor& tensor1, const BaseTensor& tensor2,
-                         BaseTensor& result) {
+    void launchAddKernel(BaseTensor& result, const BaseTensor& tensor1,
+                         const BaseTensor& tensor2) {
         // convert all tensors to tensorviews
         CudaTensorView<T> tensorView1 = buildCudaTensorView<T>(tensor1);
         CudaTensorView<T> tensorView2 = buildCudaTensorView<T>(tensor2);

@@ -3,9 +3,9 @@
 #include "tityos/ty/backend/CUDABackend.h"
 #include "tityos/ty/cuda/cuda_utils.h"
 #include "tityos/ty/ops/cuda/CudaTensorView.h"
-#include "tityos/ty/tensor/BaseTensor.h"
-#include "tityos/ty/ops/empty.h"
 #include "tityos/ty/ops/dispatchDType.h"
+#include "tityos/ty/ops/empty.h"
+#include "tityos/ty/tensor/BaseTensor.h"
 
 #include <cstdint>
 #include <stdexcept>
@@ -18,7 +18,7 @@ namespace internal {
                   CudaTensorView<T> resultTensorView, size_t numElements);
 
     template <typename T>
-    void launchBMMKernel(const BaseTensor& batch1, const BaseTensor& batch2,
-                         BaseTensor& result);
+    void launchBMMKernel(BaseTensor& result, const BaseTensor& batch1,
+                         const BaseTensor& batch2);
 } // namespace internal
 } // namespace ty

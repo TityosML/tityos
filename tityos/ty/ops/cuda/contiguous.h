@@ -3,9 +3,9 @@
 #include "tityos/ty/backend/CUDABackend.h"
 #include "tityos/ty/cuda/cuda_utils.h"
 #include "tityos/ty/ops/cuda/CudaTensorView.h"
-#include "tityos/ty/tensor/Tensor.h"
-#include "tityos/ty/ops/empty.h"
 #include "tityos/ty/ops/dispatchDType.h"
+#include "tityos/ty/ops/empty.h"
+#include "tityos/ty/tensor/Tensor.h"
 
 #include <cstdint>
 #include <stdexcept>
@@ -18,6 +18,6 @@ namespace internal {
                                          size_t numElements);
 
     template <typename T>
-    void launchContiguousKernel(const BaseTensor& tensor, BaseTensor& result);
+    void launchContiguousKernel(BaseTensor& result, const BaseTensor& tensor);
 } // namespace internal
 } // namespace ty

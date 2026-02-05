@@ -17,7 +17,7 @@ namespace internal {
     };
 
     template <typename T>
-    void launchContiguousKernel(const BaseTensor& tensor, BaseTensor& result) {
+    void launchContiguousKernel(BaseTensor& result, const BaseTensor& tensor) {
 
         // convert all tensors to tensorviews
         CudaTensorView<T> tensorView = buildCudaTensorView<T>(tensor);

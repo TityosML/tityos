@@ -37,6 +37,26 @@ namespace internal {
         return indexByte * dtypeSize(dtype) + offset_;
     }
 
+    ptrdiff_t ShapeStrides::linearToOffset(size_t linearIndex) const {
+        if (linearIndex >= numElements()) {
+            throw std::out_of_range("Linear index out of range");
+        }
+
+        if (isContiguous()) {
+            return static_cast<ptrdiff_t>(linearIndex);
+        }
+
+        ptrdiff_t offset = 0;
+
+        for (ptrdiff_t i = ndim_; i-- > 0;) {
+            size_t coord = linearIndex % shape_[i];
+            linearIndex /= shape_[i];
+            offset += static_cast<ptrdiff_t>(coord) * strides_[i];
+        }
+
+        return offset;
+    }
+
     std::array<size_t, TY_MAX_DIMS>
     ShapeStrides::linearToTensorIndex(size_t linearIndex) const {
         std::array<size_t, TY_MAX_DIMS> index{};

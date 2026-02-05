@@ -9,9 +9,9 @@
 #include <type_traits>
 
 namespace ty {
-  constexpr size_t TY_MAX_DIMS = 64;
-  using TensorStrides = std::array<ptrdiff_t, TY_MAX_DIMS>;
-  using TensorShape = std::array<size_t, TY_MAX_DIMS>;
+constexpr size_t TY_MAX_DIMS = 64;
+using TensorStrides = std::array<ptrdiff_t, TY_MAX_DIMS>;
+using TensorShape = std::array<size_t, TY_MAX_DIMS>;
 
 namespace internal {
 
@@ -31,6 +31,8 @@ namespace internal {
 
         size_t computeByteIndex(const size_t* indexStart, DType dtype) const;
         size_t computeByteIndex(size_t index, DType dtype) const;
+
+        ptrdiff_t linearToOffset(size_t linearIndex) const;
 
         std::array<size_t, TY_MAX_DIMS>
         linearToTensorIndex(size_t linearIndex) const;

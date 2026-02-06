@@ -168,7 +168,8 @@ if(TITYOS_BUILD_CUDA)
     list(APPEND INSTALL_TARGETS tityos_cuda)
 endif()
 
-install(TARGETS INSTALL_TARGETS DESTINATION lib)
+install(TARGETS ${INSTALL_TARGETS}
+        DESTINATION lib)
 
 # ================================================================
 #  Tests

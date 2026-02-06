@@ -7,5 +7,9 @@
 #include <memory>
 
 namespace ty {
-Tensor contiguous(const Tensor& tensor);
+namespace internal {
+    BaseTensor contiguous(const BaseTensor& tensor);
 }
+
+Tensor contiguous(const Tensor& tensor);
+} // namespace ty

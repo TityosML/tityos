@@ -15,8 +15,8 @@ namespace internal {
             kernelTable, launchBMMKernel,
             (BaseTensor&, const BaseTensor&, const BaseTensor&))
 
-        kernelTable[static_cast<size_t>(tensor1.getDType())](result, tensor1,
-                                                             tensor2);
+        kernelTable[static_cast<size_t>(batch1.getDType())](result, batch1,
+                                                             batch2);
 
         return result;
     }

@@ -8,7 +8,7 @@ namespace internal {
         DISPATCH_KERNEL_DTYPE_TABLE(kernelTable, launchContiguousKernel,
                                     (BaseTensor&, const BaseTensor&))
 
-        kernelTable[static_cast<size_t>(tensor1.getDType())](result, tensor);
+        kernelTable[static_cast<size_t>(tensor.getDType())](result, tensor);
 
         return result;
     }

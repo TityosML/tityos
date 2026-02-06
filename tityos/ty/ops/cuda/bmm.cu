@@ -42,7 +42,7 @@ namespace internal {
         CudaTensorView<T> tensorView2 = buildCudaTensorView<T>(batch2);
         CudaTensorView<T> resultTensorView = buildCudaTensorView<T>(result);
 
-        ty::internal::TensorShape resultShape = result.getShape();
+        ty::TensorShape resultShape = result.getShape();
         int batches = resultShape[0];
         int cols = resultShape[1];
         int rows = resultShape[2];

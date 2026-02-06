@@ -63,36 +63,36 @@ namespace internal {
     }
 
     // force compiler to compile each type
-    template void launchBMMKernel<int8_t>(const BaseTensor& batch1,
-                                          const BaseTensor& batch2,
-                                          BaseTensor& result);
-    template void launchBMMKernel<uint8_t>(const BaseTensor& batch1,
-                                           const BaseTensor& batch2,
-                                           BaseTensor& result);
-    template void launchBMMKernel<int16_t>(const BaseTensor& batch1,
-                                           const BaseTensor& batch2,
-                                           BaseTensor& result);
-    template void launchBMMKernel<uint16_t>(const BaseTensor& batch1,
-                                            const BaseTensor& batch2,
-                                            BaseTensor& result);
-    template void launchBMMKernel<int32_t>(const BaseTensor& batch1,
-                                           const BaseTensor& batch2,
-                                           BaseTensor& result);
-    template void launchBMMKernel<uint32_t>(const BaseTensor& batch1,
-                                            const BaseTensor& batch2,
-                                            BaseTensor& result);
-    template void launchBMMKernel<int64_t>(const BaseTensor& batch1,
-                                           const BaseTensor& batch2,
-                                           BaseTensor& result);
-    template void launchBMMKernel<uint64_t>(const BaseTensor& batch1,
-                                            const BaseTensor& batch2,
-                                            BaseTensor& result);
-    template void launchBMMKernel<float>(const BaseTensor& batch1,
-                                         const BaseTensor& batch2,
-                                         BaseTensor& result);
-    template void launchBMMKernel<double>(const BaseTensor& batch1,
-                                          const BaseTensor& batch2,
-                                          BaseTensor& result);
+    template void launchBMMKernel<int8_t>(BaseTensor& result,
+                                          const BaseTensor& batch1,
+                                          const BaseTensor& batch2);
+    template void launchBMMKernel<uint8_t>(BaseTensor& result,
+                                           const BaseTensor& batch1,
+                                           const BaseTensor& batch2);
+    template void launchBMMKernel<int16_t>(BaseTensor& result,
+                                           const BaseTensor& batch1,
+                                           const BaseTensor& batch2);
+    template void launchBMMKernel<uint16_t>(BaseTensor& result,
+                                            const BaseTensor& batch1,
+                                            const BaseTensor& batch2);
+    template void launchBMMKernel<int32_t>(BaseTensor& result,
+                                           const BaseTensor& batch1,
+                                           const BaseTensor& batch2);
+    template void launchBMMKernel<uint32_t>(BaseTensor& result,
+                                            const BaseTensor& batch1,
+                                            const BaseTensor& batch2);
+    template void launchBMMKernel<int64_t>(BaseTensor& result,
+                                           const BaseTensor& batch1,
+                                           const BaseTensor& batch2);
+    template void launchBMMKernel<uint64_t>(BaseTensor& result,
+                                            const BaseTensor& batch1,
+                                            const BaseTensor& batch2);
+    template void launchBMMKernel<float>(BaseTensor& result,
+                                         const BaseTensor& batch1,
+                                         const BaseTensor& batch2);
+    template void launchBMMKernel<double>(BaseTensor& result,
+                                          const BaseTensor& batch1,
+                                          const BaseTensor& batch2);
 
 } // namespace internal
 } // namespace ty

@@ -37,36 +37,36 @@ namespace internal {
     }
 
     // force compiler to compile each type
-    template void launchAddKernel<int8_t>(const BaseTensor& tensor1,
-                                          const BaseTensor& tensor2,
-                                          BaseTensor& result);
-    template void launchAddKernel<uint8_t>(const BaseTensor& tensor1,
-                                           const BaseTensor& tensor2,
-                                           BaseTensor& result);
-    template void launchAddKernel<int16_t>(const BaseTensor& tensor1,
-                                           const BaseTensor& tensor2,
-                                           BaseTensor& result);
-    template void launchAddKernel<uint16_t>(const BaseTensor& tensor1,
-                                            const BaseTensor& tensor2,
-                                            BaseTensor& result);
-    template void launchAddKernel<int32_t>(const BaseTensor& tensor1,
-                                           const BaseTensor& tensor2,
-                                           BaseTensor& result);
-    template void launchAddKernel<uint32_t>(const BaseTensor& tensor1,
-                                            const BaseTensor& tensor2,
-                                            BaseTensor& result);
-    template void launchAddKernel<int64_t>(const BaseTensor& tensor1,
-                                           const BaseTensor& tensor2,
-                                           BaseTensor& result);
-    template void launchAddKernel<uint64_t>(const BaseTensor& tensor1,
-                                            const BaseTensor& tensor2,
-                                            BaseTensor& result);
-    template void launchAddKernel<float>(const BaseTensor& tensor1,
-                                         const BaseTensor& tensor2,
-                                         BaseTensor& result);
-    template void launchAddKernel<double>(const BaseTensor& tensor1,
-                                          const BaseTensor& tensor2,
-                                          BaseTensor& result);
+    template void launchAddKernel<int8_t>(BaseTensor& result,
+                                          const BaseTensor& tensor1,
+                                          const BaseTensor& tensor2);
+    template void launchAddKernel<uint8_t>(BaseTensor& result,
+                                           const BaseTensor& tensor1,
+                                           const BaseTensor& tensor2);
+    template void launchAddKernel<int16_t>(BaseTensor& result,
+                                           const BaseTensor& tensor1,
+                                           const BaseTensor& tensor2);
+    template void launchAddKernel<uint16_t>(BaseTensor& result,
+                                            const BaseTensor& tensor1,
+                                            const BaseTensor& tensor2);
+    template void launchAddKernel<int32_t>(BaseTensor& result,
+                                           const BaseTensor& tensor1,
+                                           const BaseTensor& tensor2);
+    template void launchAddKernel<uint32_t>(BaseTensor& result,
+                                            const BaseTensor& tensor1,
+                                            const BaseTensor& tensor2);
+    template void launchAddKernel<int64_t>(BaseTensor& result,
+                                           const BaseTensor& tensor1,
+                                           const BaseTensor& tensor2);
+    template void launchAddKernel<uint64_t>(BaseTensor& result,
+                                            const BaseTensor& tensor1,
+                                            const BaseTensor& tensor2);
+    template void launchAddKernel<float>(BaseTensor& result,
+                                         const BaseTensor& tensor1,
+                                         const BaseTensor& tensor2);
+    template void launchAddKernel<double>(BaseTensor& result,
+                                          const BaseTensor& tensor1,
+                                          const BaseTensor& tensor2);
 
 } // namespace internal
 } // namespace ty

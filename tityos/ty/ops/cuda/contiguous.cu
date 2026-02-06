@@ -35,26 +35,26 @@ namespace internal {
     }
 
     // force compiler to compile each type
-    template void launchContiguousKernel<int8_t>(const BaseTensor& tensor,
-                                                 BaseTensor& result);
-    template void launchContiguousKernel<uint8_t>(const BaseTensor& tensor,
-                                                  BaseTensor& result);
-    template void launchContiguousKernel<int16_t>(const BaseTensor& tensor,
-                                                  BaseTensor& result);
-    template void launchContiguousKernel<uint16_t>(const BaseTensor& tensor,
-                                                   BaseTensor& result);
-    template void launchContiguousKernel<int32_t>(const BaseTensor& tensor,
-                                                  BaseTensor& result);
-    template void launchContiguousKernel<uint32_t>(const BaseTensor& tensor,
-                                                   BaseTensor& result);
-    template void launchContiguousKernel<int64_t>(const BaseTensor& tensor,
-                                                  BaseTensor& result);
-    template void launchContiguousKernel<uint64_t>(const BaseTensor& tensor,
-                                                   BaseTensor& result);
-    template void launchContiguousKernel<float>(const BaseTensor& tensor,
-                                                BaseTensor& result);
-    template void launchContiguousKernel<double>(const BaseTensor& tensor,
-                                                 BaseTensor& result);
+    template void launchContiguousKernel<int8_t>(BaseTensor& result,
+                                                 const BaseTensor& tensor);
+    template void launchContiguousKernel<uint8_t>(BaseTensor& result,
+                                                  const BaseTensor& tensor);
+    template void launchContiguousKernel<int16_t>(BaseTensor& result,
+                                                  const BaseTensor& tensor);
+    template void launchContiguousKernel<uint16_t>(BaseTensor& result,
+                                                   const BaseTensor& tensor);
+    template void launchContiguousKernel<int32_t>(BaseTensor& result,
+                                                  const BaseTensor& tensor);
+    template void launchContiguousKernel<uint32_t>(BaseTensor& result,
+                                                   const BaseTensor& tensor);
+    template void launchContiguousKernel<int64_t>(BaseTensor& result,
+                                                  const BaseTensor& tensor);
+    template void launchContiguousKernel<uint64_t>(BaseTensor& result,
+                                                   const BaseTensor& tensor);
+    template void launchContiguousKernel<float>(BaseTensor& result,
+                                                const BaseTensor& tensor);
+    template void launchContiguousKernel<double>(BaseTensor& result,
+                                                 const BaseTensor& tensor);
 
 } // namespace internal
 } // namespace ty

@@ -2,55 +2,61 @@
 
 namespace ty {
 namespace internal {
-    Tensor expand(const BaseTensor& tensor, std::vector<size_t> newShape) {
-        size_t newNDim = newShape.size();
-        size_t oldNDim = tensor.getNDim();
-        TensorStrides newStrides;
-        TensorShape newShapeArray;
-        auto oldShape = tensor.getShape();
-        auto oldStrides = tensor.getStrides();
-        size_t shapeOffset = oldNDim - newNDim;
+    BaseTensor expand(const BaseTensor& tensor,
+                      const std::vector<size_t>& newShape) {
+        const size_t oldNDim = tensor.getNDim();
+        const size_t newNDim = newShape.size();
 
-        if (newNDim < oldNDim) {
-            for (size_t i = 0; i < shapeOffset; i++) {
+        const auto& oldShape = tensor.getShape();
+        const auto& oldStrides = tensor.getStrides();
+
+        TensorShape newShapeArray;
+        TensorStrides newStrides;
+
+        const ptrdiff_t dimOffset =
+            static_cast<ptrdiff_t>(oldNDim) - static_cast<ptrdiff_t>(newNDim);
+
+        if (dimOffset > 0) {
+            for (ptrdiff_t i = 0; i < dimOffset; i++) {
                 if (oldShape[i] != 1) {
-                    throw std::invalid_argument("Cannot remove non-singletion "
+                    throw std::invalid_argument("Cannot remove non-singleton "
                                                 "dimensions during expansion");
                 }
             }
-        } else {
-            for (size_t i = 0; i < abs(shapeOffset); i++) {
-                newStrides[i] = 0;
-                newShapeArray[i] = newShape[i];
-            }
         }
 
-        size_t startDim = std::max(0, abs(shapeOffset));
-        for (size_t i = startDim; i < newNDim; i++) {
-            if (newShape[i] == oldShape[i + shapeOffset]) {
-                newStrides[i] = oldStrides[i + shapeOffset];
+        for (size_t newDim = 0; newDim < newNDim; newDim++) {
+            const ptrdiff_t oldDim = static_cast<ptrdiff_t>(newDim) + dimOffset;
+            const size_t newSize = newShape[newDim];
+
+            newShapeArray[newDim] = newSize;
+
+            if (oldDim < 0) {
+                newStrides[newDim] = 0;
             } else {
-                if (oldShape[i + shapeOffset] != 1) {
-                    throw std::invalid_argument(
-                        "Cannot expand non-singletion dimension to new size");
-                }
-                newStrides[i] = 0;
-            }
+                const size_t oldSize = oldShape[oldDim];
 
-            newShapeArray[i] = newShape[i];
+                if (oldSize == newSize) {
+                    newStrides[newDim] = oldStrides[oldDim];
+                } else if (oldSize == 1) {
+                    newStrides[newDim] = 0;
+                } else {
+                    throw std::invalid_argument(
+                        "Cannot expand non-singleton dimension to new size");
+                }
+            }
         }
 
-        auto offset = tensor.getLayout().getOffset();
-        internal::ShapeStrides newLayout(newShapeArray, newStrides, offset,
-                                         newNDim);
-        auto newBaseTensor = std::make_shared<internal::BaseTensor>(
-            tensor.getTensorStorage(), newLayout, tensor.getDType());
+        const auto offset = tensor.getLayout().getOffset();
+        ShapeStrides newLayout(newShapeArray, newStrides, offset, newNDim);
 
-        return Tensor(newBaseTensor);
+        return BaseTensor(tensor.getTensorStorage(), newLayout,
+                          tensor.getDType());
     }
 } // namespace internal
 
 Tensor expand(const Tensor& tensor, std::vector<size_t> newShape) {
-    return Tensor(internal::expand(*tensor.getBaseTensor(), newShape));
+    return Tensor(std::make_shared<internal::BaseTensor>(
+        internal::expand(*tensor.getBaseTensor(), newShape)));
 }
 } // namespace ty

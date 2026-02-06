@@ -163,6 +163,13 @@ endif()
 
 include(${TY_ROOT_DIR}/ty/CMakeLists.txt)
 
+set(INSTALL_TARGETS tityos tityos_cpu)
+if(TITYOS_BUILD_CUDA)
+    list(APPEND INSTALL_TARGETS tityos_cuda)
+endif()
+
+install(TARGETS INSTALL_TARGETS DESTINATION lib)
+
 # ================================================================
 #  Tests
 # ================================================================

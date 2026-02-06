@@ -13,7 +13,6 @@ namespace internal {
         const size_t M = outView.shape[1];
         const size_t N = batch1View.shape[2];
         const size_t K = outView.shape[2];
-        const size_t total = B * M * K;
 
         T* outData = static_cast<T*>(outView.data) + outView.offset;
         const T* batch1Data =

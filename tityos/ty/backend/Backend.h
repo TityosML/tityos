@@ -35,7 +35,8 @@ namespace internal {
             Backend() = default;
             virtual ~Backend() = default;
 
-            virtual void* allocate(size_t bytes, int index) = 0;
+            virtual void* allocate(size_t bytes,
+                                   [[maybe_unused]] int index) = 0;
             virtual void deallocate(void* ptr) = 0;
             virtual void copyData(void* destPtr, const void* srcPtr,
                                   size_t numBytes) = 0;

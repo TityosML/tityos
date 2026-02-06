@@ -20,7 +20,6 @@ namespace internal {
 
         size_t i = 0;
         for (; i + lanes <= total; i += lanes) {
-            using Vec = typename AvxTraits<T>::Vec;
             Vec va = AvxTraits<T>::load(tensor1Data + i);
             Vec vb = AvxTraits<T>::load(tensor2Data + i);
             Vec vc = AvxTraits<T>::add(va, vb);

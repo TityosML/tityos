@@ -134,9 +134,29 @@ endif()
 if(TITYOS_BUILD_WARNINGS)
     if(MSVC)
         target_compile_options(tityos PRIVATE /W4 /WX)
+        target_compile_options(tityos_cpu PRIVATE /W4 /WX)
     else()
         target_compile_options(tityos PRIVATE -Wall -Wextra -Wpedantic -Werror)
+        target_compile_options(tityos_cpu PRIVATE -Wall -Wextra -Wpedantic -Werror)
     endif()
+endif()
+
+if(TITYOS_BUILD_CUDA AND TITYOS_BUILD_WARNINGS)
+    target_compile_options(tityos_cuda PRIVATE
+        $<$<COMPILE_LANGUAGE:CUDA>:
+            -Xcompiler=-Wall
+            -Xcompiler=-Wextra
+            -Xcompiler=-Wpedantic
+            -Xcompiler=-Werror
+        >
+    )
+
+    target_compile_options(tityos_cuda PRIVATE
+        $<$<COMPILE_LANGUAGE:CUDA>:
+            --expt-relaxed-constexpr
+            --Werror=all-warnings
+        >
+    )
 endif()
 
 # Sanitizer

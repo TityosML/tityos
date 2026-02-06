@@ -165,8 +165,6 @@ namespace internal {
         size_t newOffset =
             offset_ + static_cast<size_t>(select) * strides_[dim];
 
-        size_t newDim = ndim_ - 1;
-
         TensorShape newShape{};
         TensorStrides newStrides{};
 
@@ -201,7 +199,7 @@ namespace internal {
     }
 
     bool ShapeStrides::isContiguous() const {
-        size_t expectedStride = 1;
+        ptrdiff_t expectedStride = 1;
 
         for (size_t i = ndim_; i-- > 0;) {
             if (strides_[i] != expectedStride) {

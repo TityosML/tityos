@@ -2,7 +2,8 @@
 
 namespace ty {
 namespace internal {
-    void* backend::CPUBackend::allocate(size_t bytes, int index) {
+    void* backend::CPUBackend::allocate(size_t bytes,
+                                        [[maybe_unused]] int index) {
         void* ptr = std::malloc(bytes);
 
         if (!ptr) {
@@ -17,7 +18,7 @@ namespace internal {
     }
 
     void backend::CPUBackend::copyData(void* destPtr, const void* srcPtr,
-                                              size_t numBytes) {
+                                       size_t numBytes) {
         std::memcpy(destPtr, srcPtr, numBytes);
     }
 

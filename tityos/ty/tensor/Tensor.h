@@ -13,6 +13,11 @@
 #include <tuple>
 
 namespace ty {
+
+class Tensor;
+
+Tensor add(const Tensor& a, const Tensor& b);
+
 class Tensor {
   private:
     std::shared_ptr<internal::BaseTensor> baseTensor_;
@@ -73,6 +78,9 @@ class Tensor {
     Tensor(Tensor&& other) noexcept;
     Tensor& operator=(const Tensor& other);
     Tensor& operator=(Tensor&& other) noexcept;
+
+    Tensor operator+(const Tensor& other) const;
+    Tensor& operator+=(const Tensor& other);
 
     Tensor copy() const;
 

@@ -7,11 +7,6 @@
 
 namespace ty {
 namespace internal {
-    template <typename Kernel, typename... Args>
-    void kernelAdapter(Args... args) {
-        Kernel(args...);
-    }
-
 #define DISPATCH_KERNEL_DTYPE_TABLE(tableName, kernel, argtypes)               \
     using kernel##typesig = void(*) argtypes;                                  \
     static const auto tableName =                                              \

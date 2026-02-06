@@ -26,6 +26,15 @@ Tensor& Tensor::operator=(Tensor&& other) noexcept {
     return *this;
 }
 
+Tensor Tensor::operator+(const Tensor& other) const {
+    return add(*this, other);
+}
+
+Tensor& Tensor::operator+=(const Tensor& other) {
+    *this = add(*this, other);
+    return *this;
+}
+
 Tensor Tensor::copy() const {
     return Tensor(std::make_shared<internal::BaseTensor>(baseTensor_->copy()));
 }

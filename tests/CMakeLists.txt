@@ -37,7 +37,7 @@ if (TITYOS_BUILD_CUDA)
 endif()
 
 # TODO: Change this
-target_link_directories(tityos_tests PRIVATE "../build")
+target_link_directories(tityos_tests PUBLIC "../build")
 
 target_link_libraries(tityos_tests PUBLIC Catch2::Catch2WithMain tityos)
 

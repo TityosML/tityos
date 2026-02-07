@@ -31,10 +31,10 @@ endif()
 option(TITYOS_SANITIZE_ADDRESS "Enable address sanitizer in tests" OFF)
 option(TITYOS_SANITIZE_MEMORY "Enable memroy sanitizer in tests" OFF)
 if (NOT(CMAKE_CXX_COMPILER_ID MATCHES "Clang") AND TITYOS_SANITIZE_MEMORY)
-message(FATAL_ERROR "TITYOS_SANITIZE_MEMORY can only be enabled with Clang") 
+    message(FATAL_ERROR "TITYOS_SANITIZE_MEMORY can only be enabled with Clang") 
 endif()
 if(TITYOS_SANITIZE_ADDRESS AND TITYOS_SANITIZE_MEMORY)
-message(FATAL_ERROR "Only one of TITYOS_SANITIZE_ADDRESS and TITYOS_SANITIZE_MEMORY can be enabled")
+    message(FATAL_ERROR "Only one of TITYOS_SANITIZE_ADDRESS and TITYOS_SANITIZE_MEMORY can be enabled")
 endif()
 
 # Compiler Warning options
@@ -61,16 +61,14 @@ target_link_libraries(tityos_cpu PRIVATE tityos)
 # TODO: Change this later
 set_target_properties(tityos PROPERTIES INSTALL_RPATH "$ORIGIN")
 
-target_include_directories(
-    tityos
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
+target_include_directories(tityos PUBLIC 
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:include>
 )
 
-target_include_directories(
-    tityos_cpu
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
+target_include_directories(tityos_cpu PUBLIC 
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:include>
 )
 
 # Compiler flags
@@ -94,11 +92,10 @@ if (TITYOS_BUILD_CUDA)
 
     set_target_properties(tityos_cuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
     target_link_libraries(tityos_cuda PUBLIC CUDA::cudart)
-    target_include_directories(
-        tityos_cuda
-        PUBLIC 
-            ${CMAKE_CURRENT_SOURCE_DIR}
-            ${CUDAToolkit_INCLUDE_DIRS}
+    target_include_directories(tityos_cuda PUBLIC 
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<BUILD_INTERFACE:${CUDAToolkit_INCLUDE_DIRS}>
+        $<INSTALL_INTERFACE:include>
     )
 endif()
 
@@ -168,20 +165,27 @@ elseif(TITYOS_SANITIZE_MEMORY)
     target_link_options(tityos PRIVATE -fsanitize=memory)
 endif()
 
+# TODO: Change this so hidden by default, need to add TITYOS_API
 # Hiding for non Win32
-if(NOT WIN32)
-    set_target_properties(tityos PROPERTIES
-        CXX_VISIBILITY_PRESET "hidden"
-        VISIBILITY_INLINES_HIDDEN TRUE
-    )
+# if(NOT WIN32)
+#     set_target_properties(tityos PROPERTIES
+#         CXX_VISIBILITY_PRESET "hidden"
+#         VISIBILITY_INLINES_HIDDEN TRUE
+#     )
 
-    set_target_properties(tityos_cpu PROPERTIES
-        CXX_VISIBILITY_PRESET "hidden"
-        VISIBILITY_INLINES_HIDDEN TRUE
-    )
-endif()
+#     set_target_properties(tityos_cpu PROPERTIES
+#         CXX_VISIBILITY_PRESET "hidden"
+#         VISIBILITY_INLINES_HIDDEN TRUE
+#     )
+# endif()
 
 include(${TY_ROOT_DIR}/ty/CMakeLists.txt)
+
+# ================================================================
+#  Install
+# ================================================================
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 
 set(INSTALL_TARGETS tityos tityos_cpu)
 if(TITYOS_BUILD_CUDA)
@@ -189,7 +193,40 @@ if(TITYOS_BUILD_CUDA)
 endif()
 
 install(TARGETS ${INSTALL_TARGETS}
-        DESTINATION lib)
+    EXPORT TityosTargets
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/tityos/"
+    DESTINATION include/tityos
+    FILES_MATCHING PATTERN "*.h"
+)
+
+install(EXPORT TityosTargets
+    FILE TityosTargets.cmake
+    NAMESPACE tityos::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tityos
+)
+
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/tityosConfigVersion.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY AnyNewerVersion
+)
+
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/tityosConfig.cmake"
+"include(CMakeFindDependencyMacro)
+find_dependency(OpenMP)
+include(\"\${CMAKE_CURRENT_LIST_DIR}/TityosTargets.cmake\")
+")
+
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/tityosConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/tityosConfigVersion.cmake"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tityos
+)
 
 # ================================================================
 #  Tests

@@ -9,22 +9,23 @@ Tityos is a C++ deep learning library which supports SIMD parallelism via AVX fo
 
 #### Example
 ```c++
-#include "tityos/ty/Tensors.h"
-#include "tityos/ty/Ops.h"
+#include "tityos/ty/tensor/Tensor.h"
+#include "tityos/ty/ops/bmm.h"
 
 int main() {
-    ty::Tensor tensor1({1, 2, 3, 4, 5, 6}, {2, 3}, ty::DType::Int32);
-    ty::Tensor tensor2({7, 8, 9, 10, 11, 12}, {3, 2}, ty::DType::Int32);
+    constexpr auto device = {ty::DeviceType::CUDA, 0};
+    ty::Tensor tensor1({1, 2, 3, 4, 5, 6}, {1, 2, 3}, device, ty::DType::Int32);
+    ty::Tensor tensor2({7, 8, 9, 10, 11, 12}, {1, 3, 2}, device, ty::DType::Int32);
 
-    auto result = ty::matmul(tensor1, tensor2);
+    auto result = ty::bmm(tensor1, tensor2);
 
     std::cout << result.toString() << "\n";
 }
 ```
 
 ```terminal
-[[ 58,  64],
- [139, 154]]
+[[[ 58,  64],
+  [139, 154]]]
 ```
 
 #

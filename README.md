@@ -35,9 +35,14 @@ int main() {
 ##### Linux
 With CUDA
 ```console
-sudo cmake --install . -DTITYOS_BUILD_CUDA=ON
+cmake -S . -B build -DTITYOS_BUILD_CUDA=ON
+cmake --build build --target tityos_cpu
+cmake --build build --target tityos_cuda
+sudo cmake --install build -DTITYOS_BUILD_CUDA=ON
 ```
 without CUDA
 ```console
-sudo cmake --install .
+cmake -S . -B build
+cmake --build build --target tityos_cpu
+sudo cmake --install build
 ```

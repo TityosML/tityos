@@ -5,7 +5,6 @@
 #include "tityos/ty/tensor/ShapeStrides.h"
 
 #include <catch2/catch_all.hpp>
-#include <iostream>
 
 TEST_CASE("Tensor Expand", "[Operation][Pointwise]") {
     // Floats
@@ -78,8 +77,6 @@ TEST_CASE("Tensor Reshape forces contiguous", "[Operation][View]") {
 
     ty::Tensor sliced(std::make_shared<ty::internal::BaseTensor>(
         t.getBaseTensor()->slice(1, 0, 1)));
-
-    std::cout << sliced.toString() << std::endl;
 
     REQUIRE(sliced.isContiguous() == false);
 

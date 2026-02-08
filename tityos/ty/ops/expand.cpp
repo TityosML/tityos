@@ -55,7 +55,7 @@ namespace internal {
     }
 } // namespace internal
 
-Tensor expand(const Tensor& tensor, std::vector<size_t> newShape) {
+Tensor expand(const Tensor& tensor, const std::vector<size_t>& newShape) {
     return Tensor(std::make_shared<internal::BaseTensor>(
         internal::expand(*tensor.getBaseTensor(), newShape)));
 }

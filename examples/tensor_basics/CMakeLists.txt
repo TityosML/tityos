@@ -1,21 +1,13 @@
 cmake_minimum_required(VERSION 3.15)
-project(Examples)
+project(TityosExample LANGUAGES CXX)
 
-set(TITYOS_LIB_DIR "${CMAKE_SOURCE_DIR}/../../build")
-set(TITYOS_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/../..")
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(WIN32)
-    set(TITYOS_LIB_FILE "${TITYOS_LIB_DIR}/tityos.lib")
-else()
-    set(TITYOS_LIB_FILE "${TITYOS_LIB_DIR}/libtityos.a")
-endif()
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable(tensor_basics main.cpp)
+find_package(tityos CONFIG REQUIRED)
 
-target_link_libraries(tensor_basics PRIVATE ${TITYOS_LIB_FILE})
+add_executable(bmm_example main.cpp)
 
-target_include_directories(
-    tensor_basics
-    PUBLIC
-        ${TITYOS_INCLUDE_DIR}
-)
+target_link_libraries(bmm_example PRIVATE tityos::tityos)

@@ -59,7 +59,9 @@ add_library(tityos_cpu SHARED)
 target_link_libraries(tityos_cpu PRIVATE tityos)
 
 # TODO: Change this later
-set_target_properties(tityos PROPERTIES INSTALL_RPATH "$ORIGIN")
+if (TITYOS_BUILD_TESTS)
+    set_target_properties(tityos PROPERTIES BUILD_RPATH "$ORIGIN")
+endif()
 
 target_include_directories(tityos PUBLIC 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -176,7 +178,7 @@ endif()
 #     set_target_properties(tityos_cpu PROPERTIES
 #         CXX_VISIBILITY_PRESET "hidden"
 #         VISIBILITY_INLINES_HIDDEN TRUE
-#     )
+#     )                                                             
 # endif()
 
 include(${TY_ROOT_DIR}/ty/CMakeLists.txt)

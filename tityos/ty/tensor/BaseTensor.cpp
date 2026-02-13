@@ -129,14 +129,12 @@ namespace internal {
         return ptr_;
     }
 
-    // Prefix increment
     BaseTensor::Iterator& BaseTensor::Iterator::operator++() {
         linearIndex_++;
         ptr_ = baseTensor_.at(linearIndex_);
         return *this;
     }
 
-    // Postfix increment
     BaseTensor::Iterator BaseTensor::Iterator::operator++(int) {
         Iterator tmp = *this;
         ++(*this);

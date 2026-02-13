@@ -19,7 +19,6 @@ namespace internal {
       private:
         TensorShape shape_;
         TensorStrides strides_;
-
         size_t offset_;
         size_t ndim_;
 

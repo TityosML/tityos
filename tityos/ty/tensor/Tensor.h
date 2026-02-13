@@ -39,15 +39,12 @@ class Tensor {
 
         size_t numElements = std::size(data);
         size_t numBytes = sizeof(T) * numElements;
-        std::shared_ptr<internal::TensorStorage> dataStorage =
+        auto dataStorage =
             std::make_shared<internal::TensorStorage>(numBytes, device);
         dataStorage->copyDataFromCpu(std::data(data), numBytes);
 
         TensorShape storageShape{};
-        int i = 0;
-        for (size_t s : shape) {
-            storageShape[i++] = s;
-        }
+        std::copy(shape.begin(), shape.end(), storageShape.begin());
 
         internal::ShapeStrides layout(storageShape, std::size(shape));
 
@@ -86,10 +83,9 @@ class Tensor {
 
     Device getDevice() const;
     DType getDType() const;
-    const std::array<size_t, TY_MAX_DIMS>& getShape() const;
+    const TensorShape& getShape() const;
     size_t getSize() const;
     size_t getNDim() const;
-
     std::shared_ptr<internal::BaseTensor> getBaseTensor() const;
 
     void* at(const size_t* indexStart, const size_t indexSize) const;

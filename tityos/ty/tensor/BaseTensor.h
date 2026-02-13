@@ -15,9 +15,7 @@ namespace internal {
     class BaseTensor {
       private:
         std::shared_ptr<TensorStorage> tensorStorage_;
-
         ShapeStrides layout_;
-
         DType dtype_;
 
       public:
@@ -67,9 +65,7 @@ namespace internal {
         struct Iterator {
           private:
             const BaseTensor& baseTensor_;
-
             size_t linearIndex_;
-
             void* ptr_;
 
           public:
@@ -83,11 +79,9 @@ namespace internal {
             void* operator*();
 
             Iterator& operator++();
-
             Iterator operator++(int);
 
             friend bool operator==(const Iterator& a, const Iterator& b);
-
             friend bool operator!=(const Iterator& a, const Iterator& b);
         };
 

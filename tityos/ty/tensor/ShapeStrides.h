@@ -1,6 +1,7 @@
 #pragma once
 
 #include "tityos/ty/tensor/Dtype.h"
+#include "tityos/ty/export.h"
 
 #include <array>
 #include <cstddef>
@@ -15,7 +16,7 @@ using TensorShape = std::array<size_t, TY_MAX_DIMS>;
 
 namespace internal {
 
-    class ShapeStrides {
+    class TITYOS_API ShapeStrides {
       private:
         TensorShape shape_;
         TensorStrides strides_;

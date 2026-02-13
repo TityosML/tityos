@@ -167,19 +167,18 @@ elseif(TITYOS_SANITIZE_MEMORY)
     target_link_options(tityos PRIVATE -fsanitize=memory)
 endif()
 
-# TODO: Change this so hidden by default, need to add TITYOS_API
 # Hiding for non Win32
-# if(NOT WIN32)
-#     set_target_properties(tityos PROPERTIES
-#         CXX_VISIBILITY_PRESET "hidden"
-#         VISIBILITY_INLINES_HIDDEN TRUE
-#     )
+if(NOT WIN32)
+    set_target_properties(tityos PROPERTIES
+        CXX_VISIBILITY_PRESET "hidden"
+        VISIBILITY_INLINES_HIDDEN TRUE
+    )
 
-#     set_target_properties(tityos_cpu PROPERTIES
-#         CXX_VISIBILITY_PRESET "hidden"
-#         VISIBILITY_INLINES_HIDDEN TRUE
-#     )                                                             
-# endif()
+    set_target_properties(tityos_cpu PROPERTIES
+        CXX_VISIBILITY_PRESET "hidden"
+        VISIBILITY_INLINES_HIDDEN TRUE
+    )                                                             
+endif()
 
 include(${TY_ROOT_DIR}/ty/CMakeLists.txt)
 

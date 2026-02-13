@@ -2,6 +2,7 @@
 
 #include "tityos/ty/Device.h"
 #include "tityos/ty/backend/Backend.h"
+#include "tityos/ty/export.h"
 #include "tityos/ty/tensor/Dtype.h"
 
 #include <cstdlib>
@@ -10,7 +11,7 @@
 
 namespace ty {
 namespace internal {
-    class TensorStorage {
+    class TITYOS_API TensorStorage {
       private:
         void* startPointer_;
         size_t size_;

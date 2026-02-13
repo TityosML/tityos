@@ -1,5 +1,6 @@
 #pragma once
 
+#include "tityos/ty/export.h"
 #include "tityos/ty/tensor/Dtype.h"
 #include "tityos/ty/tensor/Index.h"
 #include "tityos/ty/tensor/Indexing.h"
@@ -12,7 +13,7 @@
 
 namespace ty {
 namespace internal {
-    class BaseTensor {
+    class TITYOS_API BaseTensor {
       private:
         std::shared_ptr<TensorStorage> tensorStorage_;
         ShapeStrides layout_;
@@ -81,8 +82,10 @@ namespace internal {
             Iterator& operator++();
             Iterator operator++(int);
 
-            friend bool operator==(const Iterator& a, const Iterator& b);
-            friend bool operator!=(const Iterator& a, const Iterator& b);
+            TITYOS_API friend bool operator==(const Iterator& a,
+                                              const Iterator& b);
+            TITYOS_API friend bool operator!=(const Iterator& a,
+                                              const Iterator& b);
         };
 
         Iterator begin();

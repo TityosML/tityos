@@ -1,9 +1,11 @@
 #pragma once
 
+#include "tityos/ty/export.h"
+
 #include <optional>
 
 namespace ty {
-struct Slice {
+struct TITYOS_API Slice {
     std::optional<ptrdiff_t> start;
     std::optional<ptrdiff_t> stop;
     ptrdiff_t step;

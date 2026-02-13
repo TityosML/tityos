@@ -1,7 +1,8 @@
 #pragma once
 
-#include "tityos/ty/tensor/Tensor.h"
+#include "tityos/ty/export.h"
 #include "tityos/ty/ops/contiguous.h"
+#include "tityos/ty/tensor/Tensor.h"
 
 namespace ty {
 namespace internal {
@@ -11,6 +12,8 @@ namespace internal {
                     size_t ndim);
 } // namespace internal
 
-Tensor reshape(const Tensor& tensor, const TensorShape& newShape, size_t ndim);
-Tensor view(const Tensor& tensor, const TensorShape& newShape, size_t ndim);
+Tensor TITYOS_API reshape(const Tensor& tensor, const TensorShape& newShape,
+                          size_t ndim);
+Tensor TITYOS_API view(const Tensor& tensor, const TensorShape& newShape,
+                       size_t ndim);
 } // namespace ty

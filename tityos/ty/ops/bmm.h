@@ -1,6 +1,7 @@
 #pragma once
 
 #include "tityos/ty/backend/Backend.h"
+#include "tityos/ty/export.h"
 #include "tityos/ty/ops/empty.h"
 #include "tityos/ty/ops/expand.h"
 #include "tityos/ty/ops/reshape.h"
@@ -16,7 +17,7 @@ namespace internal {
     BaseTensor bmm(const BaseTensor& tensor1, const BaseTensor& tensor2);
 } // namespace internal
 
-Tensor matmul(const Tensor& tensor1, const Tensor& tensor2);
+Tensor TITYOS_API matmul(const Tensor& tensor1, const Tensor& tensor2);
 
-Tensor bmm(const Tensor& tensor1, const Tensor& tensor2);
+Tensor TITYOS_API bmm(const Tensor& tensor1, const Tensor& tensor2);
 } // namespace ty

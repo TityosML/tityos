@@ -18,7 +18,7 @@ class Tensor;
 
 Tensor add(const Tensor& a, const Tensor& b);
 
-class Tensor {
+class TITYOS_API Tensor {
   private:
     std::shared_ptr<internal::BaseTensor> baseTensor_;
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "tityos/ty/backend/Backend.h"
+#include "tityos/ty/export.h"
 #include "tityos/ty/ops/expand.h"
 #include "tityos/ty/ops/utils.h"
 
@@ -11,5 +12,5 @@ namespace internal {
     BaseTensor contiguous(const BaseTensor& tensor);
 }
 
-Tensor contiguous(const Tensor& tensor);
+Tensor TITYOS_API contiguous(const Tensor& tensor);
 } // namespace ty

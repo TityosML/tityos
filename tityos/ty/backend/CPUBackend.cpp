@@ -9,7 +9,7 @@ namespace internal {
 } // namespace ty
 
 extern "C" {
-TITYOS_EXPORT ty::internal::backend::Backend* registerCpuBackend() {
+TITYOS_API ty::internal::backend::Backend* registerCpuBackend() {
     return &ty::internal::backend::cpuBackendInstance;
 }
 }

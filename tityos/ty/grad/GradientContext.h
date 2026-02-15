@@ -17,9 +17,6 @@ namespace internal {
 
       public:
         template <typename... Args> GradientContextStorage(Args&&... args) {
-            static_assert(
-                (std::is_same_v<Args, std::shared_ptr<BaseTensor>> && ...),
-                "All arguments must be pointers to baseTensors");
             numTensors_ = sizeof...(Args);
 
             tensors_ = {std::forward<Args>(args)...};

@@ -145,7 +145,6 @@ if(TITYOS_BUILD_CUDA AND TITYOS_BUILD_WARNINGS)
         $<$<COMPILE_LANGUAGE:CUDA>:
             -Xcompiler=-Wall
             -Xcompiler=-Wextra
-            -Xcompiler=-Wpedantic
             -Xcompiler=-Werror
         >
     )

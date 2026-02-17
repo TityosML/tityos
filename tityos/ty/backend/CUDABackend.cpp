@@ -9,7 +9,7 @@ namespace internal {
 } // namespace ty
 
 extern "C" {
-TITYOS_EXPORT ty::internal::backend::Backend* registerCudaBackend() {
+TITYOS_API ty::internal::backend::Backend* registerCudaBackend() {
     return &ty::internal::backend::cudaBackendInstance;
 }
 }

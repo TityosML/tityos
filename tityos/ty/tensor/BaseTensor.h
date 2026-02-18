@@ -23,11 +23,11 @@ namespace internal {
         BaseTensor(std::shared_ptr<TensorStorage> data,
                    const ShapeStrides& layout,
                    const DType dtype = DType::Float32);
-        BaseTensor(const BaseTensor& other);
-        BaseTensor(BaseTensor&& other) noexcept;
 
-        BaseTensor& operator=(const BaseTensor& other);
-        BaseTensor& operator=(BaseTensor&& other) noexcept;
+        BaseTensor(const BaseTensor& other) = default;
+        BaseTensor(BaseTensor&& other) noexcept = default;
+        BaseTensor& operator=(const BaseTensor& other) = default;
+        BaseTensor& operator=(BaseTensor&& other) noexcept = default;
 
         BaseTensor copy() const;
 

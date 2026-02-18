@@ -10,38 +10,6 @@ namespace internal {
                            const ShapeStrides& layout, const DType dtype)
         : tensorStorage_(std::move(data)), layout_(layout), dtype_(dtype) {}
 
-    BaseTensor::BaseTensor(const BaseTensor& other)
-        : tensorStorage_(other.tensorStorage_), layout_(other.layout_),
-          dtype_(other.dtype_) {}
-
-    BaseTensor::BaseTensor(BaseTensor&& other) noexcept
-        : tensorStorage_(std::move(other.tensorStorage_)),
-          layout_(std::move(other.layout_)), dtype_(std::move(other.dtype_)) {}
-
-    BaseTensor& BaseTensor::operator=(const BaseTensor& other) {
-        if (this == &other) {
-            return *this;
-        }
-
-        tensorStorage_ = other.tensorStorage_;
-        layout_ = other.layout_;
-        dtype_ = other.dtype_;
-
-        return *this;
-    }
-
-    BaseTensor& BaseTensor::operator=(BaseTensor&& other) noexcept {
-        if (this == &other) {
-            return *this;
-        }
-
-        tensorStorage_ = std::move(other.tensorStorage_);
-        layout_ = std::move(other.layout_);
-        dtype_ = other.dtype_;
-
-        return *this;
-    }
-
     BaseTensor BaseTensor::copy() const {
         return BaseTensor(std::make_shared<TensorStorage>(*tensorStorage_),
                           layout_, dtype_);

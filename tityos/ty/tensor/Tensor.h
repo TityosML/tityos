@@ -88,10 +88,10 @@ class TITYOS_API Tensor {
     explicit Tensor(std::shared_ptr<internal::BaseTensor> baseTensor)
         : baseTensor_(baseTensor) {}
 
-    Tensor(const Tensor& other);
-    Tensor(Tensor&& other) noexcept;
-    Tensor& operator=(const Tensor& other);
-    Tensor& operator=(Tensor&& other) noexcept;
+    Tensor(const Tensor& other) = default;
+    Tensor(Tensor&& other) noexcept = default;
+    Tensor& operator=(const Tensor& other) = default;
+    Tensor& operator=(Tensor&& other) noexcept = default;
 
     Tensor operator+(const Tensor& other) const;
     Tensor& operator+=(const Tensor& other);

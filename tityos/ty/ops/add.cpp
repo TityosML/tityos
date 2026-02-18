@@ -18,6 +18,17 @@ Tensor add(const Tensor& tensor1, const Tensor& tensor2) {
         b->add(*broadcastedTensor1.getBaseTensor(),
                *broadcastedTensor2.getBaseTensor()));
 
-    return Tensor(resultBase);
+    auto result = Tensor(resultBase);
+
+    auto contextStorage = internal::GradientContextStorage(tensor1, tensor2);
+    auto context = internal::GradientContext(
+        contextStorage, [](const internal::GradientContextStorage& tensors) {
+            tensors[0].addGrad(*tensors[1].getBaseTensor());
+            tensors[1].addGrad(*tensors[0].getBaseTensor());
+        });
+
+    result.setGradContext(context);
+
+    return result;
 }
 } // namespace ty

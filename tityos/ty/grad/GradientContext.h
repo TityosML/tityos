@@ -4,15 +4,15 @@
 #include <memory>
 
 namespace ty {
+  class Tensor;
 namespace internal {
-    class BaseTensor;
     class GradientContextStorage;
 
-    using GradFn = std::function<BaseTensor(const GradientContextStorage&)>;
+    using GradFn = std::function<void(const GradientContextStorage&)>;
 
     class GradientContextStorage {
       private:
-        std::vector<std::shared_ptr<BaseTensor>> tensors_;
+        std::vector<Tensor> tensors_;
         size_t numTensors_;
 
       public:
@@ -23,9 +23,7 @@ namespace internal {
         }
         ~GradientContextStorage() = default;
 
-        const BaseTensor& operator[](size_t index) const {
-            return *tensors_[index];
-        }
+        const Tensor& operator[](size_t index) const { return tensors_[index]; }
     };
 
     class GradientContext {
@@ -37,6 +35,8 @@ namespace internal {
         GradientContext(const GradientContextStorage& tensors, GradFn gradFn)
             : tensors_(tensors), gradFn_(gradFn) {}
         ~GradientContext() = default;
+
+        void backward() const { gradFn_(tensors_); }
     };
 } // namespace internal
 } // namespace ty

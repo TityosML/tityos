@@ -21,7 +21,7 @@ Tensor add(const Tensor& a, const Tensor& b);
 
 class TITYOS_API Tensor {
   private:
-    std::shared_ptr<internal::BaseTensor> baseTensor_;
+    std::shared_ptr<internal::BaseTensor> dataTensor_;
     std::shared_ptr<internal::BaseTensor> gradTensor_;
     std::optional<internal::GradientContext> gradContext_ = std::nullopt;
     bool requiresGrad_;
@@ -53,15 +53,20 @@ class TITYOS_API Tensor {
 
         internal::ShapeStrides layout(storageShape, std::size(shape));
 
-        baseTensor_ =
+        dataTensor_ =
             std::make_shared<internal::BaseTensor>(dataStorage, layout, dtype);
 
         requiresGrad_ = false;
         if (requiresGrad && isGradientType(dtype)) {
             requiresGrad_ = true;
 
-            // TODO: Create gradTensor with same shape as dataTensor and all
-            // zeros
+            // TODO: Replace this with zerosLike
+            auto gradStorage =
+                std::make_shared<internal::TensorStorage>(numBytes, device);
+            memset(gradStorage->begin(), 0, numBytes);
+
+            gradTensor_ = std::make_shared<internal::BaseTensor>(gradStorage,
+                                                                 layout, dtype);
         }
     }
 
@@ -86,7 +91,7 @@ class TITYOS_API Tensor {
                  dtype, requiresGrad) {}
 
     explicit Tensor(std::shared_ptr<internal::BaseTensor> baseTensor)
-        : baseTensor_(baseTensor) {}
+        : dataTensor_(baseTensor) {}
 
     Tensor(const Tensor& other) = default;
     Tensor(Tensor&& other) noexcept = default;
@@ -104,6 +109,7 @@ class TITYOS_API Tensor {
     size_t getSize() const;
     size_t getNDim() const;
     std::shared_ptr<internal::BaseTensor> getBaseTensor() const;
+    std::shared_ptr<internal::BaseTensor> getGradTensor() const;
 
     void* at(const size_t* indexStart, const size_t indexSize) const;
     void* at(const std::vector<size_t>& index) const;
@@ -131,6 +137,10 @@ class TITYOS_API Tensor {
     T& elemAt(const std::initializer_list<size_t>& index) {
         return *static_cast<T*>(at(index));
     }
+
+    void setGradContext(const internal::GradientContext& context);
+    void addGrad(const internal::BaseTensor& grad) const;
+    void backward() const;
 
     using Iterator = internal::BaseTensor::Iterator;
 

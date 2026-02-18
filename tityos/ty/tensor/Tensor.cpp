@@ -11,48 +11,52 @@ Tensor& Tensor::operator+=(const Tensor& other) {
 }
 
 Tensor Tensor::copy() const {
-    return Tensor(std::make_shared<internal::BaseTensor>(baseTensor_->copy()));
+    return Tensor(std::make_shared<internal::BaseTensor>(dataTensor_->copy()));
 }
 
 Device Tensor::getDevice() const {
-    return baseTensor_->getTensorStorage()->getDevice();
+    return dataTensor_->getTensorStorage()->getDevice();
 }
 
 DType Tensor::getDType() const {
-    return baseTensor_->getDType();
+    return dataTensor_->getDType();
 }
 
 const std::array<size_t, TY_MAX_DIMS>& Tensor::getShape() const {
-    return baseTensor_->getLayout().getShape();
+    return dataTensor_->getLayout().getShape();
 }
 
 size_t Tensor::getSize() const {
     size_t tensorSize = 1;
     const std::array<size_t, TY_MAX_DIMS>& shape = getShape();
-    for (size_t i = 0; i < baseTensor_->getLayout().getNDim(); i++) {
+    for (size_t i = 0; i < dataTensor_->getLayout().getNDim(); i++) {
         tensorSize *= shape[i];
     }
     return tensorSize;
 }
 
 size_t Tensor::getNDim() const {
-    return baseTensor_->getLayout().getNDim();
+    return dataTensor_->getLayout().getNDim();
 }
 
 std::shared_ptr<internal::BaseTensor> Tensor::getBaseTensor() const {
-    return baseTensor_;
+    return dataTensor_;
+}
+
+std::shared_ptr<internal::BaseTensor> Tensor::getGradTensor() const {
+    return gradTensor_;
 }
 
 void* Tensor::at(const size_t* indexStart, const size_t indexSize) const {
-    if (indexSize != baseTensor_->getLayout().getNDim()) {
+    if (indexSize != dataTensor_->getLayout().getNDim()) {
         throw std::invalid_argument(
             "Index size mismatch: expected " +
-            std::to_string(baseTensor_->getLayout().getNDim()) + ", got " +
+            std::to_string(dataTensor_->getLayout().getNDim()) + ", got " +
             std::to_string(indexSize));
     }
 
     const std::array<size_t, TY_MAX_DIMS>& shape =
-        baseTensor_->getLayout().getShape();
+        dataTensor_->getLayout().getShape();
     for (size_t i = 0; i < indexSize; i++) {
         if (indexStart[i] >= shape[i]) {
             throw std::out_of_range(
@@ -62,7 +66,7 @@ void* Tensor::at(const size_t* indexStart, const size_t indexSize) const {
         }
     }
 
-    return baseTensor_->at(indexStart);
+    return dataTensor_->at(indexStart);
 }
 
 void* Tensor::at(const std::vector<size_t>& index) const {
@@ -76,18 +80,18 @@ void* Tensor::at(const std::initializer_list<size_t>& index) const {
 using Iterator = internal::BaseTensor::Iterator;
 
 Iterator Tensor::begin() {
-    return baseTensor_->begin();
+    return dataTensor_->begin();
 }
 Iterator Tensor::end() {
-    return baseTensor_->end();
+    return dataTensor_->end();
 }
 
 Iterator Tensor::begin() const {
-    return baseTensor_->begin();
+    return dataTensor_->begin();
 }
 
 Iterator Tensor::end() const {
-    return baseTensor_->end();
+    return dataTensor_->end();
 }
 
 std::string Tensor::itemToStringCpu(const void* item, const DType dtype) const {
@@ -117,7 +121,7 @@ std::string Tensor::itemToStringCpu(const void* item, const DType dtype) const {
 }
 
 bool Tensor::isContiguous() const {
-    return baseTensor_->isContiguous();
+    return dataTensor_->isContiguous();
 }
 
 std::string Tensor::toString() const {
@@ -127,9 +131,9 @@ std::string Tensor::toString() const {
 
     // TODO : get a copy of this tensor on the cpu if not already there
     auto b = internal::backend::getBackend(getDevice().type());
-    const auto baseTensorCpu = b->toCpu(*baseTensor_);
+    const auto baseTensorCpu = b->toCpu(*dataTensor_);
 
-    const ty::internal::ShapeStrides& layout = baseTensor_->getLayout();
+    const ty::internal::ShapeStrides& layout = dataTensor_->getLayout();
     const TensorShape& shape = layout.getShape();
     const DType dtype = getDType();
     const size_t ndim = layout.getNDim();
@@ -265,4 +269,20 @@ std::string Tensor::toString() const {
 
     return resultStream.str();
 }
+
+void Tensor::setGradContext(const internal::GradientContext& context) {
+    gradContext_ = context;
+}
+
+void Tensor::addGrad(const internal::BaseTensor& grad) const {
+    auto b = internal::backend::getBackend(gradTensor_->getDevice().type());
+    *gradTensor_ = b->add(*gradTensor_, grad);
+}
+
+void Tensor::backward() const {
+    if (gradContext_.has_value()) {
+        gradContext_.value().backward();
+    }
+}
+
 } // namespace ty

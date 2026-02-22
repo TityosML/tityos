@@ -77,3 +77,50 @@ TEST_CASE("BaseTensor IndexList", "[BaseTensor]") {
           example.indexList({0, ty::Slice(1)}));
     CHECK(example.indexList({1}).indexList({3}) == example.indexList({1, 3}));
 }
+
+TEST_CASE("BaseTensor Boolean Masking", "[BaseTensor][Indexing]") {
+    auto dataStorage = std::make_shared<ty::internal::TensorStorage>(16);
+    ty::internal::BaseTensor dataTensor(
+        dataStorage, ty::internal::ShapeStrides({4}, 1), ty::DType::Int32);
+    int32_t dataValues[4] = {10, 20, 30, 40};
+    for (size_t i = 0; i < 4; ++i) {
+        *static_cast<int32_t*>(dataTensor.at(i)) = dataValues[i];
+    }
+
+    auto maskStorage = std::make_shared<ty::internal::TensorStorage>(4);
+    ty::internal::BaseTensor maskTensor(
+        maskStorage, ty::internal::ShapeStrides({4}, 1), ty::DType::UInt8);
+    uint8_t maskValues[4] = {1, 0, 1, 0};
+    for (size_t i = 0; i < 4; ++i) {
+        *static_cast<uint8_t*>(maskTensor.at(i)) = maskValues[i];
+    }
+    ty::BoolMask boolMask{&maskTensor};
+    ty::internal::BaseTensor result = dataTensor.indexList({boolMask});
+    CHECK(result.getLayout() == ty::internal::ShapeStrides({2}, {1}, 0, 1));
+    CHECK(*static_cast<int32_t*>(result.at(static_cast<size_t>(0))) == 10);
+    CHECK(*static_cast<int32_t*>(result.at(1)) == 30);
+
+    auto allFalseMaskStorage = std::make_shared<ty::internal::TensorStorage>(4);
+    ty::internal::BaseTensor falseMaskTensor(allFalseMaskStorage,
+                                             ty::internal::ShapeStrides({4}, 1),
+                                             ty::DType::UInt8);
+
+    for (size_t i = 0; i < 4; ++i) {
+        *static_cast<uint8_t*>(falseMaskTensor.at(i)) = 0;
+    }
+
+    ty::BoolMask allFalseBoolMask{&falseMaskTensor};
+    ty::internal::BaseTensor emptyResult =
+        dataTensor.indexList({allFalseBoolMask});
+    CHECK(emptyResult.getLayout() ==
+          ty::internal::ShapeStrides({0}, {1}, 0, 1));
+
+    ty::internal::BaseTensor dataTensor2D(
+        dataStorage, ty::internal::ShapeStrides({2, 2}, 2), ty::DType::Int32);
+    auto badMaskStorage = std::make_shared<ty::internal::TensorStorage>(3);
+    ty::internal::BaseTensor badMaskTensor(
+        badMaskStorage, ty::internal::ShapeStrides({3}, 1), ty::DType::UInt8);
+
+    ty::BoolMask badBoolMask{&badMaskTensor};
+    REQUIRE_THROWS(dataTensor.indexList({badBoolMask}));
+}

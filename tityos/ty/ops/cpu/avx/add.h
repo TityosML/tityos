@@ -10,7 +10,6 @@
 
 namespace ty {
 namespace internal {
-    void addAvx(BaseTensor& result, const BaseTensor& tensor1,
-                const BaseTensor& tensor2);
+    void addAvx(BaseTensor& result, const BaseTensor& tensor1, const BaseTensor& tensor2);
 }
 } // namespace ty

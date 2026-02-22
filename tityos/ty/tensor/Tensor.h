@@ -28,14 +28,11 @@ class TITYOS_API Tensor {
 
   public:
     template <class DataContainer, class ShapeContainer,
-              std::enable_if_t<
-                  std::is_same_v<typename ShapeContainer::value_type, size_t> &&
-                      std::is_trivially_copyable_v<
-                          typename DataContainer::value_type>,
-                  int> = 0>
-    Tensor(const DataContainer& data, const ShapeContainer& shape,
-           Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32,
-           bool requiresGrad = true) {
+              std::enable_if_t<std::is_same_v<typename ShapeContainer::value_type, size_t> &&
+                                   std::is_trivially_copyable_v<typename DataContainer::value_type>,
+                               int> = 0>
+    Tensor(const DataContainer& data, const ShapeContainer& shape, Device device = {DeviceType::CPU, 0},
+           DType dtype = DType::Float32, bool requiresGrad = true) {
         using T = typename DataContainer::value_type;
 
         if (std::size(shape) > TY_MAX_DIMS) {
@@ -44,8 +41,7 @@ class TITYOS_API Tensor {
 
         size_t numElements = std::size(data);
         size_t numBytes = sizeof(T) * numElements;
-        auto dataStorage =
-            std::make_shared<internal::TensorStorage>(numBytes, device);
+        auto dataStorage = std::make_shared<internal::TensorStorage>(numBytes, device);
         dataStorage->copyDataFromCpu(std::data(data), numBytes);
 
         TensorShape storageShape{};
@@ -53,45 +49,36 @@ class TITYOS_API Tensor {
 
         internal::ShapeStrides layout(storageShape, std::size(shape));
 
-        dataTensor_ =
-            std::make_shared<internal::BaseTensor>(dataStorage, layout, dtype);
+        dataTensor_ = std::make_shared<internal::BaseTensor>(dataStorage, layout, dtype);
 
         requiresGrad_ = false;
         if (requiresGrad && isGradientType(dtype)) {
             requiresGrad_ = true;
 
             // TODO: Replace this with zerosLike
-            auto gradStorage =
-                std::make_shared<internal::TensorStorage>(numBytes, device);
+            auto gradStorage = std::make_shared<internal::TensorStorage>(numBytes, device);
             memset(gradStorage->begin(), 0, numBytes);
 
-            gradTensor_ = std::make_shared<internal::BaseTensor>(gradStorage,
-                                                                 layout, dtype);
+            gradTensor_ = std::make_shared<internal::BaseTensor>(gradStorage, layout, dtype);
         }
     }
 
     template <typename T, class ShapeContainer>
-    Tensor(std::initializer_list<T> data, const ShapeContainer& shape,
-           Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32,
-           bool requiresGrad = true)
+    Tensor(std::initializer_list<T> data, const ShapeContainer& shape, Device device = {DeviceType::CPU, 0},
+           DType dtype = DType::Float32, bool requiresGrad = true)
         : Tensor(std::vector<T>(data), shape, device, dtype, requiresGrad) {}
 
     template <class DataContainer>
-    Tensor(const DataContainer& data, std::initializer_list<size_t> shape,
-           Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32,
-           bool requiresGrad = true)
-        : Tensor(data, std::vector<size_t>(shape), device, dtype,
-                 requiresGrad) {}
+    Tensor(const DataContainer& data, std::initializer_list<size_t> shape, Device device = {DeviceType::CPU, 0},
+           DType dtype = DType::Float32, bool requiresGrad = true)
+        : Tensor(data, std::vector<size_t>(shape), device, dtype, requiresGrad) {}
 
     template <typename T>
-    Tensor(std::initializer_list<T> data, std::initializer_list<size_t> shape,
-           Device device = {DeviceType::CPU, 0}, DType dtype = DType::Float32,
-           bool requiresGrad = true)
-        : Tensor(std::vector<T>(data), std::vector<size_t>(shape), device,
-                 dtype, requiresGrad) {}
+    Tensor(std::initializer_list<T> data, std::initializer_list<size_t> shape, Device device = {DeviceType::CPU, 0},
+           DType dtype = DType::Float32, bool requiresGrad = true)
+        : Tensor(std::vector<T>(data), std::vector<size_t>(shape), device, dtype, requiresGrad) {}
 
-    explicit Tensor(std::shared_ptr<internal::BaseTensor> baseTensor)
-        : dataTensor_(baseTensor) {}
+    explicit Tensor(std::shared_ptr<internal::BaseTensor> baseTensor) : dataTensor_(baseTensor) {}
 
     Tensor(const Tensor& other) = default;
     Tensor(Tensor&& other) noexcept = default;
@@ -115,28 +102,19 @@ class TITYOS_API Tensor {
     void* at(const std::vector<size_t>& index) const;
     void* at(const std::initializer_list<size_t>& index) const;
 
-    template <size_t N> void* at(const std::array<size_t, N>& index) const {
-        return at(index.data(), N);
-    }
+    template <size_t N> void* at(const std::array<size_t, N>& index) const { return at(index.data(), N); }
 
-    template <typename T>
-    T& elemAt(const size_t* indexStart, const size_t indexSize) {
+    template <typename T> T& elemAt(const size_t* indexStart, const size_t indexSize) {
         return *static_cast<T*>(at(indexStart, indexSize));
     }
 
-    template <typename T, size_t N>
-    T& elemAt(const std::array<size_t, N>& index) {
+    template <typename T, size_t N> T& elemAt(const std::array<size_t, N>& index) {
         return *static_cast<T*>(at(index));
     }
 
-    template <typename T> T& elemAt(const std::vector<size_t>& index) {
-        return *static_cast<T*>(at(index));
-    }
+    template <typename T> T& elemAt(const std::vector<size_t>& index) { return *static_cast<T*>(at(index)); }
 
-    template <typename T>
-    T& elemAt(const std::initializer_list<size_t>& index) {
-        return *static_cast<T*>(at(index));
-    }
+    template <typename T> T& elemAt(const std::initializer_list<size_t>& index) { return *static_cast<T*>(at(index)); }
 
     void setGradContext(const internal::GradientContext& context);
     void addGrad(const internal::BaseTensor& grad) const;

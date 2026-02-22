@@ -2,8 +2,7 @@
 
 namespace ty {
 namespace internal {
-    BaseTensor expand(const BaseTensor& tensor,
-                      const std::vector<size_t>& newShape) {
+    BaseTensor expand(const BaseTensor& tensor, const std::vector<size_t>& newShape) {
         const size_t oldNDim = tensor.getNDim();
         const size_t newNDim = newShape.size();
 
@@ -13,8 +12,7 @@ namespace internal {
         TensorShape newShapeArray;
         TensorStrides newStrides;
 
-        const ptrdiff_t dimOffset =
-            static_cast<ptrdiff_t>(oldNDim) - static_cast<ptrdiff_t>(newNDim);
+        const ptrdiff_t dimOffset = static_cast<ptrdiff_t>(oldNDim) - static_cast<ptrdiff_t>(newNDim);
 
         if (dimOffset > 0) {
             for (ptrdiff_t i = 0; i < dimOffset; i++) {
@@ -41,8 +39,7 @@ namespace internal {
                 } else if (oldSize == 1) {
                     newStrides[newDim] = 0;
                 } else {
-                    throw std::invalid_argument(
-                        "Cannot expand non-singleton dimension to new size");
+                    throw std::invalid_argument("Cannot expand non-singleton dimension to new size");
                 }
             }
         }
@@ -50,13 +47,11 @@ namespace internal {
         const auto offset = tensor.getLayout().getOffset();
         ShapeStrides newLayout(newShapeArray, newStrides, offset, newNDim);
 
-        return BaseTensor(tensor.getTensorStorage(), newLayout,
-                          tensor.getDType());
+        return BaseTensor(tensor.getTensorStorage(), newLayout, tensor.getDType());
     }
 } // namespace internal
 
 Tensor expand(const Tensor& tensor, const std::vector<size_t>& newShape) {
-    return Tensor(std::make_shared<internal::BaseTensor>(
-        internal::expand(*tensor.getBaseTensor(), newShape)));
+    return Tensor(std::make_shared<internal::BaseTensor>(internal::expand(*tensor.getBaseTensor(), newShape)));
 }
 } // namespace ty

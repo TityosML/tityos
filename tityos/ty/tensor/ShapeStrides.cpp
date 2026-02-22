@@ -6,18 +6,14 @@
 
 namespace ty {
 namespace internal {
-    ShapeStrides::ShapeStrides(const TensorShape& shape,
-                               const TensorStrides& strides, size_t offset,
-                               size_t ndim)
+    ShapeStrides::ShapeStrides(const TensorShape& shape, const TensorStrides& strides, size_t offset, size_t ndim)
         : shape_(shape), strides_(strides), offset_(offset), ndim_(ndim) {}
 
-    ShapeStrides::ShapeStrides(const TensorShape& shape, size_t ndim)
-        : shape_(shape), offset_(0), ndim_(ndim) {
+    ShapeStrides::ShapeStrides(const TensorShape& shape, size_t ndim) : shape_(shape), offset_(0), ndim_(ndim) {
         initialStrides();
     }
 
-    size_t ShapeStrides::computeByteIndex(const size_t* indexStart,
-                                          DType dtype) const {
+    size_t ShapeStrides::computeByteIndex(const size_t* indexStart, DType dtype) const {
         size_t byteIndex = offset_;
         for (size_t i = 0; i < ndim_; i++) {
             byteIndex += *indexStart * strides_[i] * dtypeSize(dtype);
@@ -57,8 +53,7 @@ namespace internal {
         return offset;
     }
 
-    std::array<size_t, TY_MAX_DIMS>
-    ShapeStrides::linearToTensorIndex(size_t linearIndex) const {
+    std::array<size_t, TY_MAX_DIMS> ShapeStrides::linearToTensorIndex(size_t linearIndex) const {
         std::array<size_t, TY_MAX_DIMS> index{};
 
         for (size_t i = ndim_; i-- > 0;) {
@@ -69,8 +64,7 @@ namespace internal {
         return index;
     }
 
-    size_t ShapeStrides::tensorToLinearIndex(
-        const std::array<size_t, TY_MAX_DIMS>& index) const {
+    size_t ShapeStrides::tensorToLinearIndex(const std::array<size_t, TY_MAX_DIMS>& index) const {
         size_t linear = 0;
         size_t dimProduct = 1;
 
@@ -82,13 +76,10 @@ namespace internal {
         return linear;
     }
 
-    ShapeStrides ShapeStrides::slice(size_t dim,
-                                     std::optional<ptrdiff_t> start_opt,
-                                     std::optional<ptrdiff_t> stop_opt,
+    ShapeStrides ShapeStrides::slice(size_t dim, std::optional<ptrdiff_t> start_opt, std::optional<ptrdiff_t> stop_opt,
                                      ptrdiff_t step) const {
         if (dim >= ndim_) {
-            throw std::out_of_range(
-                "Slice dimension exceeds tensor dimensions");
+            throw std::out_of_range("Slice dimension exceeds tensor dimensions");
         }
 
         if (step == 0) {
@@ -132,8 +123,7 @@ namespace internal {
             stop = std::clamp(stop, ptrdiff_t{-1}, size - 1);
         }
 
-        ptrdiff_t newSize = std::max<ptrdiff_t>(
-            0, (stop - start + step + (step > 0 ? -1 : 1)) / step);
+        ptrdiff_t newSize = std::max<ptrdiff_t>(0, (stop - start + step + (step > 0 ? -1 : 1)) / step);
 
         TensorShape newShape = shape_;
         newShape[dim] = static_cast<size_t>(newSize);
@@ -148,8 +138,7 @@ namespace internal {
 
     ShapeStrides ShapeStrides::select(size_t dim, ptrdiff_t select) const {
         if (dim >= ndim_) {
-            throw std::out_of_range(
-                "Select dimension exceeds tensor dimensions");
+            throw std::out_of_range("Select dimension exceeds tensor dimensions");
         }
 
         ptrdiff_t size = static_cast<ptrdiff_t>(shape_[dim]);
@@ -162,8 +151,7 @@ namespace internal {
             throw std::out_of_range("Index out of bounds");
         }
 
-        size_t newOffset =
-            offset_ + static_cast<size_t>(select) * strides_[dim];
+        size_t newOffset = offset_ + static_cast<size_t>(select) * strides_[dim];
 
         TensorShape newShape{};
         TensorStrides newStrides{};
@@ -194,8 +182,7 @@ namespace internal {
         return offset_;
     }
     size_t ShapeStrides::numElements() const {
-        return std::accumulate(shape_.begin(), shape_.begin() + ndim_, 1,
-                               std::multiplies<size_t>());
+        return std::accumulate(shape_.begin(), shape_.begin() + ndim_, 1, std::multiplies<size_t>());
     }
 
     bool ShapeStrides::isContiguous() const {
@@ -222,8 +209,7 @@ namespace internal {
     }
 
     bool ShapeStrides::operator==(const ShapeStrides& other) const {
-        return ndim_ == other.ndim_ && shape_ == other.shape_ &&
-               strides_ == other.strides_ && offset_ == other.offset_;
+        return ndim_ == other.ndim_ && shape_ == other.shape_ && strides_ == other.strides_ && offset_ == other.offset_;
     }
 } // namespace internal
 } // namespace ty

@@ -4,14 +4,12 @@
 #include "tityos/ty/ops/cpu/avx/avxTraits.h"
 #include "tityos/ty/ops/dispatchDType.h"
 #include "tityos/ty/tensor/Tensor.h"
-#include "tityos/ty/ops/dispatchDType.h"
 
 #include <immintrin.h>
 #include <omp.h>
 
 namespace ty {
 namespace internal {
-    void bmmAvx(BaseTensor& result, const BaseTensor& tensor1,
-                const BaseTensor& tensor2);
+    void bmmAvx(BaseTensor& result, const BaseTensor& tensor1, const BaseTensor& tensor2);
 }
 } // namespace ty

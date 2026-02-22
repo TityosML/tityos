@@ -13,12 +13,10 @@
 namespace ty {
 namespace internal {
     template <typename T>
-    __global__ void
-    addCudaKernel(CudaTensorView<T> tensorView1, CudaTensorView<T> tensorView2,
-                  CudaTensorView<T> resultTensorView, size_t numElements);
+    __global__ void addCudaKernel(CudaTensorView<T> tensorView1, CudaTensorView<T> tensorView2,
+                                  CudaTensorView<T> resultTensorView, size_t numElements);
 
     template <typename T>
-    void launchAddKernel(BaseTensor& result, const BaseTensor& tensor1,
-                         const BaseTensor& tensor2);
+    void launchAddKernel(BaseTensor& result, const BaseTensor& tensor1, const BaseTensor& tensor2);
 } // namespace internal
 } // namespace ty

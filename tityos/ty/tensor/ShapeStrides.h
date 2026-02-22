@@ -1,7 +1,7 @@
 #pragma once
 
-#include "tityos/ty/tensor/Dtype.h"
 #include "tityos/ty/export.h"
+#include "tityos/ty/tensor/Dtype.h"
 
 #include <array>
 #include <cstddef>
@@ -24,8 +24,7 @@ namespace internal {
         size_t ndim_;
 
       public:
-        ShapeStrides(const TensorShape& shape, const TensorStrides& strides,
-                     size_t offset, size_t ndim);
+        ShapeStrides(const TensorShape& shape, const TensorStrides& strides, size_t offset, size_t ndim);
 
         ShapeStrides(const TensorShape& shape, size_t ndim);
 
@@ -34,10 +33,8 @@ namespace internal {
 
         ptrdiff_t linearToOffset(size_t linearIndex) const;
 
-        std::array<size_t, TY_MAX_DIMS>
-        linearToTensorIndex(size_t linearIndex) const;
-        size_t tensorToLinearIndex(
-            const std::array<size_t, TY_MAX_DIMS>& linearIndex) const;
+        std::array<size_t, TY_MAX_DIMS> linearToTensorIndex(size_t linearIndex) const;
+        size_t tensorToLinearIndex(const std::array<size_t, TY_MAX_DIMS>& linearIndex) const;
 
         const TensorShape& getShape() const;
         const TensorStrides& getStrides() const;
@@ -49,10 +46,8 @@ namespace internal {
 
         bool operator==(const ShapeStrides& other) const;
 
-        ShapeStrides slice(size_t dim,
-                           std::optional<ptrdiff_t> start = std::nullopt,
-                           std::optional<ptrdiff_t> stop = std::nullopt,
-                           ptrdiff_t step = 1) const;
+        ShapeStrides slice(size_t dim, std::optional<ptrdiff_t> start = std::nullopt,
+                           std::optional<ptrdiff_t> stop = std::nullopt, ptrdiff_t step = 1) const;
 
         ShapeStrides select(size_t dim, ptrdiff_t select) const;
 

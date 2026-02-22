@@ -9,7 +9,6 @@ namespace internal {
 } // namespace internal
 
 Tensor contiguous(const Tensor& tensor) {
-    return Tensor(std::make_shared<internal::BaseTensor>(
-        internal::contiguous(*tensor.getBaseTensor())));
+    return Tensor(std::make_shared<internal::BaseTensor>(internal::contiguous(*tensor.getBaseTensor())));
 }
 } // namespace ty

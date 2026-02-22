@@ -4,7 +4,7 @@
 #include <memory>
 
 namespace ty {
-  class Tensor;
+class Tensor;
 namespace internal {
     class GradientContextStorage;
 
@@ -32,8 +32,7 @@ namespace internal {
         GradFn gradFn_;
 
       public:
-        GradientContext(const GradientContextStorage& tensors, GradFn gradFn)
-            : tensors_(tensors), gradFn_(gradFn) {}
+        GradientContext(const GradientContextStorage& tensors, GradFn gradFn) : tensors_(tensors), gradFn_(gradFn) {}
         ~GradientContext() = default;
 
         void backward() const { gradFn_(tensors_); }

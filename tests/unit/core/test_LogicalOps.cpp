@@ -8,8 +8,7 @@
 
 TEST_CASE("Tensor Expand", "[Operation][Pointwise]") {
     // Floats
-    ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}),
-                        std::vector<size_t>({2, 2}));
+    ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}), std::vector<size_t>({2, 2}));
 
     auto result1 = ty::expand(example1, {4, 2, 2});
 
@@ -25,11 +24,9 @@ TEST_CASE("Tensor Expand", "[Operation][Pointwise]") {
 }
 
 TEST_CASE("Tensor CPU contiguous", "[Operation]") {
-    ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}),
-                        std::vector<size_t>({2, 2}));
+    ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}), std::vector<size_t>({2, 2}));
 
-    ty::Tensor exampleSliced(std::make_shared<ty::internal::BaseTensor>(
-        example1.getBaseTensor()->slice(1, 0, 1)));
+    ty::Tensor exampleSliced(std::make_shared<ty::internal::BaseTensor>(example1.getBaseTensor()->slice(1, 0, 1)));
 
     auto result = ty::contiguous(exampleSliced);
 
@@ -43,8 +40,7 @@ TEST_CASE("Tensor CPU contiguous", "[Operation]") {
 }
 
 TEST_CASE("Tensor Reshape", "[Operation][View]") {
-    ty::Tensor t(std::vector<float>({1.f, 2.f, 3.f, 4.f}),
-                 std::vector<size_t>({2, 2}));
+    ty::Tensor t(std::vector<float>({1.f, 2.f, 3.f, 4.f}), std::vector<size_t>({2, 2}));
 
     auto reshaped = ty::reshape(t, {4}, 1);
 
@@ -57,8 +53,7 @@ TEST_CASE("Tensor Reshape", "[Operation][View]") {
 }
 
 TEST_CASE("Tensor View", "[Operation][View]") {
-    ty::Tensor t(std::vector<float>({1.f, 2.f, 3.f, 4.f}),
-                 std::vector<size_t>({2, 2}));
+    ty::Tensor t(std::vector<float>({1.f, 2.f, 3.f, 4.f}), std::vector<size_t>({2, 2}));
 
     auto viewed = ty::view(t, {4}, 1);
 
@@ -67,16 +62,13 @@ TEST_CASE("Tensor View", "[Operation][View]") {
     CHECK(viewed.elemAt<float>({2}) == 3.f);
     CHECK(viewed.elemAt<float>({3}) == 4.f);
 
-    CHECK(viewed.getBaseTensor()->getTensorStorage() ==
-          t.getBaseTensor()->getTensorStorage());
+    CHECK(viewed.getBaseTensor()->getTensorStorage() == t.getBaseTensor()->getTensorStorage());
 }
 
 TEST_CASE("Tensor Reshape forces contiguous", "[Operation][View]") {
-    ty::Tensor t(std::vector<float>({1.f, 2.f, 3.f, 4.f}),
-                 std::vector<size_t>({2, 2}));
+    ty::Tensor t(std::vector<float>({1.f, 2.f, 3.f, 4.f}), std::vector<size_t>({2, 2}));
 
-    ty::Tensor sliced(std::make_shared<ty::internal::BaseTensor>(
-        t.getBaseTensor()->slice(1, 0, 1)));
+    ty::Tensor sliced(std::make_shared<ty::internal::BaseTensor>(t.getBaseTensor()->slice(1, 0, 1)));
 
     REQUIRE(sliced.isContiguous() == false);
 

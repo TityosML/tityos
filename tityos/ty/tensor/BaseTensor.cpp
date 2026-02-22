@@ -6,13 +6,11 @@ namespace internal {
         return layout_.numElements();
     }
 
-    BaseTensor::BaseTensor(std::shared_ptr<TensorStorage> data,
-                           const ShapeStrides& layout, const DType dtype)
+    BaseTensor::BaseTensor(std::shared_ptr<TensorStorage> data, const ShapeStrides& layout, const DType dtype)
         : tensorStorage_(std::move(data)), layout_(layout), dtype_(dtype) {}
 
     BaseTensor BaseTensor::copy() const {
-        return BaseTensor(std::make_shared<TensorStorage>(*tensorStorage_),
-                          layout_, dtype_);
+        return BaseTensor(std::make_shared<TensorStorage>(*tensorStorage_), layout_, dtype_);
     }
 
     void* BaseTensor::at(const size_t* indexStart) const {
@@ -66,20 +64,16 @@ namespace internal {
     }
 
     bool BaseTensor::operator==(const BaseTensor& other) const {
-        return tensorStorage_ == other.tensorStorage_ &&
-               layout_ == other.layout_ && dtype_ == other.dtype_;
+        return tensorStorage_ == other.tensorStorage_ && layout_ == other.layout_ && dtype_ == other.dtype_;
     }
 
-    BaseTensor BaseTensor::slice(size_t dim, std::optional<ptrdiff_t> start,
-                                 std::optional<ptrdiff_t> stop,
+    BaseTensor BaseTensor::slice(size_t dim, std::optional<ptrdiff_t> start, std::optional<ptrdiff_t> stop,
                                  ptrdiff_t step) const {
-        return BaseTensor(tensorStorage_, layout_.slice(dim, start, stop, step),
-                          dtype_);
+        return BaseTensor(tensorStorage_, layout_.slice(dim, start, stop, step), dtype_);
     };
 
     BaseTensor BaseTensor::indexList(IndexList indices) const {
-        internal::IndexingResult idxResult =
-            internal::resolveIndices(indices, *this);
+        internal::IndexingResult idxResult = internal::resolveIndices(indices, *this);
 
         if (!idxResult.gather.has_value()) {
             return BaseTensor(tensorStorage_, idxResult.newLayout, dtype_);
@@ -88,10 +82,8 @@ namespace internal {
         }
     }
 
-    BaseTensor::Iterator::Iterator(const BaseTensor& baseTensor,
-                                   size_t linearStartIndex)
-        : baseTensor_(baseTensor), linearIndex_(linearStartIndex),
-          ptr_(baseTensor.at(linearStartIndex)) {}
+    BaseTensor::Iterator::Iterator(const BaseTensor& baseTensor, size_t linearStartIndex)
+        : baseTensor_(baseTensor), linearIndex_(linearStartIndex), ptr_(baseTensor.at(linearStartIndex)) {}
 
     void* BaseTensor::Iterator::operator->() {
         return ptr_;
@@ -122,13 +114,11 @@ namespace internal {
         ptr_ = baseTensor_.at(linearIndex_);
     }
 
-    bool operator==(const BaseTensor::Iterator& a,
-                    const BaseTensor::Iterator& b) {
+    bool operator==(const BaseTensor::Iterator& a, const BaseTensor::Iterator& b) {
         return (a.ptr_ == b.ptr_) && (a.linearIndex_ == b.linearIndex_);
     }
 
-    bool operator!=(const BaseTensor::Iterator& a,
-                    const BaseTensor::Iterator& b) {
+    bool operator!=(const BaseTensor::Iterator& a, const BaseTensor::Iterator& b) {
         return (a.ptr_ != b.ptr_) || (a.linearIndex_ != b.linearIndex_);
     }
 

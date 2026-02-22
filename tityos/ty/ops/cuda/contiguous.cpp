@@ -5,8 +5,7 @@ namespace internal {
     BaseTensor backend::CUDABackend::contiguous(const BaseTensor& tensor) {
         BaseTensor result = internal::emptyLike(tensor);
 
-        DISPATCH_KERNEL_DTYPE_TABLE(kernelTable, launchContiguousKernel,
-                                    (BaseTensor&, const BaseTensor&))
+        DISPATCH_KERNEL_DTYPE_TABLE(kernelTable, launchContiguousKernel, (BaseTensor&, const BaseTensor&))
 
         kernelTable[static_cast<size_t>(tensor.getDType())](result, tensor);
 

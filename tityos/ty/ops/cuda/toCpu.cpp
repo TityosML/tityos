@@ -10,14 +10,12 @@ namespace internal {
 
         Device cpuDevice(DeviceType::CPU);
 
-        auto resultStorage =
-            std::make_shared<TensorStorage>(tensor.getLogicalSize(), cpuDevice);
+        auto resultStorage = std::make_shared<TensorStorage>(tensor.getLogicalSize(), cpuDevice);
 
         auto contiguousTensor = contiguous(tensor);
 
         resultStorage->begin();
-        cudaMemcpy(resultStorage->begin(),
-                   contiguousTensor.getTensorStorage()->begin(),
+        cudaMemcpy(resultStorage->begin(), contiguousTensor.getTensorStorage()->begin(),
                    contiguousTensor.getLogicalSize(), cudaMemcpyDeviceToHost);
 
         ShapeStrides resultLayout(tensor.getShape(), tensor.getNDim());

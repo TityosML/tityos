@@ -35,18 +35,13 @@ namespace internal {
             Backend() = default;
             virtual ~Backend() = default;
 
-            virtual void* allocate(size_t bytes,
-                                   [[maybe_unused]] int index) = 0;
+            virtual void* allocate(size_t bytes, [[maybe_unused]] int index) = 0;
             virtual void deallocate(void* ptr) = 0;
-            virtual void copyData(void* destPtr, const void* srcPtr,
-                                  size_t numBytes) = 0;
-            virtual void copyDataFromCpu(void* destPtr, const void* srcPtr,
-                                         size_t numBytes) = 0;
+            virtual void copyData(void* destPtr, const void* srcPtr, size_t numBytes) = 0;
+            virtual void copyDataFromCpu(void* destPtr, const void* srcPtr, size_t numBytes) = 0;
 
-            virtual BaseTensor add(const BaseTensor& tensor1,
-                                   const BaseTensor& tensor2) = 0;
-            virtual BaseTensor bmm(const BaseTensor& batch1,
-                                   const BaseTensor& batch2) = 0;
+            virtual BaseTensor add(const BaseTensor& tensor1, const BaseTensor& tensor2) = 0;
+            virtual BaseTensor bmm(const BaseTensor& batch1, const BaseTensor& batch2) = 0;
             virtual BaseTensor contiguous(const BaseTensor& tensor) = 0;
             virtual BaseTensor toCpu(const BaseTensor& tensor) = 0;
         };

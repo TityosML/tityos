@@ -42,21 +42,18 @@ namespace internal {
                 return;
             }
 
-            auto registerFn = reinterpret_cast<Fn>(
-                GetProcAddress(handle, "registerCpuBackend"));
+            auto registerFn = reinterpret_cast<Fn>(GetProcAddress(handle, "registerCpuBackend"));
 #else
             void* handle = dlopen(libName, RTLD_NOW | RTLD_GLOBAL);
             if (!handle) {
                 auto error = dlerror();
 
-                throw std::runtime_error("Unable to load Cpu backend: " +
-                                         std::string(error));
+                throw std::runtime_error("Unable to load Cpu backend: " + std::string(error));
 
                 return false;
             }
 
-            auto registerFn =
-                reinterpret_cast<Fn>(dlsym(handle, "registerCpuBackend"));
+            auto registerFn = reinterpret_cast<Fn>(dlsym(handle, "registerCpuBackend"));
 #endif
 
             if (registerFn) {
@@ -77,21 +74,18 @@ namespace internal {
                 return;
             }
 
-            auto registerFn = reinterpret_cast<Fn>(
-                GetProcAddress(handle, "registerCudaBackend"));
+            auto registerFn = reinterpret_cast<Fn>(GetProcAddress(handle, "registerCudaBackend"));
 #else
             void* handle = dlopen(libName, RTLD_NOW | RTLD_GLOBAL);
             if (!handle) {
                 auto error = dlerror();
 
-                throw std::runtime_error("Unable to load Cuda backend: " +
-                                         std::string(error));
+                throw std::runtime_error("Unable to load Cuda backend: " + std::string(error));
 
                 return false;
             }
 
-            auto registerFn =
-                reinterpret_cast<Fn>(dlsym(handle, "registerCudaBackend"));
+            auto registerFn = reinterpret_cast<Fn>(dlsym(handle, "registerCudaBackend"));
 #endif
             if (registerFn) {
                 cudaBackend = registerFn();

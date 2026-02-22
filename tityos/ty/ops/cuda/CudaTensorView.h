@@ -17,9 +17,7 @@ namespace internal {
         size_t ndim;
 
         // assumes contiguous in memory
-        __device__ T& operator[](size_t linear_idx) const {
-            return data[offset + linear_idx];
-        }
+        __device__ T& operator[](size_t linear_idx) const { return data[offset + linear_idx]; }
 
         // doesn't assume contiguous in memory
         __device__ __forceinline__ T& atLinear(size_t linear_idx) const {
@@ -36,18 +34,15 @@ namespace internal {
         }
 
         // Prereq: ndim = 3, pass variables to reduce repeated array accesses
-        __device__ __forceinline__ T& at3d(int x, int y, int z, int strideX,
-                                           int strideY, int strideZ) const {
+        __device__ __forceinline__ T& at3d(int x, int y, int z, int strideX, int strideY, int strideZ) const {
             return data[offset + (x * strideX + y * strideY + z * strideZ)];
         }
     };
 
-    template <typename T>
-    CudaTensorView<T> buildCudaTensorView(const BaseTensor& tensor) {
+    template <typename T> CudaTensorView<T> buildCudaTensorView(const BaseTensor& tensor) {
         CudaTensorView<T> tensorView;
 
-        tensorView.data =
-            reinterpret_cast<T*>(tensor.getTensorStorage()->begin());
+        tensorView.data = reinterpret_cast<T*>(tensor.getTensorStorage()->begin());
 
         size_t ndim = tensor.getNDim();
         TensorShape shape = tensor.getShape();

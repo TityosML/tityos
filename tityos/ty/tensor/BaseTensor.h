@@ -20,9 +20,7 @@ namespace internal {
         DType dtype_;
 
       public:
-        BaseTensor(std::shared_ptr<TensorStorage> data,
-                   const ShapeStrides& layout,
-                   const DType dtype = DType::Float32);
+        BaseTensor(std::shared_ptr<TensorStorage> data, const ShapeStrides& layout, const DType dtype = DType::Float32);
 
         BaseTensor(const BaseTensor& other) = default;
         BaseTensor(BaseTensor&& other) noexcept = default;
@@ -34,13 +32,9 @@ namespace internal {
         void* at(const size_t* indexStart) const;
         void* at(size_t index) const;
 
-        template <typename T> T* elemAt(const size_t* indexStart) const {
-            return reinterpret_cast<T*>(at(indexStart));
-        }
+        template <typename T> T* elemAt(const size_t* indexStart) const { return reinterpret_cast<T*>(at(indexStart)); }
 
-        template <typename T> T* elemAt(size_t index) const {
-            return reinterpret_cast<T*>(at(index));
-        }
+        template <typename T> T* elemAt(size_t index) const { return reinterpret_cast<T*>(at(index)); }
 
         const ShapeStrides& getLayout() const;
         size_t getNDim() const;
@@ -56,10 +50,8 @@ namespace internal {
 
         bool operator==(const BaseTensor& other) const;
 
-        BaseTensor slice(size_t dim,
-                         std::optional<ptrdiff_t> start = std::nullopt,
-                         std::optional<ptrdiff_t> stop = std::nullopt,
-                         ptrdiff_t step = 1) const;
+        BaseTensor slice(size_t dim, std::optional<ptrdiff_t> start = std::nullopt,
+                         std::optional<ptrdiff_t> stop = std::nullopt, ptrdiff_t step = 1) const;
 
         BaseTensor indexList(IndexList indices) const;
 
@@ -82,10 +74,8 @@ namespace internal {
             Iterator& operator++();
             Iterator operator++(int);
 
-            TITYOS_API friend bool operator==(const Iterator& a,
-                                              const Iterator& b);
-            TITYOS_API friend bool operator!=(const Iterator& a,
-                                              const Iterator& b);
+            TITYOS_API friend bool operator==(const Iterator& a, const Iterator& b);
+            TITYOS_API friend bool operator!=(const Iterator& a, const Iterator& b);
         };
 
         Iterator begin();

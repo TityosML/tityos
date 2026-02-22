@@ -8,9 +8,7 @@
 
 namespace ty {
 namespace internal {
-    std::vector<size_t> broadcastShape(const TensorShape& tensor1Shape,
-                                       size_t tensor1NDim,
-                                       const TensorShape& tensor2Shape,
-                                       size_t tensor2NDim);
+    std::vector<size_t> broadcastShape(const TensorShape& tensor1Shape, size_t tensor1NDim,
+                                       const TensorShape& tensor2Shape, size_t tensor2NDim);
 }
 } // namespace ty

@@ -12,7 +12,7 @@ namespace internal {
         size_t offset;
 
         TensorView(const BaseTensor& baseTensor)
-            : data(baseTensor.at((size_t) 0)), shape(baseTensor.getShape().data()),
+            : data(baseTensor.at((size_t)0)), shape(baseTensor.getShape().data()),
               strides(baseTensor.getStrides().data()), ndim(baseTensor.getNDim()),
               offset(baseTensor.getLayout().getOffset()) {}
     };

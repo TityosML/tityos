@@ -2,8 +2,7 @@
 
 namespace ty {
 namespace internal {
-    TensorStorage::TensorStorage(size_t numBytes, Device device)
-        : size_(numBytes), device_(device) {
+    TensorStorage::TensorStorage(size_t numBytes, Device device) : size_(numBytes), device_(device) {
         allocate();
     }
 
@@ -11,8 +10,7 @@ namespace internal {
         deallocate();
     }
 
-    TensorStorage::TensorStorage(const TensorStorage& other)
-        : size_(other.size_), device_(other.device_) {
+    TensorStorage::TensorStorage(const TensorStorage& other) : size_(other.size_), device_(other.device_) {
         allocate();
 
         auto b = backend::getBackend(device_.type());
@@ -20,8 +18,7 @@ namespace internal {
     }
 
     TensorStorage::TensorStorage(TensorStorage&& other) noexcept
-        : startPointer_(other.startPointer_), size_(other.size_),
-          device_(other.device_) {
+        : startPointer_(other.startPointer_), size_(other.size_), device_(other.device_) {
         other.size_ = 0;
         other.startPointer_ = nullptr;
     }
@@ -61,8 +58,7 @@ namespace internal {
         return *this;
     }
 
-    void TensorStorage::copyDataFromCpu(const void* dataStartPointer,
-                                        size_t numBytes) {
+    void TensorStorage::copyDataFromCpu(const void* dataStartPointer, size_t numBytes) {
         auto b = backend::getBackend(device_.type());
         b->copyDataFromCpu(startPointer_, dataStartPointer, numBytes);
     }
@@ -92,8 +88,7 @@ namespace internal {
         startPointer_ = b->allocate(size_, device_.index());
 
         if (!startPointer_) {
-            throw std::runtime_error(
-                "Unable to allocate memory to TensorStorage");
+            throw std::runtime_error("Unable to allocate memory to TensorStorage");
         }
     }
 

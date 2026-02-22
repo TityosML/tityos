@@ -12,17 +12,12 @@ namespace internal {
     template <> struct AvxTraits<int8_t> {
         using Vec = __m256i;
         static constexpr int lanes = 32;
-        static Vec load(const int8_t* p) {
-            return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(p));
-        }
-        static void store(int8_t* p, Vec v) {
-            _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v);
-        }
+        static Vec load(const int8_t* p) { return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(p)); }
+        static void store(int8_t* p, Vec v) { _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v); }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi8(a, b); }
         static Vec mul(Vec a, Vec b) {
             __m256i aLower = _mm256_cvtepi8_epi16(_mm256_castsi256_si128(a));
-            __m256i aUpper =
-                _mm256_cvtepi8_epi16(_mm256_extracti128_si256(a, 1));
+            __m256i aUpper = _mm256_cvtepi8_epi16(_mm256_extracti128_si256(a, 1));
 
             aLower = _mm256_mullo_epi16(aLower, b);
             aUpper = _mm256_mullo_epi16(aUpper, b);
@@ -69,18 +64,12 @@ namespace internal {
     template <> struct AvxTraits<uint8_t> {
         using Vec = __m256i;
         static constexpr int lanes = 32;
-        static Vec load(const uint8_t* p) {
-            return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(p));
-        }
-        static void store(uint8_t* p, Vec v) {
-            _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v);
-        }
+        static Vec load(const uint8_t* p) { return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(p)); }
+        static void store(uint8_t* p, Vec v) { _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v); }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi8(a, b); }
         static Vec mul(Vec a, Vec b) {
-            __m256i aLower =
-                _mm256_cvtepi8_epi16(_mm256_extracti128_si256(a, 0));
-            __m256i aUpper =
-                _mm256_cvtepi8_epi16(_mm256_extracti128_si256(a, 1));
+            __m256i aLower = _mm256_cvtepi8_epi16(_mm256_extracti128_si256(a, 0));
+            __m256i aUpper = _mm256_cvtepi8_epi16(_mm256_extracti128_si256(a, 1));
 
             aLower = _mm256_mullo_epi16(aLower, b);
             aUpper = _mm256_mullo_epi16(aUpper, b);
@@ -127,12 +116,8 @@ namespace internal {
     template <> struct AvxTraits<int16_t> {
         using Vec = __m256i;
         static constexpr int lanes = 16;
-        static Vec load(const int16_t* p) {
-            return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(p));
-        }
-        static void store(int16_t* p, Vec v) {
-            _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v);
-        }
+        static Vec load(const int16_t* p) { return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(p)); }
+        static void store(int16_t* p, Vec v) { _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v); }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi16(a, b); }
         static Vec mul(Vec a, Vec b) { return _mm256_mullo_epi16(a, b); }
 
@@ -151,20 +136,14 @@ namespace internal {
         }
 
         static Vec set1(int16_t val) { return _mm256_set1_epi16(val); }
-        static Vec fma(Vec a, Vec b, Vec c) {
-            return _mm256_add_epi16(_mm256_mullo_epi16(a, b), c);
-        }
+        static Vec fma(Vec a, Vec b, Vec c) { return _mm256_add_epi16(_mm256_mullo_epi16(a, b), c); }
     };
 
     template <> struct AvxTraits<uint16_t> {
         using Vec = __m256i;
         static constexpr int lanes = 16;
-        static Vec load(const uint16_t* p) {
-            return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(p));
-        }
-        static void store(uint16_t* p, Vec v) {
-            _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v);
-        }
+        static Vec load(const uint16_t* p) { return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(p)); }
+        static void store(uint16_t* p, Vec v) { _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v); }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi16(a, b); }
         static Vec mul(Vec a, Vec b) { return _mm256_mullo_epi16(a, b); }
 
@@ -183,20 +162,14 @@ namespace internal {
         }
 
         static Vec set1(uint16_t val) { return _mm256_set1_epi16(val); }
-        static Vec fma(Vec a, Vec b, Vec c) {
-            return _mm256_add_epi16(_mm256_mullo_epi16(a, b), c);
-        }
+        static Vec fma(Vec a, Vec b, Vec c) { return _mm256_add_epi16(_mm256_mullo_epi16(a, b), c); }
     };
 
     template <> struct AvxTraits<int32_t> {
         using Vec = __m256i;
         static constexpr int lanes = 8;
-        static Vec load(const int32_t* p) {
-            return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(p));
-        }
-        static void store(int32_t* p, Vec v) {
-            _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v);
-        }
+        static Vec load(const int32_t* p) { return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(p)); }
+        static void store(int32_t* p, Vec v) { _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v); }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi32(a, b); }
         static Vec mul(Vec a, Vec b) { return _mm256_mullo_epi32(a, b); }
 
@@ -214,20 +187,14 @@ namespace internal {
         }
 
         static Vec set1(int32_t val) { return _mm256_set1_epi32(val); }
-        static Vec fma(Vec a, Vec b, Vec c) {
-            return _mm256_add_epi32(_mm256_mullo_epi32(a, b), c);
-        }
+        static Vec fma(Vec a, Vec b, Vec c) { return _mm256_add_epi32(_mm256_mullo_epi32(a, b), c); }
     };
 
     template <> struct AvxTraits<uint32_t> {
         using Vec = __m256i;
         static constexpr int lanes = 8;
-        static Vec load(const uint32_t* p) {
-            return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(p));
-        }
-        static void store(uint32_t* p, Vec v) {
-            _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v);
-        }
+        static Vec load(const uint32_t* p) { return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(p)); }
+        static void store(uint32_t* p, Vec v) { _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v); }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi32(a, b); }
         static Vec mul(Vec a, Vec b) { return _mm256_mullo_epi32(a, b); }
 
@@ -245,20 +212,14 @@ namespace internal {
         }
 
         static Vec set1(uint32_t val) { return _mm256_set1_epi32(val); }
-        static Vec fma(Vec a, Vec b, Vec c) {
-            return _mm256_add_epi32(_mm256_mullo_epi32(a, b), c);
-        }
+        static Vec fma(Vec a, Vec b, Vec c) { return _mm256_add_epi32(_mm256_mullo_epi32(a, b), c); }
     };
 
     template <> struct AvxTraits<int64_t> {
         using Vec = __m256i;
         static constexpr int lanes = 4;
-        static Vec load(const int64_t* p) {
-            return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(p));
-        }
-        static void store(int64_t* p, Vec v) {
-            _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v);
-        }
+        static Vec load(const int64_t* p) { return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(p)); }
+        static void store(int64_t* p, Vec v) { _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v); }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi64(a, b); }
         static Vec mul(Vec a, Vec b) {
             __m256i lower = _mm256_mul_epu32(a, b);
@@ -295,12 +256,8 @@ namespace internal {
     template <> struct AvxTraits<uint64_t> {
         using Vec = __m256i;
         static constexpr int lanes = 4;
-        static Vec load(const uint64_t* p) {
-            return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(p));
-        }
-        static void store(uint64_t* p, Vec v) {
-            _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v);
-        }
+        static Vec load(const uint64_t* p) { return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(p)); }
+        static void store(uint64_t* p, Vec v) { _mm256_storeu_si256(reinterpret_cast<__m256i*>(p), v); }
         static Vec add(Vec a, Vec b) { return _mm256_add_epi64(a, b); }
         static Vec mul(Vec a, Vec b) {
             __m256i lower = _mm256_mul_epu32(a, b);

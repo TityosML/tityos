@@ -14,12 +14,10 @@ namespace internal {
         std::optional<std::vector<size_t>> gather;
     };
 
-    IndexingResult resolveIndices(const ty::IndexList& indices,
-                                  const BaseTensor& data);
+    IndexingResult resolveIndices(const ty::IndexList& indices, const BaseTensor& data);
 
     IndexingResult applyMask(const BaseTensor& data, const BoolMask& mask);
 
-    BaseTensor copyFromGather(const BaseTensor& data,
-                              const IndexingResult& idxResult);
+    BaseTensor copyFromGather(const BaseTensor& data, const IndexingResult& idxResult);
 } // namespace internal
 } // namespace ty

@@ -13,12 +13,9 @@
 namespace ty {
 namespace internal {
     template <typename T>
-    __global__ void
-    bmmCudaKernel(CudaTensorView<T> tensorView1, CudaTensorView<T> tensorView2,
-                  CudaTensorView<T> resultTensorView, size_t numElements);
+    __global__ void bmmCudaKernel(CudaTensorView<T> tensorView1, CudaTensorView<T> tensorView2,
+                                  CudaTensorView<T> resultTensorView, size_t numElements);
 
-    template <typename T>
-    void launchBMMKernel(BaseTensor& result, const BaseTensor& batch1,
-                         const BaseTensor& batch2);
+    template <typename T> void launchBMMKernel(BaseTensor& result, const BaseTensor& batch1, const BaseTensor& batch2);
 } // namespace internal
 } // namespace ty

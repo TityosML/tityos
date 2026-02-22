@@ -13,11 +13,9 @@
 namespace ty {
 namespace internal {
     template <typename T>
-    __global__ void contiguousCudaKernel(CudaTensorView<T> tensorView,
-                                         CudaTensorView<T> resultTensorView,
+    __global__ void contiguousCudaKernel(CudaTensorView<T> tensorView, CudaTensorView<T> resultTensorView,
                                          size_t numElements);
 
-    template <typename T>
-    void launchContiguousKernel(BaseTensor& result, const BaseTensor& tensor);
+    template <typename T> void launchContiguousKernel(BaseTensor& result, const BaseTensor& tensor);
 } // namespace internal
 } // namespace ty

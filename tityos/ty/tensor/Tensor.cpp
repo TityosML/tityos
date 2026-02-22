@@ -49,20 +49,17 @@ std::shared_ptr<internal::BaseTensor> Tensor::getGradTensor() const {
 
 void* Tensor::at(const size_t* indexStart, const size_t indexSize) const {
     if (indexSize != dataTensor_->getLayout().getNDim()) {
-        throw std::invalid_argument(
-            "Index size mismatch: expected " +
-            std::to_string(dataTensor_->getLayout().getNDim()) + ", got " +
-            std::to_string(indexSize));
+        throw std::invalid_argument("Index size mismatch: expected " +
+                                    std::to_string(dataTensor_->getLayout().getNDim()) + ", got " +
+                                    std::to_string(indexSize));
     }
 
-    const std::array<size_t, TY_MAX_DIMS>& shape =
-        dataTensor_->getLayout().getShape();
+    const std::array<size_t, TY_MAX_DIMS>& shape = dataTensor_->getLayout().getShape();
     for (size_t i = 0; i < indexSize; i++) {
         if (indexStart[i] >= shape[i]) {
-            throw std::out_of_range(
-                "Index out of bounds at dimension " + std::to_string(i) +
-                ": index value " + std::to_string(*(indexStart + i)) +
-                " is >= shape dimension " + std::to_string(shape[i]));
+            throw std::out_of_range("Index out of bounds at dimension " + std::to_string(i) + ": index value " +
+                                    std::to_string(*(indexStart + i)) + " is >= shape dimension " +
+                                    std::to_string(shape[i]));
         }
     }
 
@@ -142,16 +139,14 @@ std::string Tensor::toString() const {
     std::ostringstream resultStream;
 
     // returns (finished iterating, num brackets to place, has elided)
-    auto nextVisibleIndex =
-        [=](size_t& linearIndex) -> std::tuple<bool, size_t, bool> {
+    auto nextVisibleIndex = [=](size_t& linearIndex) -> std::tuple<bool, size_t, bool> {
         auto index = layout.linearToTensorIndex(linearIndex);
 
         for (int i = ndim - 1; i >= 0; i--) {
             index[i]++;
 
             size_t dimSize = shape[i];
-            bool isElided =
-                tensorSize > ElideAfter && dimSize > 2 * ElidedElementsPrinted;
+            bool isElided = tensorSize > ElideAfter && dimSize > 2 * ElidedElementsPrinted;
 
             if (isElided && index[i] == ElidedElementsPrinted) {
                 index[i] = dimSize - ElidedElementsPrinted;
@@ -183,8 +178,7 @@ std::string Tensor::toString() const {
 
             std::string itString = itemToStringCpu(*it, dtype);
 
-            maxItemLength = (itString.size() > maxItemLength) ? itString.size()
-                                                              : maxItemLength;
+            maxItemLength = (itString.size() > maxItemLength) ? itString.size() : maxItemLength;
 
             switch (dtype) {
             // TODO : Handle Float16 case
@@ -207,9 +201,7 @@ std::string Tensor::toString() const {
 
     if (!isIntegralType(dtype) && allVisibleIntegral) {
         // Remove trailing zeros if all elements are whole numbers
-        maxItemLength = (maxItemLength > DecimalsDisplayed)
-                            ? (maxItemLength - DecimalsDisplayed)
-                            : 1;
+        maxItemLength = (maxItemLength > DecimalsDisplayed) ? (maxItemLength - DecimalsDisplayed) : 1;
     }
 
     {
@@ -231,19 +223,15 @@ std::string Tensor::toString() const {
 
                 if (hasElided) {
                     if (numBrackets > 1) {
-                        resultStream << "\n"
-                                     << std::string(ndim - numBrackets, ' ')
-                                     << "...\n\n";
+                        resultStream << "\n" << std::string(ndim - numBrackets, ' ') << "...\n\n";
                     } else {
-                        resultStream << std::string(ndim - numBrackets, ' ')
-                                     << "...\n";
+                        resultStream << std::string(ndim - numBrackets, ' ') << "...\n";
                     }
                 } else if (numBrackets > 1) {
                     resultStream << "\n";
                 }
 
-                resultStream << std::string(ndim - numBrackets, ' ')
-                             << std::string(numBrackets, '[') << " ";
+                resultStream << std::string(ndim - numBrackets, ' ') << std::string(numBrackets, '[') << " ";
             } else if (hasElided) {
                 resultStream << "... ";
             }
@@ -256,8 +244,7 @@ std::string Tensor::toString() const {
                 itString.resize(decimal_pos + 1);
             }
 
-            itString =
-                std::string(maxItemLength - itString.size(), ' ') + itString;
+            itString = std::string(maxItemLength - itString.size(), ' ') + itString;
 
             resultStream << itString << " ";
 

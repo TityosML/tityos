@@ -10,8 +10,8 @@
 #include <cuda_runtime.h>
 
 TEST_CASE("Tensor CUDA toCpu", "[Operation]") {
-    ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}),
-                        std::vector<size_t>({2, 2}), {ty::DeviceType::CUDA, 0});
+    ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}), std::vector<size_t>({2, 2}),
+                        {ty::DeviceType::CUDA, 0});
 
     auto example1Cpu = ty::toCpu(example1);
 
@@ -24,10 +24,10 @@ TEST_CASE("Tensor CUDA toCpu", "[Operation]") {
 TEST_CASE("Tensor CUDA Addition", "[Operation][Pointwise]") {
 
     // Floats
-    ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}),
-                        std::vector<size_t>({2, 2}), {ty::DeviceType::CUDA, 0});
-    ty::Tensor example2(std::vector<float>({5.0f, 6.0f, 7.0f, 8.0f}),
-                        std::vector<size_t>({2, 2}), {ty::DeviceType::CUDA, 0});
+    ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}), std::vector<size_t>({2, 2}),
+                        {ty::DeviceType::CUDA, 0});
+    ty::Tensor example2(std::vector<float>({5.0f, 6.0f, 7.0f, 8.0f}), std::vector<size_t>({2, 2}),
+                        {ty::DeviceType::CUDA, 0});
 
     auto result1 = ty::add(example1, example2);
     auto result1Cpu = ty::toCpu(result1);
@@ -38,12 +38,10 @@ TEST_CASE("Tensor CUDA Addition", "[Operation][Pointwise]") {
     CHECK(result1Cpu.elemAt<float>({1, 1}) == 12.0f);
 
     // Floats with broadcasting
-    ty::Tensor example3(
-        std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f}),
-        std::vector<size_t>({3, 2}), {ty::DeviceType::CUDA, 0});
+    ty::Tensor example3(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f}), std::vector<size_t>({3, 2}),
+                        {ty::DeviceType::CUDA, 0});
 
-    ty::Tensor example4(std::vector<float>({10.0f, 20.0f}),
-                        std::vector<size_t>({2}), {ty::DeviceType::CUDA, 0});
+    ty::Tensor example4(std::vector<float>({10.0f, 20.0f}), std::vector<size_t>({2}), {ty::DeviceType::CUDA, 0});
 
     auto result2 = ty::add(example3, example4);
     auto result2Cpu = ty::toCpu(result2);
@@ -58,11 +56,9 @@ TEST_CASE("Tensor CUDA Addition", "[Operation][Pointwise]") {
     CHECK(result2Cpu.elemAt<float>({2, 1}) == 26.0f);
 
     // Int32
-    ty::Tensor example5(std::vector<int>({1, 2, 3, 4}),
-                        std::vector<size_t>({2, 2}), {ty::DeviceType::CUDA, 0},
+    ty::Tensor example5(std::vector<int>({1, 2, 3, 4}), std::vector<size_t>({2, 2}), {ty::DeviceType::CUDA, 0},
                         ty::DType::Int32);
-    ty::Tensor example6(std::vector<int>({5, 6, 7, 8}),
-                        std::vector<size_t>({2, 2}), {ty::DeviceType::CUDA, 0},
+    ty::Tensor example6(std::vector<int>({5, 6, 7, 8}), std::vector<size_t>({2, 2}), {ty::DeviceType::CUDA, 0},
                         ty::DType::Int32);
 
     auto result3 = ty::add(example5, example6);
@@ -74,12 +70,10 @@ TEST_CASE("Tensor CUDA Addition", "[Operation][Pointwise]") {
     CHECK(result3Cpu.elemAt<int>({1, 1}) == 12);
 
     // Int32 with broadcasting
-    ty::Tensor example7(std::vector<int>({1, 2, 3, 4, 5, 6}),
-                        std::vector<size_t>({1, 3, 2}),
-                        {ty::DeviceType::CUDA, 0}, ty::DType::Int32);
+    ty::Tensor example7(std::vector<int>({1, 2, 3, 4, 5, 6}), std::vector<size_t>({1, 3, 2}), {ty::DeviceType::CUDA, 0},
+                        ty::DType::Int32);
 
-    ty::Tensor example8(std::vector<int>({10, 20, 30, 40, 50, 60, 70, 80}),
-                        std::vector<size_t>({4, 1, 2}),
+    ty::Tensor example8(std::vector<int>({10, 20, 30, 40, 50, 60, 70, 80}), std::vector<size_t>({4, 1, 2}),
                         {ty::DeviceType::CUDA, 0}, ty::DType::Int32);
 
     auto result4 = ty::add(example7, example8);
@@ -104,13 +98,10 @@ TEST_CASE("Tensor CUDA Addition", "[Operation][Pointwise]") {
 TEST_CASE("Tensor CUDA Batch Matrix-Matrix Multiplication", "[Operation]") {
 
     // Floats 2x2
-    ty::Tensor example1(
-        std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f,
-                            9.0f, 10.0f, 11.0f, 12.0f}),
-        std::vector<size_t>({3, 2, 2}), {ty::DeviceType::CUDA, 0});
+    ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f}),
+                        std::vector<size_t>({3, 2, 2}), {ty::DeviceType::CUDA, 0});
     ty::Tensor example2(
-        std::vector<float>({13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f,
-                            20.0f, 21.0f, 22.0f, 23.0f, 24.0f}),
+        std::vector<float>({13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f, 21.0f, 22.0f, 23.0f, 24.0f}),
         std::vector<size_t>({3, 2, 2}), {ty::DeviceType::CUDA, 0});
 
     // note tests are in form ayx
@@ -134,13 +125,10 @@ TEST_CASE("Tensor CUDA Batch Matrix-Matrix Multiplication", "[Operation]") {
     CHECK(result1Cpu.elemAt<float>({2, 1, 1}) == 530.0f);
 
     // Floats 3x2 @ 2x3 -> 3x3
-    ty::Tensor example3(
-        std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f,
-                            9.0f, 10.0f, 11.0f, 12.0f}),
-        std::vector<size_t>({2, 3, 2}), {ty::DeviceType::CUDA, 0});
+    ty::Tensor example3(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f, 11.0f, 12.0f}),
+                        std::vector<size_t>({2, 3, 2}), {ty::DeviceType::CUDA, 0});
     ty::Tensor example4(
-        std::vector<float>({13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f,
-                            20.0f, 21.0f, 22.0f, 23.0f, 24.0f}),
+        std::vector<float>({13.0f, 14.0f, 15.0f, 16.0f, 17.0f, 18.0f, 19.0f, 20.0f, 21.0f, 22.0f, 23.0f, 24.0f}),
         std::vector<size_t>({2, 2, 3}), {ty::DeviceType::CUDA, 0});
 
     auto result2 = ty::bmm(example3, example4);
@@ -173,46 +161,30 @@ TEST_CASE("Tensor CUDA Batch Matrix-Matrix Multiplication", "[Operation]") {
     CHECK(result2Cpu.elemAt<float>({1, 2, 2}) == 519.0f);
 
     // Int32 2x2
-    ty::Tensor example5(
-        std::vector<int>({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}),
-        std::vector<size_t>({3, 2, 2}), {ty::DeviceType::CUDA, 0},
-        ty::DType::Int32);
-    ty::Tensor example6(
-        std::vector<int>({13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24}),
-        std::vector<size_t>({3, 2, 2}), {ty::DeviceType::CUDA, 0},
-        ty::DType::Int32);
+    ty::Tensor example5(std::vector<int>({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}), std::vector<size_t>({3, 2, 2}),
+                        {ty::DeviceType::CUDA, 0}, ty::DType::Int32);
+    ty::Tensor example6(std::vector<int>({13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24}),
+                        std::vector<size_t>({3, 2, 2}), {ty::DeviceType::CUDA, 0}, ty::DType::Int32);
 
     auto result3 = ty::bmm(example5, example6);
 
     int ai00, ai01, ai10, ai11;
-    cudaMemcpy(&ai00, result3.at({0, 0, 0}), sizeof(int),
-               cudaMemcpyDeviceToHost);
-    cudaMemcpy(&ai01, result3.at({0, 0, 1}), sizeof(int),
-               cudaMemcpyDeviceToHost);
-    cudaMemcpy(&ai10, result3.at({0, 1, 0}), sizeof(int),
-               cudaMemcpyDeviceToHost);
-    cudaMemcpy(&ai11, result3.at({0, 1, 1}), sizeof(int),
-               cudaMemcpyDeviceToHost);
+    cudaMemcpy(&ai00, result3.at({0, 0, 0}), sizeof(int), cudaMemcpyDeviceToHost);
+    cudaMemcpy(&ai01, result3.at({0, 0, 1}), sizeof(int), cudaMemcpyDeviceToHost);
+    cudaMemcpy(&ai10, result3.at({0, 1, 0}), sizeof(int), cudaMemcpyDeviceToHost);
+    cudaMemcpy(&ai11, result3.at({0, 1, 1}), sizeof(int), cudaMemcpyDeviceToHost);
 
     int bi00, bi01, bi10, bi11;
-    cudaMemcpy(&bi00, result3.at({1, 0, 0}), sizeof(int),
-               cudaMemcpyDeviceToHost);
-    cudaMemcpy(&bi01, result3.at({1, 0, 1}), sizeof(int),
-               cudaMemcpyDeviceToHost);
-    cudaMemcpy(&bi10, result3.at({1, 1, 0}), sizeof(int),
-               cudaMemcpyDeviceToHost);
-    cudaMemcpy(&bi11, result3.at({1, 1, 1}), sizeof(int),
-               cudaMemcpyDeviceToHost);
+    cudaMemcpy(&bi00, result3.at({1, 0, 0}), sizeof(int), cudaMemcpyDeviceToHost);
+    cudaMemcpy(&bi01, result3.at({1, 0, 1}), sizeof(int), cudaMemcpyDeviceToHost);
+    cudaMemcpy(&bi10, result3.at({1, 1, 0}), sizeof(int), cudaMemcpyDeviceToHost);
+    cudaMemcpy(&bi11, result3.at({1, 1, 1}), sizeof(int), cudaMemcpyDeviceToHost);
 
     int ci00, ci01, ci10, ci11;
-    cudaMemcpy(&ci00, result3.at({2, 0, 0}), sizeof(int),
-               cudaMemcpyDeviceToHost);
-    cudaMemcpy(&ci01, result3.at({2, 0, 1}), sizeof(int),
-               cudaMemcpyDeviceToHost);
-    cudaMemcpy(&ci10, result3.at({2, 1, 0}), sizeof(int),
-               cudaMemcpyDeviceToHost);
-    cudaMemcpy(&ci11, result3.at({2, 1, 1}), sizeof(int),
-               cudaMemcpyDeviceToHost);
+    cudaMemcpy(&ci00, result3.at({2, 0, 0}), sizeof(int), cudaMemcpyDeviceToHost);
+    cudaMemcpy(&ci01, result3.at({2, 0, 1}), sizeof(int), cudaMemcpyDeviceToHost);
+    cudaMemcpy(&ci10, result3.at({2, 1, 0}), sizeof(int), cudaMemcpyDeviceToHost);
+    cudaMemcpy(&ci11, result3.at({2, 1, 1}), sizeof(int), cudaMemcpyDeviceToHost);
 
     CHECK(ai00 == 43);
     CHECK(ai01 == 46);
@@ -230,14 +202,10 @@ TEST_CASE("Tensor CUDA Batch Matrix-Matrix Multiplication", "[Operation]") {
     CHECK(ci11 == 530);
 
     // Ints 3x2 @ 2x3 -> 3x3
-    ty::Tensor example7(
-        std::vector<int>({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}),
-        std::vector<size_t>({2, 3, 2}), {ty::DeviceType::CUDA, 0},
-        ty::DType::Int32);
-    ty::Tensor example8(
-        std::vector<int>({13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24}),
-        std::vector<size_t>({2, 2, 3}), {ty::DeviceType::CUDA, 0},
-        ty::DType::Int32);
+    ty::Tensor example7(std::vector<int>({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}), std::vector<size_t>({2, 3, 2}),
+                        {ty::DeviceType::CUDA, 0}, ty::DType::Int32);
+    ty::Tensor example8(std::vector<int>({13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24}),
+                        std::vector<size_t>({2, 2, 3}), {ty::DeviceType::CUDA, 0}, ty::DType::Int32);
 
     auto result4 = ty::bmm(example7, example8);
     auto result4Cpu = ty::toCpu(result4);
@@ -269,11 +237,10 @@ TEST_CASE("Tensor CUDA Batch Matrix-Matrix Multiplication", "[Operation]") {
 }
 
 TEST_CASE("Tensor CUDA contiguous", "[Operation]") {
-    ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}),
-                        std::vector<size_t>({2, 2}), {ty::DeviceType::CUDA, 0});
+    ty::Tensor example1(std::vector<float>({1.0f, 2.0f, 3.0f, 4.0f}), std::vector<size_t>({2, 2}),
+                        {ty::DeviceType::CUDA, 0});
 
-    ty::Tensor exampleSliced(std::make_shared<ty::internal::BaseTensor>(
-        example1.getBaseTensor()->slice(1, 0, 1)));
+    ty::Tensor exampleSliced(std::make_shared<ty::internal::BaseTensor>(example1.getBaseTensor()->slice(1, 0, 1)));
 
     auto result = ty::contiguous(exampleSliced);
 
@@ -283,10 +250,8 @@ TEST_CASE("Tensor CUDA contiguous", "[Operation]") {
     CHECK(exampleSliced.isContiguous() == false);
     CHECK(result.isContiguous() == true);
 
-    CHECK(exampleSlicedCpu.elemAt<float>({0, 0}) ==
-          resultCpu.elemAt<float>({0, 0}));
-    CHECK(exampleSlicedCpu.elemAt<float>({1, 0}) ==
-          resultCpu.elemAt<float>({1, 0}));
+    CHECK(exampleSlicedCpu.elemAt<float>({0, 0}) == resultCpu.elemAt<float>({0, 0}));
+    CHECK(exampleSlicedCpu.elemAt<float>({1, 0}) == resultCpu.elemAt<float>({1, 0}));
 
     CHECK(exampleSlicedCpu.elemAt<float>({0, 0}) == 1.0f);
 }

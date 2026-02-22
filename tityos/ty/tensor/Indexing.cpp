@@ -7,8 +7,7 @@
 
 namespace ty {
 namespace internal {
-    IndexingResult resolveIndices(const IndexList& indices,
-                                  const BaseTensor& data) {
+    IndexingResult resolveIndices(const IndexList& indices, const BaseTensor& data) {
         ShapeStrides newLayout = data.getLayout();
 
         size_t dim = 0;
@@ -20,8 +19,7 @@ namespace internal {
 
             if (std::holds_alternative<Slice>(idx)) {
                 const Slice& slice = std::get<Slice>(idx);
-                newLayout =
-                    newLayout.slice(dim, slice.start, slice.stop, slice.step);
+                newLayout = newLayout.slice(dim, slice.start, slice.stop, slice.step);
                 dim++;
             }
             if (std::holds_alternative<ptrdiff_t>(idx)) {
@@ -50,19 +48,16 @@ namespace internal {
         gather.reserve(total);
 
         for (size_t i = 0; i < total; ++i) {
-            const uint8_t* maskVal =
-                static_cast<const uint8_t*>(maskTensor.at(i));
+            const uint8_t* maskVal = static_cast<const uint8_t*>(maskTensor.at(i));
             if (*maskVal != 0) {
                 gather.push_back(i);
             }
         }
 
-        return IndexingResult{ShapeStrides{{gather.size()}, {1}, 0, 1},
-                              std::move(gather)};
+        return IndexingResult{ShapeStrides{{gather.size()}, {1}, 0, 1}, std::move(gather)};
     }
 
-    BaseTensor copyFromGather(const BaseTensor& data,
-                              const IndexingResult& idxResult) {
+    BaseTensor copyFromGather(const BaseTensor& data, const IndexingResult& idxResult) {
         std::vector<size_t> gather = *idxResult.gather;
         size_t total = gather.size();
         size_t elemSize = dtypeSize(data.getDType());
@@ -71,13 +66,11 @@ namespace internal {
         const ShapeStrides& layout = data.getLayout();
         if (layout.isContiguous()) {
             uint8_t* dataStartPointer =
-                reinterpret_cast<uint8_t*>(data.getTensorStorage()->begin()) +
-                (layout.getOffset() * elemSize);
+                reinterpret_cast<uint8_t*>(data.getTensorStorage()->begin()) + (layout.getOffset() * elemSize);
 
             for (size_t i = 0; i < total; ++i) {
                 size_t idx = gather[i];
-                std::memcpy(&buffer[i * elemSize],
-                            dataStartPointer + idx * elemSize, elemSize);
+                std::memcpy(&buffer[i * elemSize], dataStartPointer + idx * elemSize, elemSize);
             }
         } else {
             for (size_t i = 0; i < total; ++i) {
@@ -89,8 +82,7 @@ namespace internal {
         TensorStorage storage(buffer.size(), data.getDevice());
         storage.copyDataFromCpu(buffer.data(), buffer.size());
 
-        return BaseTensor(std::make_shared<TensorStorage>(std::move(storage)),
-                          idxResult.newLayout, data.getDType());
+        return BaseTensor(std::make_shared<TensorStorage>(std::move(storage)), idxResult.newLayout, data.getDType());
     }
 } // namespace internal
 } // namespace ty

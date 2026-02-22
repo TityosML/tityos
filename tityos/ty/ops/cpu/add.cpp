@@ -5,18 +5,12 @@
 namespace ty {
 namespace internal {
     template <typename T>
-    void addCpuKernel(const TensorView& outView, const TensorView& tensor1View,
-                      const TensorView& tensor2View) {
-        size_t total =
-            std::accumulate(outView.shape, outView.shape + outView.ndim, 1,
-                            std::multiplies<size_t>());
+    void addCpuKernel(const TensorView& outView, const TensorView& tensor1View, const TensorView& tensor2View) {
+        size_t total = std::accumulate(outView.shape, outView.shape + outView.ndim, 1, std::multiplies<size_t>());
 
-        T* __restrict__ outData =
-            static_cast<T*>(outView.data) + outView.offset;
-        const T* __restrict__ tensor1Data =
-            static_cast<T*>(tensor1View.data) + tensor1View.offset;
-        const T* __restrict__ tensor2Data =
-            static_cast<T*>(tensor2View.data) + tensor2View.offset;
+        T* __restrict__ outData = static_cast<T*>(outView.data) + outView.offset;
+        const T* __restrict__ tensor1Data = static_cast<T*>(tensor1View.data) + tensor1View.offset;
+        const T* __restrict__ tensor2Data = static_cast<T*>(tensor2View.data) + tensor2View.offset;
 
         size_t idx[TY_MAX_DIMS];
         for (size_t i = 0; i < outView.ndim; i++) {
@@ -46,8 +40,7 @@ namespace internal {
         }
     }
 
-    BaseTensor backend::CPUBackend::add(const BaseTensor& tensor1,
-                                        const BaseTensor& tensor2) {
+    BaseTensor backend::CPUBackend::add(const BaseTensor& tensor1, const BaseTensor& tensor2) {
         BaseTensor result = internal::emptyLike(tensor1);
 
         // Avx Optimized kernel
@@ -56,12 +49,10 @@ namespace internal {
             return result;
         }
 
-        DISPATCH_KERNEL_DTYPE_TABLE(
-            kernelTable, addCpuKernel,
-            (const TensorView&, const TensorView&, const TensorView&))
+        DISPATCH_KERNEL_DTYPE_TABLE(kernelTable, addCpuKernel,
+                                    (const TensorView&, const TensorView&, const TensorView&))
 
-        kernelTable[static_cast<size_t>(tensor1.getDType())](result, tensor1,
-                                                             tensor2);
+        kernelTable[static_cast<size_t>(tensor1.getDType())](result, tensor1, tensor2);
 
         return result;
     }

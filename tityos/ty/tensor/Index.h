@@ -7,6 +7,12 @@
 #include <vector>
 
 namespace ty {
-using IndexItem = std::variant<Slice, ptrdiff_t>;
+namespace internal {
+    class BaseTensor;
+}
+struct TITYOS_API BoolMask {
+    const internal::BaseTensor* boolTensor;
+};
+using IndexItem = std::variant<Slice, ptrdiff_t, BoolMask>;
 using IndexList = std::vector<IndexItem>;
 } // namespace ty

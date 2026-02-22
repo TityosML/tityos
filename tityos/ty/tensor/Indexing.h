@@ -1,4 +1,5 @@
 #pragma once
+
 #include "tityos/ty/tensor/Index.h"
 #include "tityos/ty/tensor/ShapeStrides.h"
 
@@ -6,25 +7,19 @@
 
 namespace ty {
 namespace internal {
+    class BaseTensor;
+
     struct IndexingResult {
         ty::internal::ShapeStrides newLayout;
-        std::vector<size_t> gather;
-    };
-
-    struct MaskInfo {
-        const bool* data;
-        ShapeStrides layout;
+        std::optional<std::vector<size_t>> gather;
     };
 
     IndexingResult resolveIndices(const ty::IndexList& indices,
-                                  const ShapeStrides& layout,
-                                  std::optional<MaskInfo> mask);
+                                  const BaseTensor& data);
 
-    IndexingResult applyMask(const ShapeStrides& layout, const MaskInfo& mask);
+    IndexingResult applyMask(const BaseTensor& data, const BoolMask& mask);
 
-    ShapeStrides applySlice(const ShapeStrides& layout, size_t dim,
-                            const Slice& slice);
-    ShapeStrides applySelect(const ShapeStrides& layout, size_t dim,
-                             ptrdiff_t select);
+    BaseTensor copyFromGather(const BaseTensor& data,
+                              const IndexingResult& idxResult);
 } // namespace internal
 } // namespace ty

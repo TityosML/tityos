@@ -78,10 +78,14 @@ namespace internal {
     };
 
     BaseTensor BaseTensor::indexList(IndexList indices) const {
-        internal::IndexingResult result =
-            internal::resolveIndices(indices, layout_, std::nullopt);
+        internal::IndexingResult idxResult =
+            internal::resolveIndices(indices, *this);
 
-        return BaseTensor(tensorStorage_, result.newLayout, dtype_);
+        if (!idxResult.gather.has_value()) {
+            return BaseTensor(tensorStorage_, idxResult.newLayout, dtype_);
+        } else {
+            return copyFromGather(*this, idxResult);
+        }
     }
 
     BaseTensor::Iterator::Iterator(const BaseTensor& baseTensor,
